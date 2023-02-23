@@ -1,0 +1,13 @@
+.env
+node_modules
+public/build
+public/theme
+storage
+vendor
+Backup
+resources/views/companyadmin/expense_moved/*
+resources/views/companyadmin/sales_moved/*
+!resources/views/*.blade.php
+tests
+stubs
+
