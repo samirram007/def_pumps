@@ -37,6 +37,7 @@ Route::get('/', [LoginController::class, 'welcome'])->name('welcome');
 Route::get('lang/{locale}', [LocalizationController::class,'index'])->name('lang');
 
 
+
 Route::get('/office/search', [OfficeController::class, 'address_search'])->name('office.address.search');
 Route::group(['middleware' => 'preventbackhistory'], function () {
 

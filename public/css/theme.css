@@ -445,7 +445,7 @@ table.dataTable tbody th, table.dataTable tbody td {
 }
 td {
     display: table-cell;
-    max-width: 20ch;
+    max-width: 25ch;
     word-wrap: break-word;
     word-break: break-word;
     white-space: pre-wrap;

@@ -36,7 +36,7 @@
     const doc = document;
     const lightSwitch = doc.getElementById('lights-toggle');
     let labelText = lightSwitch.parentNode.querySelector('.label-text');
-    console.log(x);
+
     if (x == 'on') {
         document.body.classList.remove('lights-off');
         lightSwitch.checked = true;

@@ -30,27 +30,26 @@
             {{-- @dd($product_types) --}}
             <div class="label-text pb-2 " for="product_type">{{ __('Product Type') }}</div>
             <select name="product_type" id="product_type" class="form-control">
-                <option value="" data-rp="0" data-msl="0">{{__('Select Product')}}</option>
 
                 @foreach ($product_types as $product_type)
                     <option value="{{ $product_type['productTypeId'] }}"
-                        data-rp="{{ $product_type['recorderPoint'] }}"
-                        data-msl="{{ $product_type['maxStockLevel'] }}">{{ $product_type['productTypeName'] }}
+                        data-recorderpoint="{{ $product_type['recorderPoint'] }}"
+                        data-maxstocklevel="{{ $product_type['maxStockLevel'] }}">{{ $product_type['productTypeName'] }}
                     </option>
                 @endforeach
             </select>
         </div>
-        <div class="col-md-6 pt-4 d-none" id="stock_slider_panel">
+        <div class="col-md-6 pt-4">
             {{-- slider --}}
             <div class="label-text pb-2 " for="product_type">{{ __('Current Stock') }}</div>
             <div class="row">
-                <div class="col-12">
+                <div class="col-12 px-4">
                     <div class="box-minmax">
                         {{-- <span>0</span><span>200</span> --}}
                     </div>
                     <div class="range-slider position-relative">
-                        <span class="ml-2 pt-2">0</span>
-                        <i id="rs-bullet-back" class="rs-label-back noselect ">{{__('Recorder Point')}}:
+                        <span class="ml-2 pt-2 position-absolute">0</span>
+                        <i id="rs-bullet-back" class="rs-label-back noselect ">Recorder Point:
                             {{ $product_types[0]['recorderPoint'] }}</i>
 
                         <input id="rs-range-line-back" class="rs-range-back noselect  position-absolute" type="range"
@@ -58,10 +57,10 @@
                             max="{{ $product_types[0]['maxStockLevel'] }}" disabled>
 
                         <input id="rs-range-line" class="rs-range" type="range" value="0" min="0"
-                            step="10" data-min="{{ $product_types[0]['recorderPoint'] }}"
+                            data-min="{{ $product_types[0]['recorderPoint'] }}"
                             max="{{ $product_types[0]['maxStockLevel'] }}">
 
-                        <span class="ml-2 pt-2 slider-max">{{ $product_types[0]['maxStockLevel'] }}</span>
+                        <span class="ml-2 pt-2 position-absolute slider-max">{{ $product_types[0]['maxStockLevel'] }}</span>
                         <span id="rs-bullet" class="rs-label">0</span>
 
                     </div>
@@ -76,19 +75,42 @@
 
     </div>
     <script>
+        //         document ready
+        $(document).ready(function() {
+            $('#product_type').on('change', function() {
+                // console.log(e);
+                // var product_type = sender;
+                var maxStockLevel = $(this).find(':selected').data('maxstocklevel');
+                $('#rs-range-line').attr('max', maxStockLevel);
+                $('.slider-max').text(maxStockLevel);
+                var recorderPoint = $(this).find(':selected').data('recorderpoint');
+                $('#rs-bullet-back').html("Recorder Point : " + recorderPoint);
+                $('#rs-range-line-back').attr('max', maxStockLevel);
+                $('#rs-range-line-back').val(recorderPoint);
+                // console.log($('#rs-bullet-back').clientWidth);
+                var backSliderWidth = document.getElementById('rs-range-line-back');
+
+                var x = backSliderWidth.clientWidth / maxStockLevel * recorderPoint;
+                //console.log(x);
+                $('#rs-bullet-back').css('left', x - 15 + "px")
+            });
+            $('#product_type').trigger('change');
+        });
+    </script>
+
+    <script>
         var rangeSlider = document.getElementById("rs-range-line");
         var rangeBullet = document.getElementById("rs-bullet");
 
         // rangeSlider.addEventListener("input", showSliderValue, false);
         //  rangeSlider.addEventListener("input", changeValue, false);
-        rangeSlider.addEventListener("change", changeValue, true);
+        rangeSlider.addEventListener("change", changeValue, false);
         var lastValue = 0;
 
         function changeValue() {
-            // console.log("---------------------|------------------");
             var value = rangeSlider.value;
             lastValue = value;
-
+            // console.log(lastValue);
             setTimeout(() => {
                 showSliderValue();
             }, 200);
@@ -103,58 +125,10 @@
             ShowFilteredPumps();
 
         }
-
-        $(document).ready(function() {
-            $('#product_type').select2(
-                {
-
-                    placeholder: "{{__('Select Product')}}",
-                    allowClear: true,
-                    width: '100%',
-
-                }
-            );
-        });
+        // async delay(ms) {
+        //     return new Promise(resolve => setTimeout(resolve, ms));
+        // }
     </script>
-    <script>
-        //         document ready
-        $(document).ready(function() {
-            $('#product_type').on('change', function() {
-
-                var sender = $(this).val();
-                if (sender == '') {
-                    $('#stock_slider_panel').addClass('d-none');
-                } else {
-                    $('#stock_slider_panel').removeClass('d-none');
-                }
-
-                var maxStockLevel = $(this).find(':selected').data('msl');
-                $('#rs-range-line').attr('max', maxStockLevel);
-                $('.slider-max').text(maxStockLevel);
-                var recorderPoint = $(this).find(':selected').data('rp');
-                $('#rs-bullet-back').html("Recorder Point : " + recorderPoint);
-                $('#rs-range-line-back').attr('max', maxStockLevel);
-                $('#rs-range-line-back').val(recorderPoint);
-
-                var backSliderWidth = document.getElementById('rs-range-line-back');
-                var x = backSliderWidth.clientWidth / maxStockLevel;
-
-                x *= recorderPoint;
-
-
-                $('#rs-bullet-back').css('left', x - 5 + "px");
-
-                //changeValue();
-                setTimeout(() => {
-                    changeValue();
-            }, 200);
-
-            });
-            $('#product_type').trigger('change');
-        });
-    </script>
-
-
     <style>
         .box-minmax {
             /* margin-top: 30px; */
@@ -177,17 +151,19 @@
 
         }
 
-        .rs-range {
-            margin-top: 0;
-            width: 80%;
-            -webkit-appearance: none;
-        }
-
-        .rs-range-back {
+        .rs-range, .rs-range-back {
+            box-sizing: border-box;
             margin-top: 0;
             width: 100%;
             -webkit-appearance: none;
+
         }
+
+        /* .rs-range-back {
+            margin-top: 0;
+            width:80%;
+            -webkit-appearance: none;
+        } */
 
         .rs-range:focus,
         .rs-range-back {
@@ -199,7 +175,8 @@
             height: 1px;
             cursor: pointer;
             box-shadow: none;
-            background: #752e2e;
+            background: #e60c0c;
+            background: toLinearGradient(90deg, #e60c0c, #e60c0c00);
             border-radius: 0px;
             border: 0px solid #010101;
         }
@@ -209,7 +186,7 @@
             height: 1px;
             cursor: pointer;
             box-shadow: none;
-            background: #752e2e00;
+            background: #916d6d9c;
             border-radius: 0px;
             border: 0px solid #010101;
         }
@@ -236,10 +213,11 @@
 
         .rs-range::-webkit-slider-thumb {
             box-shadow: none;
+            transform-origin: center center;
             border: 0px solid #b63f3f;
             box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.25);
-            height: 22px;
-            width: 44px;
+            height: 42px;
+            width: 22px;
             border-radius: 22px;
             background: rgb(39, 150, 158);
             cursor: pointer;
@@ -247,30 +225,30 @@
             margin-top: -20px;
             z-index: 100;
             transition: all 0.4s ease-out;
-            transform-origin: center center;
         }
 
         .rs-range::-webkit-slider-thumb:hover {
             background: rgb(58, 180, 170);
-            width: 66px;
+            transform-origin: center center;
+            width: 42px;
             height: 22px;
             margin-top: -10px;
-            /* border-radius: 22px; */
+            margin-left: -8px;
+            border-radius: 22px;
         }
 
         .rs-range-back::-webkit-slider-thumb {
-            content: "Happy";
             box-shadow: none;
             border: 0px solid #b63f3f;
-            box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.25);
+            /* box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.25); */
             height: 42px;
             width: 2px;
-            border-radius: 22px;
-            background: rgb(37, 90, 235);
+            /* border-radius: 22px; */
+            background: rgb(75, 8, 184);
             cursor: pointer;
             -webkit-appearance: none;
             margin-top: -5px;
-            /* margin-left: 5px; */
+
         }
 
         .rs-label-back {
@@ -317,7 +295,7 @@
             box-shadow: none;
             border: 0px solid #6e2a2a;
             box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.25);
-            height: 22px;
+            height: 42px;
             width: 22px;
             border-radius: 22px;
             background: rgb(136, 72, 72);
@@ -334,6 +312,7 @@
         .rs-label {
 
             position: absolute;
+            transform-origin: center center;
             display: block;
             width: 50px;
             height: 0;
@@ -350,15 +329,13 @@
             font-style: normal;
             font-weight: normal;
             line-height: normal;
-            font-size: 1rem;
+            font-size: 0.8rem;
         }
 
         .rs-label::after {
-            content: attr(value);
+
             display: block;
-            font-size: 12px;
-            letter-spacing: 0.07em;
-            margin-top: -2px;
+            font-size: 0.8rem;
         }
     </style>
 </div>

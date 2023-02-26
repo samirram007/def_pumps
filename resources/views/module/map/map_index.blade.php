@@ -2,18 +2,17 @@
 @section('content')
     <style>
         /*
-     * Always set the map height explicitly to define the size of the div element
-     * that contains the map.
-     */
-     #map_panel{
+                             * Always set the map height explicitly to define the size of the div element
+                             * that contains the map.
+                             */
+        #map_panel {}
 
-     }
         #map {
             height: 60vh;
-            border:6px solid #4d9784e1;
-        border-radius: 10px;
-        padding: 10px;
-        box-shadow: 0 0 10px 0 #0000001a;
+            border: 6px solid #4d9784e1;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 0 10px 0 #0000001a;
 
         }
 
@@ -54,7 +53,7 @@
         let Latitude = '{{ $office['latitude'] }}';
         let Longitude = '{{ $office['longitude'] }}';
 
-        //console.log(Latitude);
+
     </script>
     <div class="content-wrapper">
         <div class="content-header">
@@ -92,40 +91,103 @@
 
         <script>
             $(document).ready(function() {
-               // window.mapData =  '{!! $map_data !!}';
-                 //console.log(mapData);
+                // window.mapData =  '{!! $map_data !!}';
+
                 $('#map_filter').on('change', function() {
-                    //spinner animation
-                    //full div bar animation
 
-                        $('#map').html('<div class="d-flex justify-content-center align-items-center" style="height: 60vh;"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>');
+                    $('#map').html(
+                        '<div class="d-flex justify-content-center align-items-center" style="height: 60vh;"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>'
+                    );
+                    SetPumps();
 
-
-                    //$('#map').html('<div class="d-flex justify-content-center align-items-center" style="height: 60vh;"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>');
-
-                    // $('#map_panel').html('');
-                    var map_filter = $(this).val();
-                    //console.log(map_filter);
-                    $.ajax({
-                        url: "{{ route($routeRole.'.map.filter') }}",
-                        method: "GET",
-                        data: {
-                            map_filter: map_filter
-                        },
-                        success: function(data) {
-                          //  console.log(data.res.map_data);
-                           var mapData=data.res.map_data;
-                           // window.initMap = initMap;
-                           initMap(mapData);
-                            // initMap(data.res.map_data);
-                            //$('#map_panel').html(data.html);
-                        }
-                    });
                 });
             });
+            let allMapData = @json($map_data);
+            const SetPumps = function() {
+
+                var map_filter = $('#map_filter').val();
+                $.ajax({
+                    url: "{{ route($routeRole . '.map.filter') }}",
+                    method: "GET",
+                    data: {
+                        map_filter: map_filter,
+                    },
+                    success: function(data) {
+                        var mapData = data.res.map_data;
+                        allMapData = mapData;
+
+
+                        initMap(mapData);
+
+                    }
+                });
+            }
+            const ShowFilteredPumps = function() {
+
+                var map_filter = $('#map_filter').val();
+                var elmnt= $('#product_type');
+                var product_type = elmnt.val();
+                var recorder_point = elmnt.find(':selected').data('rp');
+               //  console.log(recorder_point +" : Recorder Point");
+              //  var recorder_point = $('#product_type').attr('data-recorderpoint');
+                var slider_value = $('#rs-range-line').val();
+                //filter allPumpsData by product_type and slider_value
+                var filteredPumps = [];
+
+                var obj = $.parseJSON(allMapData);
+                // var obj = $.parseJSON(allMapData);
+
+                var newarray = []
+                $.each(obj, function(key, value) {
+
+                   var flag = false;
+                   if(value.products.length > 0){
+                    $.each(value.products, function(k, v) {
+
+                         //value['flag'] = 'Red';
+                        // console.log(value['officeName']+'00000000000000000000000000000');
+                        //  console.log(v.productTypeId+'++++++++++++++ product_type : ' +product_type+' ++++++++++++++ current stock: '+v.currentStock+' ++++++++++++++ Rec Point : '+recorder_point);
+                        //  console.log(slider_value);
+                        if (v.productTypeId == product_type && v.currentStock != null) {
+
+
+                            if(v.currentStock<recorder_point){
+                                value['flag'] = 'Red';
+
+
+                            }
+                            if(v.currentStock >= slider_value){
+                               flag = true;
+                            }
+
+                        }
+                        else{
+                            flag = true;
+                        }
+                    });
+                    if(flag){
+                        newarray.push(value);
+                    }
+                    else{
+                        value['flag'] = 'Red';
+                        newarray.push(value);
+                    }
+                   }
+                   else{
+                    newarray.push(value);
+                   }
+
+
+                });
+
+
+
+                 initMap(JSON.stringify(newarray));
+
+            }
             var activeInfoWindow;
 
-           async function initMap(map_data=[]) {
+            function initMap(map_data = []) {
                 let infoHTML = '';
                 const iconBase = "{{ asset('images/icons') }}/";
                 map = new google.maps.Map(document.getElementById("map"), {
@@ -187,51 +249,52 @@
                     "Wholesale Pumps": {
                         name: "Wholesale",
                         icon: iconBase + "map-pump-icon.png",
-
                     },
                     "Company": {
                         name: "Company",
                         icon: iconBase + "map-pump-icon.png",
-
+                    },
+                    "Red": {
+                        name: "Red",
+                        icon: iconBase + "map-pump-icon-red.png",
                     },
 
                 };
-               // console.log(map_data.length);
 
-                 mapData = map_data.length>0? map_data:'{!! $map_data !!}';
+                mapData = map_data.length > 0 ? map_data : '{!! $map_data !!}';
+                //  console.log(mapData);
                 //mapData= mapData;
-               // console.log(mapData);
+
 
                 //  mapData=JSON.parse(mapData);
                 let features = [];
                 if (mapData != '') {
 
                     mapData = JSON.parse(mapData);
-                    // console.log(mapData);
+                  //  console.log(mapData);
                     mapData.forEach(data_stat => {
-                        //
+
                         const newArray = {
                             position: new google.maps.LatLng(data_stat.latitude, data_stat.longitude),
                             type: data_stat.officeTypeName,
                             textData: data_stat.officeAddress,
                             textTitle: data_stat.officeName,
+                            products: data_stat.products,
+                            flag: data_stat.flag,
                         };
-                        //console.log(data_stat.FuelType);
+
                         features.push(newArray);
                     });
 
 
                 }
-                // console.log(features);
 
-                //  console.log(features_);
 
                 features.forEach((feature) => {
-                    //console.log(feature[0].type);
 
                     const marker = new google.maps.Marker({
                         position: feature.position,
-                        icon: icons[feature.type].icon,
+                        icon: icons[feature.flag].icon,
                         // iconSize: new google.maps.Size(10, 10),
 
                         map: map,
@@ -239,31 +302,37 @@
                     });
 
 
+                    let productContent = '';
+                    $.each(feature.products, function(i, product) {
+                        productContent = productContent + (
+                            `<div>${product.productTypeName} :  ${product.currentStock}</div>`);
 
+                    });
 
                     const infowindow = new google.maps.InfoWindow({
                         content: `<div class="info-window">
                     <h3>${feature.textTitle}</h3>
-                    <p>${feature.textData}</p>
-                </div>`
+                    <p>${feature.textData}</p>` +
+                            `<div class="info-window-products border-bottom border-dark font-weight-bold"> Current Stock </div>` +
+                            productContent +
+                            `</div>`
                     });
 
 
-
+                    // $each(feature.products, function(product){
+                    //     <p>${feature.products}</p>
+                    // })
                     marker.addListener("click", () => {
 
-                        if (activeInfoWindow) { activeInfoWindow.close();}
+                        if (activeInfoWindow) {
+                            activeInfoWindow.close();
+                        }
                         setTimeout(() => {
                             infowindow.open(map, marker);
                         }, 100);
 
-                            activeInfoWindow = infowindow;
-                          //  console.log(activeInfoWindow);
-                        // infowindow.open({
-                        //     anchor: marker,
-                        //     map,
-                        //     shouldFocus: true
-                        // });
+                        activeInfoWindow = infowindow;
+
                     });
 
 

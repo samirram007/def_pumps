@@ -88,7 +88,7 @@
 </style>
 <link rel="stylesheet" href="{{ asset('css/bn/bn-style.css') }}">
 
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+{{-- <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
     google.load("elements", "1", {
     packages: "inputtools"
@@ -104,7 +104,7 @@
       });
     }
     google.setOnLoadCallback(onLoad);
-  </script>
+  </script> --}}
   <style>
     .preloader{
         position: fixed;

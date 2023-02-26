@@ -516,7 +516,7 @@ class SalesController extends Controller
             $user = (object) ApiController::User(Session::get('loginid'));
 
             $data['officeList'] = ApiController::GetOfficeByMasterOfficeId($user->officeId);
-            // $data['productTypeList'] = ApiController::GetProductType();
+
             $data['productTypeList'] = ApiController::GetProductTypeWithRate($user->officeId);
             $html= view('module.sales.producttype_index', $data)->render();
             return response()->json([

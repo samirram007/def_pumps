@@ -270,6 +270,7 @@ class SalesController extends Controller
                 'paymentModeId' => $request->input('paymentModeId'),
 
             ];
+             // dd(json_encode($data));
             $response = ApiController::CreateSales($data);
             if($response['status'] == false){
 
@@ -487,7 +488,7 @@ class SalesController extends Controller
             $user = (object) ApiController::User(Session::get('loginid'));
 
             $data['officeList'] = ApiController::GetOfficeByMasterOfficeId($user->officeId);
-            // $data['productTypeList'] = ApiController::GetProductType();
+
             $data['productTypeList'] = ApiController::GetProductTypeWithRate($user->officeId);
             $html= view('module.sales.producttype_index', $data)->render();
             return response()->json([

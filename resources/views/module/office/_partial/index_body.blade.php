@@ -136,7 +136,7 @@
                                 @if ($office['level'] == 0)
                                     <tr class="v-midlle accordion-item">
                                         <td class="pdl-0 text-wrap text-truncate">
-                                            <button class="border border-0 bg-transparent accordion-button"
+                                            <button class="border border-0 bg-transparent accordion-button "
                                                 data-toggle="collapse" data-target="#collapseExample"
                                                 aria-expanded="true" aria-controls="collapseExample">
                                                 {{ __($office['officeName']) }}
@@ -172,7 +172,7 @@
                                     @if ($office['children'] != null)
                                         @foreach ($office['children'] as $subOfficeKey => $subOffice)
                                             @if ($subOffice['level'] == 1)
-                                                <tr class="collapse" id="collapseExample">
+                                                <tr class="collapse show" id="collapseExample">
                                                     <td class="pdlg-1 text-wrap text-truncate">
                                                         {{ __($subOffice['officeName']) }}</td>
                                                     <td class="small  text-truncate">
@@ -220,6 +220,13 @@
                                                                     class="load-popup text-info mx-2 fw-bold {{ $subOffice['level'] <= 1 ? 'd-inline-flex' : 'd-none' }} m-size">
                                                                     {{ __('@') }}
                                                                 </a>
+                                                                <a href="javascript:" data-param=""
+                                                                data-url="{{ route('companyadmin.office.current_stock', $subOffice['officeId']) }}"
+                                                                title="{{ __('Current Stock') }}"
+                                                                class="load-popup text-info mx-2 fw-bold {{ $subOffice['level'] <= 1 ? 'd-inline-flex' : 'd-none' }} m-size">
+                                                                <i class="fa fa-archive" aria-hidden="true"></i>
+                                                                {{-- <i class="fa fa-cart-plus" aria-hidden="true"></i> --}}
+                                                            </a>
                                                             @else
                                                                 {{ __(' ') }}
                                                             @endif

@@ -32,7 +32,7 @@
     font-size: .813rem;
     background: none;
 }
-.sidebar .nav .nav-item .nav-link {padding:.55rem 1.5rem!important; color:/*#abb9e8;*/ rgb(255 255 255 / 0.7);transition-duration: 0s; }
+.sidebar .nav .nav-item .nav-link {padding:.55rem 1.5rem!important; color:/*#abb9e8;*/ rgb(255 255 255 / 0.7);transition-duration: 0s; white-space: pre-line; }
 .sidebar .nav .nav-item .nav-link a:hover{ /*color:#ffc107;*/ color: #fff;}
 .sidebar .nav .nav-item.active > .nav-link i, .sidebar .nav .nav-item.active > .nav-link .menu-title, .sidebar .nav .nav-item.active > .nav-link .menu-arrow { /*color:#ffc107;*/ color:#fff !important;}
 .navbar {height: auto !important;}

@@ -463,11 +463,11 @@ public static function  DeleteExpense($id,$userId)
         $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'Expense/'.$id)->json();
         return $res;
     }
-public static function  GetProductType()
+public static function  GetProductType($officeId)
     {
         //dd($data);
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*",];
-        $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'ProductType')->json();
+        $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'ProductType/'.$officeId)->json();
         return $res;
     }
 public static function  saveProductType($data)
@@ -514,6 +514,23 @@ public static function  GetProductByOrgId($id)
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*",];
         $res = Http::withHeaders($headers)->post(env('API_RESOURCE_URL') . 'FuelRate/SaveFuelDetails',$data)->json();
        // dd($res);
+        return $res;
+    }
+    public static function  GetCurrentStockByOfficeId($id)
+    {
+        // dd($id);
+        $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*",];
+        $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'Stock/GetCurrentStockByOfficeId/'.$id)->json();
+        // dd($res);
+        return $res;
+    }
+    public static function  UpdateCurrentStock($data)
+    {
+        // dd($id);
+      //  dd(json_encode($data));
+        $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*",];
+        $res = Http::withHeaders($headers)->post(env('API_RESOURCE_URL') . 'Stock/SaveCurrentStock',$data)->json();
+        // dd($res);
         return $res;
     }
     public static function   AddOfficeLastInvoiceDetails($data)

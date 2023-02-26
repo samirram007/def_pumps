@@ -72,3 +72,9 @@
         <span class="menu-title">{{ __('Locate Pump') }} </span>
     </a>
 </li>
+<li class="nav-item   {{ $route == 'companyadmin.calculator' ? 'active' : '' }} ">
+    <a class="nav-link my-2" href="{{ route('companyadmin.calculator') }}">
+        <i class="fa fa-calculator mr-3"  ></i>
+        <span class="menu-title">{{ __('ROI Calculator') }} </span>
+    </a>
+</li>

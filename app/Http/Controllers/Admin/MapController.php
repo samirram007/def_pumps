@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Session;
 
 class MapController extends Controller
 {
@@ -39,7 +40,7 @@ class MapController extends Controller
         $user=$this->user;
         $data['roleName']=$this->roleName;
         $data['routeRole']= $this->routeRole;
-
+        $data['product_types']=ApiController::GetProductType($user['officeId']);
 
         $data['office']=ApiController::GetOffice($user['officeId']);
         // dd($user);
@@ -54,7 +55,8 @@ class MapController extends Controller
 
        // $url=  env('API_RESOURCE_URL') .'Office/getCompanyWisePump/'.$officeId.'/1?OfficeTypeIds=2,3';
 
-        $headers = [ "Accept" => "application/json",];
+        // $headers = [ "Accept" => "application/json",];
+        $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*",];
         $res = Http::withHeaders($headers)->get($url)->json();
 
         //dd($data);
@@ -62,6 +64,11 @@ class MapController extends Controller
 
         asort($res);
         $res['map_data'] = array_values($res);
+        foreach($res['map_data'] as $key=>$val){
+            $res['map_data'][$key]['flag']=$res['map_data'][$key]['officeTypeName'];
+          //  $cnt++;
+        }
+       // dd($res['map_data']);
 
         $data['TITLE']='Def Pumps';
         $data['map_data'] = json_encode($res['map_data']);
@@ -72,6 +79,7 @@ class MapController extends Controller
     public function map_filter(Request $request){
        // dd($request->all());
         $map_filter = $request->map_filter;
+
         $user=$this->user;
         $data['roleName']=$this->roleName;
         $data['routeRole']= $this->routeRole;
@@ -89,7 +97,8 @@ class MapController extends Controller
             $url=  env('API_RESOURCE_URL') .'Office/getCompanyWisePump/'.$officeId.'/'.$map_filter.'?OfficeTypeIds=2,3';
         }
         //dd($url);
-        $headers = [ "Accept" => "application/json",];
+        // $headers = [ "Accept" => "application/json",];
+        $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*",];
         $res = Http::withHeaders($headers)->get($url)->json();
 
         //dd($data);
@@ -98,10 +107,16 @@ class MapController extends Controller
         asort($res);
         $res['map_data'] = array_values($res);
 
+        foreach($res['map_data'] as $key=>$val){
+            $res['map_data'][$key]['flag']=$res['map_data'][$key]['officeTypeName'];
+          //  $cnt++;
+        }
+        //dd($res['map_data']);
+
         $data['TITLE']='Def Pumps';
         $data['map_data'] = json_encode($res['map_data']);
 
-       //dd($data['map_data']);
+        //dd($data['map_data']);
         //$html= view('module.map.map' , $data)->render();
 
         return response()->json(['status'=>true,'res'=>    $data]);

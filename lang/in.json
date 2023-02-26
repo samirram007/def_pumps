@@ -287,6 +287,31 @@
     "Export to pdf": "पीडीएफ में निर्यात करें",
     "Search": "खोज",
     "View Options": "विकल्प देखें",
+    "Locate Pump": "पंप का पता लगाएँ",
+    "Def Pumps": "Def पंप",
+    "ROI Calculator": "ROI कैलकुलेटर",
+    "Current Stock": "वर्तमान स्टॉक",
+    "Recorder Point": "रिकॉर्डर पॉइंट",
+    "Calculate": "गणना करें",
+    "Sale(in Amt) need to achieve (daily)": "बिक्री (राशि में) प्राप्त करने के लिए (दैनिक)",
+    "Sale(in Amt) need to achieve (monthly)": "बिक्री (राशि में) प्राप्त करने के लिए (मासिक)",
+    "Sale(in Litre) need to achieve (daily)": "बिक्री (लीटर में) प्राप्त करने के लिए (दैनिक)",
+    "Rate of DEF": "DEF का दर",
+    "Profit Rate per litre": "प्रति लीटर लाभ दर",
+    "Interest Amtount (monthly)": "ब्याज राशि (मासिक)",
+    "Return of Investment": "आवृत्ति का वापसी",
+"Return of Investment(ROI) monthly":"आवृत्ति का वापसी(ROI) मासिक रिटर्न",
+"Monthly Profit":"मासिक लाभ",
+"Time Frame (months)": "समय फ्रेम (महीने)",
+"Bank FD Rate": "बैंक एफडी दर",
+"Investment Amount": "आवृत्ति राशि",
+"My Pumps": "मेरे पंप",
+"Pumps Under My Chain": "मेरे श्रृंखला के तहत पंप",
+"All Def Pumps": "सभी Def पंप",
+"Select Product": "उत्पाद चुनें",
+
+
+
 
 
 

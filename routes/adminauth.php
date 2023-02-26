@@ -5,11 +5,12 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\Admin\MapController;
+use App\Http\Controllers\Admin\StockController as AdminStockController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\MasterOfficeController;
+
+
 use App\Http\Controllers\ProductTypeController ;
-
-
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\SalesController as AdminSalesController;
 use App\Http\Controllers\Admin\OfficeController as AdminOfficeController;
@@ -24,7 +25,9 @@ Route::prefix('companyadmin')->group(function () {
     Route::group(['middleware' => 'CheckRole'], function () {
         Route::get('/', [LoginController::class, 'checkDashboard']);
         Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('companyadmin.dashboard');
-
+        Route::get('/calculator', function(){
+            return view('module.calculator.calculator');
+        })->name('companyadmin.calculator');
         Route::get('/user/profile/{loginid}', [AdminUserController::class, 'profile'])->name('companyadmin.user.profile');
         Route::get('/user/profile/edit/{loginid}', [AdminUserController::class, 'profile'])->name('companyadmin.user.profile_edit');
         Route::get('/map', [MapController::class, 'map'])->name('companyadmin.map');
@@ -70,6 +73,9 @@ Route::prefix('companyadmin')->group(function () {
         Route::get('/office/view/{id}', [AdminOfficeController::class, 'view'])->name('companyadmin.office.view');
         Route::get('/office/latest_rate/{id}', [AdminFuelRateController::class, 'latest_rate'])->name('companyadmin.office.latest_rate');
         Route::post('/office/store_latest_rate', [AdminFuelRateController::class, 'store_latest_rate'])->name('companyadmin.store_latest_rate');
+
+        Route::get('/office/current_stock/{id}', [AdminStockController::class, 'current_stock'])->name('companyadmin.office.current_stock');
+        Route::post('/office/store_current_stock', [AdminStockController::class, 'store_current_stock'])->name('companyadmin.store_current_stock');
 
 
         Route::get('/office/invoice_no/{id}', [AdminOfficeController::class, 'invoice_no'])->name('companyadmin.office.invoice_no');
