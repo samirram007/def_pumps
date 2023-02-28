@@ -5,11 +5,12 @@ use App\Http\Controllers\MapController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\SalesController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\SupportController;
+
+
 use App\Http\Controllers\LocalizationController;
-
-
 use App\Http\Controllers\MasterOfficeController;
 use App\Http\Controllers\ProductTypeController ;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -35,6 +36,8 @@ use App\Http\Controllers\Admin\ProductTypeController as AdminProductTypeControll
 Route::get('/', [LoginController::class, 'welcome'])->name('welcome');
 
 Route::get('lang/{locale}', [LocalizationController::class,'index'])->name('lang');
+Route::get('/si/{invoice_no}', [SalesController::class, 'sales_invoice'])->name('sales_invoice');
+
 
 
 

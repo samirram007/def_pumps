@@ -2,9 +2,9 @@
 @section('content')
     <style>
         /*
-                             * Always set the map height explicitly to define the size of the div element
-                             * that contains the map.
-                             */
+                                     * Always set the map height explicitly to define the size of the div element
+                                     * that contains the map.
+                                     */
         #map_panel {}
 
         #map {
@@ -52,8 +52,6 @@
         let map;
         let Latitude = '{{ $office['latitude'] }}';
         let Longitude = '{{ $office['longitude'] }}';
-
-
     </script>
     <div class="content-wrapper">
         <div class="content-header">
@@ -85,7 +83,7 @@
                 <div id="map_panel" class="mt-4">
                     @include('module.map.map', ['map_data' => $map_data])
                 </div>
-
+                @include('module.map.map_legends')
             </div>
         </section>
 
@@ -125,11 +123,11 @@
             const ShowFilteredPumps = function() {
 
                 var map_filter = $('#map_filter').val();
-                var elmnt= $('#product_type');
+                var elmnt = $('#product_type');
                 var product_type = elmnt.val();
                 var recorder_point = elmnt.find(':selected').data('rp');
-               //  console.log(recorder_point +" : Recorder Point");
-              //  var recorder_point = $('#product_type').attr('data-recorderpoint');
+                //  console.log(recorder_point +" : Recorder Point");
+                //  var recorder_point = $('#product_type').attr('data-recorderpoint');
                 var slider_value = $('#rs-range-line').val();
                 //filter allPumpsData by product_type and slider_value
                 var filteredPumps = [];
@@ -140,49 +138,44 @@
                 var newarray = []
                 $.each(obj, function(key, value) {
 
-                   var flag = false;
-                   if(value.products.length > 0){
-                    $.each(value.products, function(k, v) {
+                    var flag = false;
+                    if (value.products.length > 0) {
+                        $.each(value.products, function(k, v) {
 
-                         //value['flag'] = 'Red';
-                        // console.log(value['officeName']+'00000000000000000000000000000');
-                        //  console.log(v.productTypeId+'++++++++++++++ product_type : ' +product_type+' ++++++++++++++ current stock: '+v.currentStock+' ++++++++++++++ Rec Point : '+recorder_point);
-                        //  console.log(slider_value);
-                        if (v.productTypeId == product_type && v.currentStock != null) {
+                            if (v.productTypeId == product_type && v.currentStock != null) {
 
 
-                            if(v.currentStock<recorder_point){
-                                value['flag'] = 'Red';
+                                if (v.currentStock < recorder_point) {
+                                    value['flag'] = 'Red';
 
 
+                                }
+                                if (v.currentStock >= slider_value) {
+                                    flag = true;
+                                }
+
+                            } else {
+                                flag = true;
                             }
-                            if(v.currentStock >= slider_value){
-                               flag = true;
-                            }
+                        });
+                        if (flag) {
+                            newarray.push(value);
+                        } else {
+                            value['flag'] = 'Gray';
 
+                            newarray.push(value);
                         }
-                        else{
-                            flag = true;
-                        }
-                    });
-                    if(flag){
-                        newarray.push(value);
-                    }
-                    else{
+                    } else {
                         value['flag'] = 'Red';
                         newarray.push(value);
                     }
-                   }
-                   else{
-                    newarray.push(value);
-                   }
 
 
                 });
 
 
 
-                 initMap(JSON.stringify(newarray));
+                initMap(JSON.stringify(newarray));
 
             }
             var activeInfoWindow;
@@ -235,7 +228,7 @@
 
 
                 });
-
+                console.log(map.center.latitude);
 
 
 
@@ -258,6 +251,10 @@
                         name: "Red",
                         icon: iconBase + "map-pump-icon-red.png",
                     },
+                    "Gray": {
+                        name: "Gray",
+                        icon: iconBase + "map-pump-icon-gray.png",
+                    },
 
                 };
 
@@ -271,11 +268,13 @@
                 if (mapData != '') {
 
                     mapData = JSON.parse(mapData);
-                  //  console.log(mapData);
+                    //  console.log(mapData);
+                    var bounds = new google.maps.LatLngBounds();
                     mapData.forEach(data_stat => {
-
+                        var myLatLng = new google.maps.LatLng(data_stat.latitude, data_stat.longitude);
+                        bounds.extend(myLatLng);
                         const newArray = {
-                            position: new google.maps.LatLng(data_stat.latitude, data_stat.longitude),
+                            position: new google.maps.LatLng(myLatLng),
                             type: data_stat.officeTypeName,
                             textData: data_stat.officeAddress,
                             textTitle: data_stat.officeName,
@@ -287,6 +286,7 @@
                     });
 
 
+                    map.fitBounds(bounds);
                 }
 
 

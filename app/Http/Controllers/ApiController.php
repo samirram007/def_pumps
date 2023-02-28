@@ -404,6 +404,17 @@ public static function  GetSalesById($salesId)
         $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'Sales/'.$salesId)->json();
         return $res;
     }
+public static function  getSalesInvoice($salesId)
+    {
+        //  dd($salesId);
+        $headers = ["Accept" => "*"];
+        // $url=env('API_RESOURCE_URL') . 'Open/geSalesInvoice/'.$salesId;
+        // dd($url);
+        $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'Open/getSalesInvoice/'.$salesId)->json();
+        //dd($res);
+        return $res;
+    }
+
 public static function  UpdateSales($data)
     {
         //dd($data);
