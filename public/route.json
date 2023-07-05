@@ -1,0 +1,113 @@
+{
+    "Excess_capacity": 0.0,
+    "Not_selected": [
+      {
+        "atDeliveryRequirement": 2000.0,
+        "currentStock": 978.23,
+        "latitude": "25.2552821",
+        "longitude": "82.91981679999999",
+        "officeId": "7834ad90-3fd7-4cb4-4c74-08db2523436a",
+        "officeName": "KHUSHIPUR DEF UFS",
+        "totalCapacity": 3000.0
+      },
+      {
+        "atDeliveryRequirement": 500.0,
+        "currentStock": 1549.0,
+        "latitude": "26.4205674",
+        "longitude": "83.4498491",
+        "officeId": "47cae688-8d29-4fde-8a90-08db16119d3f",
+        "officeName": "Mazgawa",
+        "totalCapacity": 2000.0
+      }
+    ],
+    "Routes": {
+      "Algorithm_1": {
+        "Description": "Routing based on Nearest Branch",
+        "Route": [
+          {
+            "atDeliveryRequirement": 0.0,
+            "currentStock": 0.0,
+            "latitude": "24.317600",
+            "longitude": "82.973900",
+            "officeId": "3918",
+            "officeName": "Varanasi",
+            "totalCapacity": 0.0
+          },
+          {
+            "atDeliveryRequirement": 500.0,
+            "currentStock": 1171.4,
+            "latitude": "26.0889239",
+            "longitude": "82.84901789999999",
+            "officeId": "06d5dda0-6834-4ea1-183d-08daf95ad4ef",
+            "officeName": "Phoolpur Pump",
+            "totalCapacity": 2000.0
+          },
+          {
+            "atDeliveryRequirement": 1000.0,
+            "currentStock": 1981.0,
+            "latitude": "26.2008867",
+            "longitude": "83.09636669999999",
+            "officeId": "e2f1f785-6e62-4ed0-1840-08daf95ad4ef",
+            "officeName": "Kaptanganj Pump",
+            "totalCapacity": 3000.0
+          },
+          {
+            "atDeliveryRequirement": 1500.0,
+            "currentStock": 296.0,
+            "latitude": "26.1172747",
+            "longitude": "83.2149616",
+            "officeId": "23496355-d87a-4e44-a473-08db18dc8d10",
+            "officeName": "Ukraora Pump",
+            "totalCapacity": 2000.0
+          },
+          {
+            "atDeliveryRequirement": 2500.0,
+            "currentStock": 530.9200000000001,
+            "latitude": "26.2184306",
+            "longitude": "83.4071456",
+            "officeId": "55e0f82c-ed3b-40e0-183e-08daf95ad4ef",
+            "officeName": "Latghat Pump",
+            "totalCapacity": 3000.0
+          },
+          {
+            "atDeliveryRequirement": 2000.0,
+            "currentStock": 743.27,
+            "latitude": "26.3357261",
+            "longitude": "83.4818579",
+            "officeId": "a78599e0-a1e1-4b3b-183f-08daf95ad4ef",
+            "officeName": "Badhalganj Pump",
+            "totalCapacity": 3000.0
+          },
+          {
+            "atDeliveryRequirement": 2000.0,
+            "currentStock": 851.21,
+            "latitude": "26.9270041",
+            "longitude": "83.7137223",
+            "officeId": "61f7473c-d9b8-40ca-4c71-08db2523436a",
+            "officeName": "Kaptanganj-2 Pump",
+            "totalCapacity": 3000.0
+          },
+          {
+            "atDeliveryRequirement": 500.0,
+            "currentStock": 252.0,
+            "latitude": "26.7609202",
+            "longitude": "82.1535106",
+            "officeId": "3b66922c-791c-427e-a472-08db18dc8d10",
+            "officeName": "Faizabad Pump",
+            "totalCapacity": 1000.0
+          },
+          {
+            "atDeliveryRequirement": 0.0,
+            "currentStock": 0.0,
+            "latitude": "24.317600",
+            "longitude": "82.973900",
+            "officeId": "3918",
+            "officeName": "Varanasi",
+            "totalCapacity": 0.0
+          }
+        ],
+        "Total_distance": 786.7543842374679
+      }
+    },
+    "Total_requirement": 10000.0
+  }

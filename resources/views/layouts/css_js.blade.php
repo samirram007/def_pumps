@@ -128,9 +128,25 @@
         height: 20px;
         border-radius: 50%;
         background: #f00;
-        animation: loader 3s infinite ease-in-out;
+        animation: loader 0.5s infinite ease-in-out;
     }
     @keyframes loader{
+        0%{
+            transform: scale(0);
+            background: rgba(50, 59, 73, 0.678);
+        }
+        55%{
+            transform: scale(3);
+            background: rgba(55, 98, 134, 0.5);
+        }
+
+        100%{
+            transform: scale(0);
+            background: rgba(219, 211, 216, 0.171);
+            /* opacity: 0; */
+        }
+    }
+    @keyframes loader2{
         0%{
             transform: scale(0);
             background: #f00;

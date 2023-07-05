@@ -1,5 +1,5 @@
-@if ($collections[0]['level'] == 0)
-    {{-- @dd($collections[0]) --}}
+@if($collections[0]['level'] == 0)
+
     <div class="card">
         <div class="card-header card-primary" id="headingOne">
             <h3 class="mb-0">{{ $collections[0]['officeName'] }}</h3>
@@ -12,7 +12,7 @@
             <p>{{ __('location') }}: {{ $collections[0]['officeAddress'] }}</p>
             <div>
                 <div class="accordion" id="accordionExample">
-                    {{-- @dd($offices) --}}
+
                     @foreach ($collections as $key => $office)
                         @if ($office['level'] == '1')
                             <div class="card border-0  ">

@@ -135,8 +135,9 @@
 
             <thead>
                 <tr style="background:rgb(124, 238, 213); font-weight:bold">
-                    <td scope="col" style="width:50%;" class="text-left">{{ __('Product Name') }}</td>
-                    <td scope="col" style="width:50%;" class="text-right">{{ __('Amount') }}</td>
+                    <td scope="col" style="width:40%;" class="text-left">{{ __('Product Name') }}</td>
+                    <td scope="col" style="width:30%;" class="text-center">{{ __('Quantity') }}</td>
+                    <td scope="col" style="width:30%;" class="text-right">{{ __('Amount') }}</td>
                 </tr>
             </thead>
             <tbody>
@@ -144,19 +145,23 @@
                     $total_amount = 0;
                 @endphp
                 @foreach ($graph2 as $product => $value)
+
                     @php
-                        $total_amount += $value;
+                        $total_amount += $value['sale'];
                     @endphp
+                    @if($value['sale']!=0)
                     <tr style=" ">
 
-                        <td scope="col" style="width: 50%;padding:5px" class="text-left">{{ __($product) }}</td>
-                        <td scope="col" style="width: 50%;padding:5px" class="text-right">
-                            {{ __(number_format($value, 2, '.', 0)) }}</td>
+                        <td scope="col" style="width: 40%;padding:5px" class="text-left">{{ __($product) }}</td>
+                        <td scope="col" style="width: 30%;padding:5px" class="text-center">{{$value['qty']==0?'':  __(number_format($value['qty'], 2, '.', '')) .' ' .__($value['PrimaryUnit']['unitShortName']) }}</td>
+                        <td scope="col" style="width: 30%;padding:5px" class="text-right">
+                            {{ __(number_format($value['sale'], 2, '.', 0)) }}</td>
                     </tr>
+                    @endif
                 @endforeach
                 <tr style="border-top:2px solid #fff;background:rgb(230, 233, 232); font-weight:bold">
                     {{-- <th scope="col" style="width: 50%;padding:5px" class="text-right"></th> --}}
-                    <td scope="col" colspan="2" style="width: 100%;padding:5px" class="text-right">
+                    <td scope="col" colspan="3" style="width: 100%;padding:5px" class="text-right">
                         {{ __('Total') }} : {{ __(number_format($total_amount, 2, '.', 0)) }}</td>
                 </tr>
             </tbody>

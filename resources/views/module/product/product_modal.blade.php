@@ -6,7 +6,7 @@
             {{-- <h4 class="modal-title text-light">{{ __('Product List') }} </h4> --}}
             <h4 class="modal-title text-light"> {{ __('Products List') }} :: {{ $office[0]['officeName'] }} </h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+                <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
             </button>
         </div>
 

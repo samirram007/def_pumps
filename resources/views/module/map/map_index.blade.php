@@ -114,7 +114,7 @@
                         var mapData = data.res.map_data;
                         allMapData = mapData;
 
-
+//console.log(typeof(mapData));
                         initMap(mapData);
 
                     }
@@ -228,7 +228,7 @@
 
 
                 });
-                console.log(map.center.latitude);
+                //console.log(map.center.latitude);
 
 
 

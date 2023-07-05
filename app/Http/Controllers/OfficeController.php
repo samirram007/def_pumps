@@ -51,6 +51,7 @@ class OfficeController extends Controller
         $offices=array_filter($offices, function($var) use ($id){
             return ($var['level'] == 1);
         });
+
         // $offices=ApiController::GetOfficeList($id);
         $data['MasterOffice'] =[ApiController::GetOffice($id)];
 
@@ -70,7 +71,8 @@ class OfficeController extends Controller
         // load the create form (app/views/users/create.blade.php)
 
 
-
+        $data['roleName']=$this->roleName;
+        $data['routeRole']=$this->routeRole;
         $user=(object)$this->user;
 
         $data['masterOfficeId'] =$id;
@@ -99,10 +101,10 @@ class OfficeController extends Controller
  public function store(Request $request)
     {
         // validate the data
-       // dd($request->all());
+
         $validator = Validator::make($request->all(), [
             'officeName' => 'required|max:255',
-            'masterOfficeId' => 'required',
+            'masterOfficeId' => 'nullable',
             'officeContactNo' => 'nullable|numeric|digits:10',
             'officeEmail' => 'nullable|max:255|email',
         ]);
@@ -129,6 +131,7 @@ class OfficeController extends Controller
                 'officeName' => base64_encode($request->input('officeName')) ,
                 'officeTypeId' =>  $request->input('officeTypeId'),
                 'masterOfficeId' => $request->input('masterOfficeId'),
+                'registeredAddress' => base64_encode($request->input('registeredAddress')),
                 'officeAddress' => base64_encode($request->input('officeAddress')),
                 'officeContactNo' => $request->input('officeContactNo'),
                 'officeEmail' => $request->input('officeEmail'),
@@ -175,7 +178,8 @@ class OfficeController extends Controller
     public function edit($id)
     {
 
-
+        $data['roleName']=$this->roleName;
+        $data['routeRole']=$this->routeRole;
         $office=[ApiController::GetOffice($id)];
 
         $data['officeTypes'] =  ApiController::GetOfficeTypeList();
@@ -184,7 +188,7 @@ class OfficeController extends Controller
         $info['title']="Create Office";
         $info['size']="modal-lg";
 
-
+        //dd($data['editData'] );
         $GetView= view('superadmin.office.office_edit',$data)->render();
         return response()->json([
             "status" => true,
@@ -203,20 +207,21 @@ class OfficeController extends Controller
      */
     public function update(Request $request, $id)
     {
-
+       // dd($request->all());
         // validate the data
         $validator = Validator::make($request->all(), [
             'officeName' => 'required|max:255',
-            'masterOfficeId' => 'required',
+            'masterOfficeId' => 'nullable',
             'officeContactNo' => 'nullable|numeric|digits:10',
             'officeEmail' => 'nullable|max:255|email',
         ]);
 
         // process the data
         if ($validator->fails()) {
-            return redirect('office/edit/'.$id)
-                ->withErrors($validator)
-                ->withInput();
+            return response()->json([
+                "status" => false,
+                "errors" => $validator->errors()
+            ]);
         } else {
             if($request->input('gstTypeId')>0){
                 $validator = Validator::make($request->all(), [
@@ -237,6 +242,7 @@ class OfficeController extends Controller
                 'officeTypeId' =>$request->input('officeTypeId'),
                 'masterOfficeId' => $request->input('masterOfficeId'),
                 'officeAddress' => base64_encode($request->input('officeAddress')),
+                'registeredAddress' => base64_encode($request->input('registeredAddress')),
                 'officeContactNo' => $request->input('officeContactNo'),
                 'officeEmail' => $request->input('officeEmail'),
                 'longitude' => $request->input('longitude'),
@@ -257,7 +263,7 @@ class OfficeController extends Controller
             $response = ApiController::UpdateOffice($data);
             return response()->json([
                 "status" => true,
-                "message" => "Office updated successfully"
+                "message" => "Updation successfull"
             ]);
             //return redirect()->route('superadmin.office.index',$request->input('masterOfficeId'))->with('success', 'Office updated successfully');
         }

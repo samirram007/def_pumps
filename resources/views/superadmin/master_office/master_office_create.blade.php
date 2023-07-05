@@ -3,13 +3,13 @@
          <div class="modal-header">
              <h4 class="modal-title text-light">{{ __('Add Top Company') }} </h4>
              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                 <span aria-hidden="true">&times;</span>
+                <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
              </button>
          </div>
          @include('module.office.office_create')
 
      </div>
-     <script>
+     {{-- <script>
          $(document).ready(function() {
              // $('#formCreate').submit();
              $("#formCreate").on("submit", function(event) {
@@ -55,5 +55,5 @@
 
              });
          });
-     </script>
+     </script> --}}
  </div>

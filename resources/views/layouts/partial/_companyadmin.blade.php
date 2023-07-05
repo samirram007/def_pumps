@@ -72,6 +72,12 @@
         <span class="menu-title">{{ __('Locate Pump') }} </span>
     </a>
 </li>
+<li class="nav-item   {{ $route == 'companyadmin.delivery_plan' ? 'active' : '' }} ">
+    <a class="nav-link my-2" href="{{ route('companyadmin.delivery_plan') }}">
+        <i class="fa fa-map-marker mr-3"  ></i>
+        <span class="menu-title">{{ __('Delivery Plan') }} </span>
+    </a>
+</li>
 <li class="nav-item   {{ $route == 'companyadmin.calculator' ? 'active' : '' }} ">
     <a class="nav-link my-2" href="{{ route('companyadmin.calculator') }}">
         <i class="fa fa-calculator mr-3"  ></i>

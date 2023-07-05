@@ -21,35 +21,43 @@
                 <table id="chartTwoDataTable" class="  table-striped  display nowrap stattab" style="width:100%"   >
                     <thead>
                         <tr>
-                            <th colspan="2" style="text-align:center; background: rgba(81, 173, 85,1); border-bottom:1px solid rgb(4, 27, 10)">
+                            <th colspan="3" style="text-align:center; background: rgba(81, 173, 85,1); border-bottom:1px solid rgb(4, 27, 10)">
                                 {{__('Product Wise Summary Data')}}
                             </th>
                         </tr>
                         <tr style="background: rgba(81, 173, 85,1); border-bottom:1px solid rgb(4, 27, 10)">
 
-                            <th scope="col" style="width: 50%;padding:5px;" >{{__('Product Name')}}</th>
-                            <th scope="col"  style="width: 50%; text-align:right;padding:5px;border-left:1px dashed #aaa">{{__('Amount')}}</th>
+                            <th scope="col" style="width: 40%;padding:5px;" >{{__('Product Name')}}</th>
+                            <th scope="col" style="width: 30%;padding:5px; text-align:center;" >{{__('Quantity')}}</th>
+                            <th scope="col"  style="width: 30%; text-align:right;padding:5px;border-left:1px dashed #aaa">{{__('Amount')}}</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         @php
                             $total = 0;
+                            $total_qty=0;
                         @endphp
                         @foreach ($graph2 as $product => $value)
+                       {{-- @dd($value) --}}
                         @php
-                            $total += $value;
+                            $total += (float)$value['sale'];
+                            $total_qty += (float)$value['qty'];
 
                         @endphp
+
+                        @if($value['sale']!=0)
                             <tr    style=" ">
 
-                                <td scope="col" style="width: 50%;padding:5px" >{{ __($product) }}</td>
-                                <td scope="col" style="width: 50%;padding:5px;border-left:1px dashed #aaa"  class="text-right">{{ __(number_format($value, 2, '.', '')) }}</td>
+                                <td scope="col" style="width: 40%;padding:5px" >{{ __($product) }}</td>
+                                <td scope="col" style="width: 30%;padding:5px;text-align:center;" >{{$value['qty']==0?'':  __(number_format($value['qty'], 2, '.', '')) .' ' .__($value['PrimaryUnit']['unitShortName']) }}</td>
+                                <td scope="col" style="width: 30%;padding:5px;border-left:1px dashed #aaa"  class="text-right">{{ __(number_format($value['sale'], 2, '.', '')) }}</td>
                             </tr>
+                            @endif
                         @endforeach
                         <tr style="">
 
-                            <td scope="col" style="width: 50%;padding:5px" >{{__('Total')}}</td>
+                            <td scope="col" colspan="2" style="width: 50%;padding:5px" >{{__('Total')}}</td>
                             <td scope="col" style="width: 50%;padding:5px;border-left:1px dashed #aaa"  class="text-right">{{ __(number_format($total, 2, '.', '')) }}</td>
                         </tr>
                     </tbody>

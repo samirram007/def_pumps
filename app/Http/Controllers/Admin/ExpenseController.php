@@ -96,6 +96,7 @@ class ExpenseController extends Controller
         $info['title'] = "New Expense Voucher";
         $info['size'] = "modal-lg";
         $data['info'] = $info;
+
         $GetView = view('module.expense.expense_create', $data)->render();
         return response()->json([
             "status" => true,

@@ -185,7 +185,7 @@ div.dataTables_wrapper div.dataTables_length select {outline:none;}
 }*/
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .navbar-dropdown .dropdown-item {padding: 1rem 1.562rem;}
 
-.navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .navbar-dropdown {top: 60px;}
+.navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .navbar-dropdown {top: 3.2rem;}
 .footer {padding:1rem;}
 table.dataTable thead {background-color:/* #ea6e27; #405189*/ #335e64;color: #fff;}
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {background: /*#ea6e27;*/ #335e64;border:none;}

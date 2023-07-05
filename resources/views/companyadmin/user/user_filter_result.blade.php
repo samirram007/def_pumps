@@ -25,7 +25,8 @@
                         {{-- <td><img style="width: 50px; height:50px; border:1px solid #000000;"
                                 src="{{ !empty($data->image) ? url('upload/user_images/' . $data->image) : url('upload/no_image.jpg') }}"
                                 alt=""></td> --}}
-                        <td>{{ __($data->firstName) }} {{ $data->firstName == $data->surName ? '' : $data->surName }}</td>
+                        <td>{{ __($data->firstName) }} {{ $data->firstName == $data->surName ? '' : $data->surName }}
+                        </td>
                         <td>
                             @if ($routeRole == 'companyadmin')
                                 @if (in_array(strtolower($data->roleName), ['superadmin', 'companyadmin']))
@@ -42,29 +43,43 @@
                         <td class="text-right " style="overflow: inherit;">
 
                             @if (!empty($office))
-                                <a href="javascript:" data-param="{{base64_encode(json_encode($data))}}"
+                                @if (session()->has('isSuperAdmin') && session()->get('isSuperAdmin'))
+                                    @if ($data->roleName != 'PumpUser')
+                                        <a href="{{ route('switchmode', $data->id) }}"
+                                            class="switch-user  mx-2 text-info my-2">
+                                            <i class="fa fa-sign-in-alt fa-lg" aria-hidden="true"></i>
+
+                                        </a>
+                                    @endif
+                                @endif
+                                <a href="javascript:" data-param="{{ base64_encode(json_encode($data)) }}"
                                     data-url="{{ route('companyadmin.office_user.edit', [$data->id, $office->officeId]) }}"
-                                    title="{{ __('Edit') }}"
-                                    class="load-popup  btn btn-rounded animated-shine   m-0"> <i
+                                    title="{{ __('Edit') }}" class="load-popup  mx-2 text-info my-2"> <i
                                         class="fa fa-edit "></i></a>
 
                                 <a href="{{ route('companyadmin.user.delete', $data->id) }}" data-param=""
                                     data-url="{{ route('companyadmin.user.delete', $data->id) }}"
-                                    title="{{ __('Delete') }}"
-                                    class="delete btn btn-rounded animated-shine-danger m-0 "><i
+                                    title="{{ __('Delete') }}" class="delete  mx-2 text-info my-2 "><i
                                         class="fa fa-trash "></i></a>
                             @else
-                                <a href="javascript:" data-param="{{base64_encode(json_encode($data))}}"
+                                @if (session()->has('isSuperAdmin') && session()->get('isSuperAdmin'))
+                                    @if ($data->roleName != 'PumpUser')
+                                        <a href="{{ route('switchmode', $data->id) }}"
+                                            class="switch-user  mx-2 text-info my-2">
+                                            <i class="fa fa-sign-in-alt fa-lg" aria-hidden="true"></i>
+
+                                        </a>
+                                    @endif
+                                @endif
+                                <a href="javascript:" data-param="{{ base64_encode(json_encode($data)) }}"
                                     data-url="{{ route('companyadmin.user.edit', $data->id) }}"
-                                    title="{{ __('Edit') }}"
-                                    class="load-popup  btn btn-rounded animated-shine   m-0 "> <i
-                                        class="fa fa-edit "></i></a>
+                                    title="{{ __('Edit') }}" class="load-popup  mx-2 text-info  my-2 "> <i
+                                        class="fa fa-edit fa-lg"></i></a>
 
                                 <a href="{{ route('companyadmin.user.delete', $data->id) }}" data-param=""
                                     data-url="{{ route('companyadmin.user.delete', $data->id) }}"
-                                    title="{{ __('Delete') }}"
-                                    class="delete btn btn-rounded animated-shine-danger   m-0 "><i
-                                        class="fa fa-trash "></i></a>
+                                    title="{{ __('Delete') }}" class="delete mx-2 text-info  my-2 "><i
+                                        class="fa fa-trash fa-lg "></i></a>
                             @endif
 
 

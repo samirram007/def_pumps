@@ -64,25 +64,28 @@
           padding: 10px 20px 10px 10px;
         text-align: left; */
     }
+
     .card-row {
-    width: 100%;
-    display: flex;
-    text-align: center;
-    flex-flow: column wrap;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-}
-.card-pices {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: nowrap;
-    margin: 5px;
-}
-.card-pices div:nth-child(2) {
-    margin-left: 5px;
-}
+        width: 100%;
+        display: flex;
+        text-align: center;
+        flex-flow: column wrap;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .card-pices {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        margin: 5px;
+    }
+
+    .card-pices div:nth-child(2) {
+        margin-left: 5px;
+    }
 </style>

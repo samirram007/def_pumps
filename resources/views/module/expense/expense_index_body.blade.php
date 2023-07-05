@@ -32,7 +32,7 @@
                                   <td class="text-right " style="overflow: inherit;">
                                       {{-- <a href="{{ route($routeRole.'.expense.edit', $data->expenseId) }}" title="{{__('Edit')}}" class="edit   btn btn-rounded animated-shine "><i class="fa fa-edit m-0 "></i></a> --}}
                                       <a href="javascript:" data-param="" data-url="{{ route($routeRole.'.expense.edit', $data->expenseId) }}"
-                                      title="{{ __('New Expense Voucher') }}" class="load-popup edit   btn btn-rounded animated-shine ">
+                                      title="{{ __('Edit Expense Voucher') }}" class="load-popup edit   btn btn-rounded animated-shine ">
                                       <i class="fa fa-edit m-0 "></i></a>
                                       <a href="{{ route($routeRole.'.expense.delete', $data->expenseId) }}" title="{{__('Delete')}}" class="delete  btn btn-rounded animated-shine-danger    "><i class="fa fa-trash m-0 "></i></a>
                                   </td>

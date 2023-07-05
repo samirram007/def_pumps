@@ -5,5 +5,7 @@ namespace App\Services;
 
 class ApiServices
 {
-    public function getUser($id);
+    public function getUser($id){
+
+    }
 }

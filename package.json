@@ -12,6 +12,7 @@
         "vite": "^3.0.0"
     },
     "dependencies": {
+        "@googlemaps/markerclusterer": "^2.3.0",
         "@mdi/font": "^7.0.96",
         "ace-builds": "^1.8.1",
         "bootstrap": "^5.2.0",

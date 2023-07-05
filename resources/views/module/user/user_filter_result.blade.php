@@ -36,8 +36,8 @@
                                     <div class="badge badge-warning">pump</div>
                                 @endif
                             @endif
-                                {{-- {{$data->officeId}} --}}
-                            {{ __($data->office==null?'':$data->office['officeName']) }}
+                            {{-- {{$data->officeId}} --}}
+                            {{ __($data->office == null ? '' : $data->office['officeName']) }}
 
                         </td>
                         <td>{{ __($data->roleName) }}</td>
@@ -46,20 +46,27 @@
 
                         <td class="text-right " style="overflow: inherit;">
 
+                            @if (session()->has('isSuperAdmin') && session()->get('isSuperAdmin'))
+                                @if ($data->roleName != 'PumpUser')
+                                    <a href="{{ route('switchmode', $data->id) }}"
+                                        class="switch-user  mx-2 text-info my-2">
+                                        <i class="fa fa-sign-in-alt fa-lg" aria-hidden="true"></i>
+
+                                    </a>
+                                @endif
+                            @endif
                             @if (in_array($routeRole, ['superadmin', 'companyadmin']))
-                                <a href="javascript:" data-param="{{base64_encode(json_encode($data))}}"
+                                <a href="javascript:" data-param="{{ base64_encode(json_encode($data)) }}"
                                     data-url="{{ route($routeRole . '.organization_user.edit', [$data->id, $office['officeId']]) }}"
-                                    title="{{ __('Edit') }}"
-                                    class="load-popup  btn btn-rounded animated-shine px-2  "> <i
-                                        class="fa fa-edit"></i></a>
+                                    title="{{ __('Edit') }}" class="load-popup  mx-2 text-info px-2  "> <i
+                                        class="fa fa-edit fa-lg"></i></a>
 
                                 <a href="{{ route($routeRole . '.user.delete', $data->id) }}" data-param=""
                                     data-url="{{ route($routeRole . '.user.delete', $data->id) }}"
-                                    title="{{ __('Delete') }}"
-                                    class="delete btn btn-rounded animated-shine-danger   px-2  "><i
-                                        class="fa fa-trash"></i></a>
+                                    title="{{ __('Delete') }}" class="delete  mx-2 text-info   px-2  "><i
+                                        class="fa fa-trash fa-lg"></i></a>
                             @else
-                                <a href="javascript:" data-param="{{base64_encode(json_encode($data))}}"
+                                <a href="javascript:" data-param="{{ base64_encode(json_encode($data)) }}"
                                     data-url="{{ route($routeRole . '.user.edit', $data->id) }}"
                                     title="{{ __('Edit') }}"
                                     class="load-popup  btn btn-rounded animated-shine px-2  "> <i

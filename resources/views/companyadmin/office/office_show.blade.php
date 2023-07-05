@@ -3,7 +3,7 @@
         <div class="modal-header">
             <h4 class="modal-title text-light">{{ __('View Business Entity') }} </h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+                <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
             </button>
         </div>
 
@@ -89,6 +89,14 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="registeredAddress">{{ __('Registered Address') }}</label>
+                                                        <textarea class="form-control" rows="3" id="registeredAddress" name="registeredAddress"
+                                                        placeholder="{{__('Enter Registered Address')}}">{{ $editData->registeredAddress }}</textarea>
+
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="officeAddress">{{ __('Address') }}</label>

@@ -47,7 +47,7 @@
                                     @foreach ($collections as $key => $data)
                                         @php
                                             $data = (object) $data;
-
+                                            
                                         @endphp
                                         <tr>
                                             {{-- <td>{{ $key + 1 }} </td> --}}
@@ -72,7 +72,10 @@
                                                     <a href="javascript:" data-param=""
                                                         data-url="{{ route('superadmin.organization.product', $data->officeId) }}"
                                                         title="{{ __('Product') }}"
-                                                        class="load-popup  btn btn-rounded animated-shine   ">{{ __('Product') }}</a>
+                                                        class="load-popup sr-only  btn btn-rounded   ">{{ __('Product') }}</a>
+                                                    <a href="{{ route('superadmin.organization.product', $data->officeId) }}"
+                                                        title="{{ __('Product') }}"
+                                                        class=" btn btn-rounded animated-shine   ">{{ __('Product') }}</a>
 
                                                     <a href="javascript:" data-param=""
                                                         data-url="{{ route('superadmin.master_office.features', $data->officeId) }}"

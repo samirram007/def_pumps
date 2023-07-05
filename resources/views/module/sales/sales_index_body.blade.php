@@ -51,42 +51,54 @@
                       /* text-shadow: 0 0 0.2em #000000; */
 
                   }
+
                   .lights-off #table tbody tr.selected td:last-child,
-                  .lights-off #table tbody tr.selected td:first-child,{
-                    box-shadow: inset 0 0 0 9999px rgb(255, 255, 255) !important;
-                  }
-                  #table tbody tr.selected>td:first-child,
-                  #table  .bg-danger-light td:last-child ,
-                  #table  .bg-danger-light td:first-child ,#table  td:last-child  {
+                  .lights-off #table tbody tr.selected td:first-child,
+                      {
                       box-shadow: inset 0 0 0 9999px rgb(255, 255, 255) !important;
                   }
-                  .lights-off #table  .bg-danger-light td:last-child, .lights-off #table  .bg-danger-light td:first-child,
-                  , .lights-off #table  td:first-child {
+
+                  #table tbody tr.selected>td:first-child,
+                  #table .bg-danger-light td:last-child,
+                  #table .bg-danger-light td:first-child,
+                  #table td:last-child {
+                      box-shadow: inset 0 0 0 9999px rgb(255, 255, 255) !important;
+                  }
+
+                  .lights-off #table .bg-danger-light td:last-child,
+                  .lights-off #table .bg-danger-light td:first-child,
+                  ,
+                  .lights-off #table td:first-child {
                       /* box-shadow: inset 0 0 0 9999px rgba(255, 255, 255, 0) !important; */
                       box-shadow: inset 0 0 0 9999px rgb(255, 255, 255) !important;
                   }
 
-                  .bg-danger-light, .lights-off #table  .bg-danger-light td{
-                      box-shadow: inset 0 0 0 9999px rgba(238, 182, 182, 0.521)!important;
+                  .bg-danger-light,
+                  .lights-off #table .bg-danger-light td {
+                      box-shadow: inset 0 0 0 9999px rgba(238, 182, 182, 0.521) !important;
                       /* background-color: #3239474f !important; */
                       color: rgba(25, 25, 25) !important;
                       /* text-shadow: 0 0 0.2em #fffcfc; */
                   }
-                  .bg-success-light, .lights-off #table  .bg-success-light td{
-                      box-shadow: inset 0 0 0 9999px rgba(203, 238, 216, 0.521)!important;
+
+                  .bg-success-light,
+                  .lights-off #table .bg-success-light td {
+                      box-shadow: inset 0 0 0 9999px rgba(203, 238, 216, 0.521) !important;
                       /* background-color: #3239474f !important; */
                       color: rgba(25, 25, 25) !important;
                       /* text-shadow: 0 0 0.2em #fffcfc; */
                   }
-                    .lights-off #table  .bg-success-light td:first-child, .lights-off #table  .bg-danger-light td:first-child{
-                      box-shadow: inset 0 0 0 9999px rgba(255, 254, 254, 1)!important;
-                      color: rgba(25, 25, 25) !important;
-                  }
-                  .lights-off  #table  td:last-child {
-                    box-shadow: inset 0 0 0 9999px rgba(255, 254, 254, 1)!important;
+
+                  .lights-off #table .bg-success-light td:first-child,
+                  .lights-off #table .bg-danger-light td:first-child {
+                      box-shadow: inset 0 0 0 9999px rgba(255, 254, 254, 1) !important;
                       color: rgba(25, 25, 25) !important;
                   }
 
+                  .lights-off #table td:last-child {
+                      box-shadow: inset 0 0 0 9999px rgba(255, 254, 254, 1) !important;
+                      color: rgba(25, 25, 25) !important;
+                  }
               </style>
               {{-- <div id="salesIds">
                 Event summary - new salesIds added at the top
@@ -96,12 +108,12 @@
                   <thead>
                       <tr>
                           <th class="text-right">
-                            @if(in_array($routeRole, ['pumpadmin','pumpuser']))
-                            --
-                            @else
-                              <input type="checkbox" name="select_all" value="1" id="table-select-all"
-                                  class="toggle-all">
-                            @endif
+                              @if (in_array($routeRole, ['pumpadmin', 'pumpuser']))
+                                  --
+                              @else
+                                  <input type="checkbox" name="select_all" value="1" id="table-select-all"
+                                      class="toggle-all">
+                              @endif
                           </th>
                           {{-- <th><input type="checkbox" id="select-all"></th> --}}
                           <th>{{ __('InvoiceDate') }}</th>
@@ -135,10 +147,11 @@
                               } else {
                                   $bgColor = '';
                               }
-
+                              
                           @endphp
 
-                          <tr class="{{ $data->status == 2 ? 'bg-danger-light' : '' }} {{ $data->status == 1 ? 'bg-success-light' : '' }}">
+                          <tr
+                              class="{{ $data->status == 2 ? 'bg-danger-light' : '' }} {{ $data->status == 1 ? 'bg-success-light' : '' }}">
                               <td>
                                   @if ($data->status == 1)
                                       {{ 'verified|' }}{{ $data->salesId }}
@@ -175,17 +188,22 @@
                                       class="load-popup edit    mx-2 text-info d-inline-flex "><i
                                           class="fa fa-eye fa-lg"></i></a>
                                   @if ($routeRole == 'companyadmin' || !in_array($data->status, [1, 2]))
-                                      <a href="javascript:" data-param="{{ base64_encode(json_encode($data)) }}"
+                                      {{-- <a href="javascript:" data-param="{{ base64_encode(json_encode($data)) }}"
                                           data-url="{{ route($routeRole . '.sales.edit', $data->salesId) }}"
                                           title="{{ __('Edit') }}"
                                           class="load-popup edit    mx-2 text-info d-inline-flex "><i
-                                              class="fa fa-edit fa-lg"></i></a>
+                                              class="fa fa-edit fa-lg"></i></a> --}}
+                                      <a href="javascript:" data-param="{{ base64_encode(json_encode($data)) }}"
+                                          data-url="{{ route($routeRole . '.sales.edit', $data->salesId) }}"
+                                          title="{{ __('Edit Invoice') }}"
+                                          class="load-popup mx-2 text-info d-inline-flex">
+                                          <i class="fa fa-edit fa-lg"></i></a>
                                       <a href="{{ route($routeRole . '.sales.delete', $data->salesId) }}"
                                           title="{{ __('Delete') }}"
                                           class="   d-inline-flex  my-2 text-lg  mx-2 delete   text-info"><i
                                               class="fa fa-trash fa-lg"></i></a>
-                                  {{-- @elseif (in_array($routeRole, ['pumpadmin', 'pumpuser']))
-                                                @if(in_array($data->status, [1, 2]))
+                                      {{-- @elseif (in_array($routeRole, ['pumpadmin', 'pumpuser']))
+                                                @if (in_array($data->status, [1, 2]))
 
                                                 @endif --}}
                                   @endif
@@ -211,9 +229,9 @@
               return item[0];
           });
           //csv to array
-        //   var ids = ids.toString().split(',');
-        // ids = ids.toString().split(',').join('').replace(/under_process|dispute|\|/g, '');
-        ids = ids.toString().split(',').map(id => id.replace(/(under_process|dispute|\|)/g, '')).join(',');
+          //   var ids = ids.toString().split(',');
+          // ids = ids.toString().split(',').join('').replace(/under_process|dispute|\|/g, '');
+          ids = ids.toString().split(',').map(id => id.replace(/(under_process|dispute|\|)/g, '')).join(',');
           //ids push into array
           salesIds.val(ids);
       }
@@ -341,9 +359,10 @@
               });
               $('#select_count').html(ids.length + ' selected');
               //csv to array
-            //   var ids = ids.toString().split(',');
-            // ids = ids.toString().split(',').join('').replace(/under_process|dispute|\|/g, '');
-            ids = ids.toString().split(',').map(id => id.replace(/(under_process|dispute|\|)/g, '')).join(',');
+              //   var ids = ids.toString().split(',');
+              // ids = ids.toString().split(',').join('').replace(/under_process|dispute|\|/g, '');
+              ids = ids.toString().split(',').map(id => id.replace(/(under_process|dispute|\|)/g, ''))
+                  .join(',');
               //ids push into array
               salesIds.val(ids);
           });
@@ -380,12 +399,13 @@
               });
               $('#select_count').html(ids.length + ' selected');
               //csv to array
-            //   ids = ids.toString().split(',').join('').replace(/under_process|dispute|\|/g, '');
-            ids = ids.toString().split(',').map(id => id.replace(/(under_process|dispute|\|)/g, '')).join(',');
-            //   var ids = ids.toString().split(',');
-            //   ids=str_replace(ids, 'under_process', '');
-            //   ids=str_replace(ids, 'dispute', '');
-            //   ids=str_replace(ids, '|', '');
+              //   ids = ids.toString().split(',').join('').replace(/under_process|dispute|\|/g, '');
+              ids = ids.toString().split(',').map(id => id.replace(/(under_process|dispute|\|)/g, ''))
+                  .join(',');
+              //   var ids = ids.toString().split(',');
+              //   ids=str_replace(ids, 'under_process', '');
+              //   ids=str_replace(ids, 'dispute', '');
+              //   ids=str_replace(ids, '|', '');
               //ids push into array
               salesIds.val(ids);
               //  $('#table').DataTable().draw();
@@ -421,9 +441,10 @@
                   });
                   $('#select_count').html(ids.length + ' selected');
                   //csv to array
-                //   var ids = ids.toString().split(',');
-                // ids = ids.toString().split(',').join('').replace(/under_process|dispute|\|/g, '');
-                ids = ids.toString().split(',').map(id => id.replace(/(under_process|dispute|\|)/g, '')).join(',');
+                  //   var ids = ids.toString().split(',');
+                  // ids = ids.toString().split(',').join('').replace(/under_process|dispute|\|/g, '');
+                  ids = ids.toString().split(',').map(id => id.replace(/(under_process|dispute|\|)/g, ''))
+                      .join(',');
                   //ids push into array
                   salesIds.val(ids);
               })
@@ -451,9 +472,10 @@
                   });
                   $('#select_count').html(ids.length + ' selected');
                   //csv to array
-                //   var ids = ids.toString().split(',');
-                // ids = ids.toString().split(',').join('').replace(/under_process|dispute|\|/g, '');
-                ids = ids.toString().split(',').map(id => id.replace(/(under_process|dispute|\|)/g, '')).join(',');
+                  //   var ids = ids.toString().split(',');
+                  // ids = ids.toString().split(',').join('').replace(/under_process|dispute|\|/g, '');
+                  ids = ids.toString().split(',').map(id => id.replace(/(under_process|dispute|\|)/g, ''))
+                      .join(',');
                   //ids push into array
                   salesIds.val(ids);
               });

@@ -38,6 +38,7 @@
 
             function cb(start, end) {
                 $('#reportrange span').html(start.format('DD-MM-YYYY') + ' - ' + end.format('DD-MM-YYYY'));
+                filter();
                 // console.log(start);
                 // $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
             }
@@ -62,7 +63,22 @@
             $('#filter').click(function() {
                 // $('#section_graph1').html('');
                 // $('#section_graph2').html('');
-                $('#filter').html(
+                filter()
+
+            });
+            // $('#reportrange').daterangechange(function() {
+            //     filter()
+
+            // });
+            $('#office').change(function() {
+                filter()
+
+            });
+
+        });
+        function filter()
+        {
+            $('#filter').html(
                     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
                     );
 
@@ -84,21 +100,26 @@
                         _token: "{{ csrf_token() }}"
                     },
                     success: function(response) {
+                        if(!response.starus)
+                        {
+                            $('#filter').html("{{ __('Filter') }}");
+                            $('#section_graph1').html('');
+                        $('#section_graph2').html('');
+                        }
+
 
                         $('#section_graph1').html(response.graph1);
                         $('#section_graph2').html(response.graph2);
                         setTimeout(() => {
                             $('#filter').html("{{ __('Filter') }}");
-                        }, 1000);
+                        }, 500);
 
                     }
                 });
                 setTimeout(() => {
                     $('#filter').html("{{ __('Filter') }}");
-                }, 1000);
-            });
-
-        });
+                }, 500);
+        }
     </script>
     <style>
         .optionGroup {

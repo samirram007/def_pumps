@@ -50,7 +50,7 @@
                         @foreach ($collections as $key => $data)
                             @php
                                 $data = (object) $data;
-
+                                
                             @endphp
 
                             <tr>
@@ -78,9 +78,9 @@
                                         {{ __('--') }}
                                     @endif
                                 </td>
-                                <td class="text-left  "
-                                    style="overflow: inherit; text-align:left!important;">
+                                <td class="text-left  " style="overflow: inherit; text-align:left!important;">
                                     <div class=" d-inline-flex">
+
                                         <a href="javascript:" data-param=""
                                             data-url="{{ route('companyadmin.office.edit', $data->officeId) }}"
                                             title="{{ __('Edit') }}"

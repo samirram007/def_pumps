@@ -523,6 +523,25 @@
                 color: rgba(203, 213, 224, var(--text-opacity))
             }
         }
+
+        .btn-back {
+            background: rgba(172, 42, 42, 0.993);
+            color: rgba(223, 215, 215, 0.966);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px 2px #e4ab9d9a;
+            transition: background 0.2s ease 1;
+            margin: 10px auto;
+
+        }
+
+        .btn-back:hover {
+            background: rgba(196, 100, 100, 0.993);
+            color: rgba(223, 215, 215, 0.966);
+            padding: 10px;
+            border-radius: 5px;
+
+        }
     </style>
 
     <style>
@@ -547,8 +566,7 @@
             </div>
             <div class="flex items-center mt-8 pt-8 sm:justify-start sm:pt-0 border-t border-gray-400">
                 @if (session()->get('loginid') != null)
-                    <a class="mt-4 ml-4 text-lg text-gray-500 uppercase tracking-wider"
-                        href="{{ route('logout') }}">Back to Home page</a>
+                    <a class="mt-4 ml-4 btn-back" href="{{ route('logout') }}">Back to Home page</a>
                 @else
                     <a class="mt-4 ml-4 text-lg text-gray-500 uppercase tracking-wider" href="{{ route('login') }}">Back
                         to Home page</a>

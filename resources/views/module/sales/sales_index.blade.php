@@ -148,17 +148,17 @@
                         </ol>
 
                         <div class="invoice-btn  position-md-absolute position-relative " style="right:0;top:0;">
-                            @if(!in_array($routeRole,['pumpadmin','pumpuser']))
-                            <a href="javascript:" id="btn-verify" data-status="1" data-param=""
-                                data-url="{{ route($routeRole . '.sales.create') }}" title="{{ __('Mark Finalize') }}"
-                                class="status_update btn btn-rounded animated-shine px-2 mb-2 {{in_array($routeRole,['pumpadmin','pumpuser']) ? 'd-none':'' }} ">
-                                {{ __('Mark Finalize') }}</a>
+                            @if (!in_array($routeRole, ['pumpadmin', 'pumpuser']))
+                                <a href="javascript:" id="btn-verify" data-status="1" data-param=""
+                                    data-url="{{ route($routeRole . '.sales.create') }}" title="{{ __('Mark Verified') }}"
+                                    class="status_update btn btn-rounded animated-shine px-2 mb-2 {{ in_array($routeRole, ['pumpadmin', 'pumpuser']) ? 'd-none' : '' }} ">
+                                    {{ __('Mark Verified') }}</a>
 
-                            <a href="javascript:" id="btn-verify" data-status="2" data-param=""
-                                data-url="{{ route($routeRole . '.sales.create') }}" title="{{ __('Mark Disputed') }}"
-                                class="status_update btn btn-rounded animated-shine px-2 mb-2 {{in_array($routeRole,['pumpadmin','pumpuser']) ? 'd-none':'' }} ">
-                                {{ __('Mark Disputed') }}</a>
-                             @endif
+                                <a href="javascript:" id="btn-verify" data-status="2" data-param=""
+                                    data-url="{{ route($routeRole . '.sales.create') }}" title="{{ __('Mark Disputed') }}"
+                                    class="status_update btn btn-rounded animated-shine px-2 mb-2 {{ in_array($routeRole, ['pumpadmin', 'pumpuser']) ? 'd-none' : '' }} ">
+                                    {{ __('Mark Disputed') }}</a>
+                            @endif
 
                             <a href="javascript:" data-param="" data-url="{{ route($routeRole . '.sales.create') }}"
                                 title="{{ __('New Invoice') }}"
@@ -229,19 +229,22 @@
                         </div>
 
                         <div class="col-md-3 d-flex align-items-center mt-4 icon-wrap ">
-                            <a href="javascript:" class="search btn-zoom badge align-self-end"  title="{{__('Search')}}">
+                            <a href="javascript:" class="search btn-zoom badge align-self-end" title="{{ __('Search') }}">
                                 <span class="iconify" data-icon="fe:search" style="color: #05a;" data-width="30"
                                     data-height="30"></span>
                             </a>
-                            <a class="export btn-zoom badge align-self-end mx-2" href="javascript:"  title="{{__('Export to excel')}}">
+                            <a class="export btn-zoom badge align-self-end mx-2" href="javascript:"
+                                title="{{ __('Export to excel') }}">
                                 <span class="iconify" data-icon="ri:file-excel-2-fill" style="color: #2a0;" data-width="30"
                                     data-height="30"></span>
                             </a>
-                            <a class="pdf btn-zoom badge   align-self-end" href="javascript:"  title="{{__('Export to pdf')}}">
+                            <a class="pdf btn-zoom badge   align-self-end" href="javascript:"
+                                title="{{ __('Export to pdf') }}">
                                 <span class="iconify" data-icon="fluent:document-pdf-32-regular" style="color: #d20;"
                                     data-width="30" data-height="30"></span>
                             </a>
-                            <a class="toggle-legends btn-zoom badge   align-self-end" href="javascript:" title="{{__('Show/Hide Legend')}}">
+                            <a class="toggle-legends btn-zoom badge   align-self-end" href="javascript:"
+                                title="{{ __('Show/Hide Legend') }}">
                                 <img src="{{ asset('images/code-block.png') }}" width="30" height="30"
                                     alt="">
                             </a>
@@ -361,17 +364,15 @@
     </script>
     <script>
         var routeRole = "{{ $routeRole }}";
-        $(document).ready(function() {
-
-            $('.search').on('click', function() {
-                $('.reportPanel').html(
+        function search(){
+            $('.reportPanel').html(
                     '<div class="alert alert-info"><i class="fa fa-spinner fa-spin"></i> Please wait...</div>'
                 );
                 var officeId = $('#officeId_filter').val();
                 var fromDate = $('#fromDate').val();
                 var toDate = $('#toDate').val();
                 var status = $('#status_filter').val();
-
+                    console.log(fromDate );
 
                 $.ajax({
                     url: '{{ $url_sales_filter }}',
@@ -388,21 +389,32 @@
                         $('.reportPanel').html(response.view);
                     }
                 });
+        }
+        $(document).ready(function() {
+
+            $('.search').on('click', function() {
+              search();
             });
             // setTimeout(() => {
             //      $('.search').click();
             // }, 2000);
             $('#status_filter').on('change', function() {
-                $('.search').click();
+                search();
             });
             $('#officeId_filter').on('change', function() {
-                $('.search').click();
+                search();
             });
             $('#fromDate').on('change', function() {
-                $('.search').click();
+                console.log('I am from Date'+ $('#fromDate').val());
+                if($('#fromDate').val()!=''){
+                    search();
+                }
+
             });
             $('#toDate').on('change', function() {
-                $('.search').click();
+                if($('#toDate').val()!=''){
+                    search();
+                }
             });
 
             $('.export').on('click', function() {
@@ -517,34 +529,34 @@
             }, 2000);
 
             var updateCount = 0;
-          $('.status_update').on('click', function() {
-              if ($('#salesIds').val() == '') {
-                  toastr.error("{{ __('Please select sales to update status') }}");
-                  return false;
-              }
-              var status = $(this).attr('data-status');
-              $.ajax({
-                  url: "{{ route($routeRole . '.sales.verify') }}",
-                  method: "POST",
-                  data: {
-                      _token: "{{ csrf_token() }}",
-                      status: status,
-                      salesIds: $('#salesIds').val()
-                  },
-                  success: function(data) {
-                      if (data.status == 1) {
-                        $('#salesIds').val('');
-                          toastr.success(data.message);
-                          console.log(updateCount++);
-                          $('.search').click();
-                          //  $('#table').DataTable().draw();
-                      } else {
-                          toastr.error(data.message);
-                      }
-                  }
-              });
+            $('.status_update').on('click', function() {
+                if ($('#salesIds').val() == '') {
+                    toastr.error("{{ __('Please select sales to update status') }}");
+                    return false;
+                }
+                var status = $(this).attr('data-status');
+                $.ajax({
+                    url: "{{ route($routeRole . '.sales.verify') }}",
+                    method: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        status: status,
+                        salesIds: $('#salesIds').val()
+                    },
+                    success: function(data) {
+                        if (data.status == 1) {
+                            $('#salesIds').val('');
+                            toastr.success(data.message);
+                            console.log(updateCount++);
+                            $('.search').click();
+                            //  $('#table').DataTable().draw();
+                        } else {
+                            toastr.error(data.message);
+                        }
+                    }
+                });
 
-          });
+            });
 
 
 

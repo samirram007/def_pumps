@@ -1,30 +1,20 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MapController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\OfficeController;
-use App\Http\Controllers\LocalizationController;
-use App\Http\Controllers\MasterOfficeController;
-use App\Http\Controllers\ProductTypeController ;
-
-
 use App\Http\Controllers\Admin\FuelRateController;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Admin\SalesController as AdminSalesController;
 use App\Http\Controllers\Admin\OfficeController as AdminOfficeController;
-use App\Http\Controllers\Admin\ReportController as AdminReportController;
-use App\Http\Controllers\Admin\ExpenseController as AdminExpenseController;
-use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\ProductTypeController as AdminProductTypeController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MasterOfficeController;
+use App\Http\Controllers\OfficeController;
+use App\Http\Controllers\ProductTypeController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('superadmin')->group(function () {
 
     Route::group(['middleware' => 'CheckRole'], function () {
         Route::get('/', [LoginController::class, 'dashboard']);
         Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('superadmin.dashboard');
+
         Route::get('/user/profile/{loginid}', [UserController::class, 'profile'])->name('superadmin.user.profile');
         Route::get('/user/profile/edit/{loginid}', [UserController::class, 'profile'])->name('superadmin.user.profile_edit');
         //============= User ===============
@@ -58,7 +48,6 @@ Route::prefix('superadmin')->group(function () {
         Route::get('/organization/user/create/{id}', [UserController::class, 'organisation_user_create'])->name('superadmin.organization_user.create');
         Route::get('/organization/user/filter/{id}', [UserController::class, 'show_organisation_user_filter'])->name('superadmin.organization_user.filter');
 
-
         Route::get('/user/edit/{user_id}/{id}', [UserController::class, 'office_user_edit'])->name('superadmin.organization_user.edit');
 
         //============= Office ===============
@@ -76,10 +65,11 @@ Route::prefix('superadmin')->group(function () {
         Route::post('/office/store_invoice_no', [FuelRateController::class, 'store_invoice_no'])->name('superadmin.office.store_invoice_no');
 
         Route::get('/organization/product/{id}', [ProductTypeController::class, 'organisation_product_index'])->name('superadmin.organization.product');
+        Route::post('/organization/product/search', [ProductTypeController::class, 'organisation_product_search'])->name('superadmin.organization.product_search');
+        Route::get('/organization/product/create/{id}', [ProductTypeController::class, 'organisation_product_create'])->name('superadmin.organization.product_create');
+
+        Route::get('/organization/product/edit{id}', [ProductTypeController::class, 'organisation_product_edit'])->name('superadmin.organization.product_edit');
         Route::post('/save_product', [ProductTypeController::class, 'save_product'])->name('superadmin.save_product');
-
-
-
 
     });
 });

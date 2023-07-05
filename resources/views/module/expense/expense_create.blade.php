@@ -3,7 +3,7 @@
         <div class="modal-header">
             <h4 class="modal-title text-light">{{ __('New Expense Voucher') }} </h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+                <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
             </button>
         </div>
         <form id="formCreate" enctype="multipart/form-data">
@@ -26,7 +26,8 @@
                                                 <div class="col-md-6 mb-4">
                                                     <div class="form-group">
 
-                                                        <label for="officeId">{{ __('Business Entity') }}  <span class="text-danger">*</span></label>
+                                                        <label for="officeId">{{ __('Business Entity') }} <span
+                                                                class="text-danger">*</span></label>
 
                                                         <select class="form-control " name="officeId" id="officeId">
                                                             {{-- <option value="" class="text-bold">Select Office</option> --}}
@@ -35,29 +36,30 @@
                                                                     {{ __($tg['officeName']) }}
                                                                 </option>
                                                             @empty
-                                                                <option value="">{{__('No record found')}} </option>
+                                                                <option value="">{{ __('No record found') }}
+                                                                </option>
                                                             @endforelse
                                                         </select>
                                                         <input type="hidden" name="masterOfficeId" id="masterOfficeId"
                                                             value="{{ $masterOfficeId }}">
                                                     </div>
                                                     <script>
-                                                        var officeId_filter=$('#officeId_filter').val();
-                                                         $('#officeId').val(officeId_filter);
+                                                        var officeId_filter = $('#officeId_filter').val();
+                                                        $('#officeId').val(officeId_filter);
                                                     </script>
                                                 </div>
 
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label for="voucherNo">{{ __('Voucher No') }}</label>
-                                                        <input type="text"  class="form-control"
-                                                            id="voucherNo" name="voucherNo"
-                                                            value="{{ old('voucherNo') }}">
+                                                        <input type="text" class="form-control" id="voucherNo"
+                                                            name="voucherNo" value="{{ old('voucherNo') }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label for="voucherDate">{{ __('Voucher Date') }} <span class="text-danger">*</span></label>
+                                                        <label for="voucherDate">{{ __('Voucher Date') }} <span
+                                                                class="text-danger">*</span></label>
                                                         <input type="date" required class="form-control"
                                                             id="voucherDate" name="voucherDate"
                                                             value="{{ old('voucherDate') == null ? date('Y-m-d') : old('voucherDate') }}">
@@ -66,8 +68,10 @@
 
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label for="particulars">{{ __('Particulars') }} <span class="text-danger">*</span></label>
-                                                        <textarea class="form-control" rows="1" id="particulars" name="particulars" placeholder="{{__('Enter particulars')}}">{{ old('particulars') }}</textarea>
+                                                        <label for="particulars">{{ __('Particulars') }} <span
+                                                                class="text-danger">*</span></label>
+                                                        <textarea class="form-control" rows="1" id="particulars" name="particulars"
+                                                            placeholder="{{ __('Enter particulars') }}">{{ old('particulars') }}</textarea>
 
                                                     </div>
                                                 </div>
@@ -77,9 +81,10 @@
 
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label for="amount">{{ __('Amount') }}{{__('(INR)')}} <span class="text-danger">*</span></label>
-                                                        <input type="text" size="10"
-                                                            class="form-control" id="amount" name="amount"
+                                                        <label for="amount">{{ __('Amount') }}{{ __('(INR)') }}
+                                                            <span class="text-danger">*</span></label>
+                                                        <input type="text" size="10" class="form-control"
+                                                            id="amount" name="amount"
                                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/^([0-9]*\.[0-9]{0,2}).*/,'$1');"
                                                             value="{{ old('amount') }}">
                                                     </div>
@@ -96,6 +101,7 @@
 
 
                                             </div>
+
                                             <div class="row text-center">
                                                 <div class="col-6 mx-auto">
                                                     <button type="submit"
@@ -108,7 +114,7 @@
                                                 <div class="col-6 mx-auto">
                                                     <button type="button"
                                                         class=" btn btn-rounded animated-shine-danger px-4"
-                                                        data-dismiss="modal">{{__('Cancel')}}</button>
+                                                        data-dismiss="modal">{{ __('Cancel') }}</button>
                                                 </div>
                                             </div>
 
@@ -125,6 +131,7 @@
     <script>
         setEnvWithRate(1);
         var routeRole = "{{ $routeRole }}";
+
         function setEnvWithRate(productTypeId) {
             // console.log(productTypeId);
             var isContainer = $("#productTypeId").find(':selected').attr('data-iscontainer');
@@ -264,8 +271,10 @@
             $("#formCreate").on("submit", function(event) {
 
                 event.preventDefault();
-                $('.submit').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ');
-                var url = "{{ route($routeRole.'.expense.store') }}";
+                $('.submit').html(
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> '
+                    );
+                var url = "{{ route($routeRole . '.expense.store') }}";
 
                 var formData = new FormData($(this)[0]);
 
@@ -278,15 +287,15 @@
                 }).done(function(data) {
                     if (!data.status) {
 
-                            $('.submit').attr('disabled', false);
-                            $('.submit').html('Submit');
-                            $.each(data.errors, function(key, value) {
-                                $('#' + key).addClass('is-invalid');
-                                $('#' + key).next().text(value);
-                                toastr.error(value);
-                            });
-                            $('.submit').attr('disabled', false);
-                            $('.submit').html('Save');
+                        $('.submit').attr('disabled', false);
+                        $('.submit').html('Submit');
+                        $.each(data.errors, function(key, value) {
+                            $('#' + key).addClass('is-invalid');
+                            $('#' + key).next().text(value);
+                            toastr.error(value);
+                        });
+                        $('.submit').attr('disabled', false);
+                        $('.submit').html('Save');
                     } else {
                         setTimeout(() => {
                             $('.search').click();
@@ -296,9 +305,9 @@
                     }
                 }).fail(function(data) {
 
-                        $('.submit').attr('disabled', false);
-                        $('.submit').html('Submit');
-                        toastr.error(data.message);
+                    $('.submit').attr('disabled', false);
+                    $('.submit').html('Submit');
+                    toastr.error(data.message);
 
                     // console.log(data);
                 });

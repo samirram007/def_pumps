@@ -12,11 +12,12 @@
 </li>
 <li class="nav-item {{ $route == 'superadmin.support.list' ? 'active' : '' }} ">
     <a href="{{ route('superadmin.support.list') }}" class="nav-link my-2">
-        <i class="fa fa-user-circle mr-3" ></i>
+        <i class="fa fa-user-circle mr-3"></i>
         <span class="menu-title">{{ __('Support') }} </span>
 
     </a>
 </li>
+
 {{-- <li class="nav-item border-bottom {{ $route == 'superadmin.user.index' ? 'active' : '' }} ">
     <a class="nav-link my-2  " href="{{ route('superadmin.user.index') }}">
         <i class="fas fa-users mr-3"></i>

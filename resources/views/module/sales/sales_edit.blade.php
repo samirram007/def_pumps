@@ -1,9 +1,10 @@
 <div class="modal-dialog modal-lg  modal-dialog-centered mt-0 ">
+    <div class="loader"></div>
     <div class="modal-content bg-info">
         <div class="modal-header">
-            <h4 class="modal-title text-light">{{ __('Invoice') }} : {{ $editData['invoiceNo'] }} </h4>
+            <h4 class="modal-title text-light" id="title">{{ __('Invoice') }} : {{ $editData['invoiceNo'] }} </h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+                <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
             </button>
         </div>
         <form id="formCreate">
@@ -24,14 +25,13 @@
 
                                             <div class="row">
                                                 <div class="col-md-6 mb-4">
-                                                    <div class="form-group ">
+                                                    <div class="form-group">
 
                                                         <label for="officeId">{{ __('Business Entity') }} <span
                                                                 class="text-danger">*</span> </label>
                                                         <input type="text" class="sr-only " name="officeId"
                                                             value="{{ $editData['officeId'] }}">
-                                                        <select class="form-control " name="officeId" id="officeId"
-                                                            disabled>
+                                                        <select class="form-control " name="officeId" id="officeId">
                                                             {{-- <option value="" class="text-bold">Select Office</option> --}}
                                                             @forelse ($officeList as $tg)
                                                                 <option value="{{ $tg['officeId'] }}"
@@ -44,8 +44,9 @@
                                                             @endforelse
                                                         </select>
                                                     </div>
+
                                                 </div>
-                                                <div class="col-md-3  offset-md-3 d-none">
+                                                <div class="col-md-3   d-none">
                                                     <div class="form-group">
 
                                                         <label for="invoiceNo">{{ __('Invoice No') }} <span
@@ -55,7 +56,7 @@
                                                             placeholder="{{ __('Invoice No') }} ">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3  offset-md-3">
+                                                <div class="col-md-3 offset-md-3 ">
                                                     <div class="form-group">
 
                                                         <label for="invoiceDate">{{ __('Invoice Date') }} <span
@@ -100,28 +101,18 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-6 ">
+                                                <div class="col-md-3 col-6 sr-only">
                                                     <div class="form-group">
-
-                                                        <label for="productTypeId">{{ __('ProductType') }} <span
-                                                                class="text-danger">*</span></label>
-                                                                <input type="text" class="sr-only " name="productTypeId"
-                                                                  value="{{ $editData['productTypeId'] }}">
-
-                                                        <select class="form-control " name="productTypeId"
-                                                            id="productTypeId" disabled>
+                                                        <label for="businessTaxTypeId">{{ __('Sales Type') }} <span
+                                                                class="text-danger">*</span> </label>
+                                                        <select class="form-control " name="businessTaxTypeId"
+                                                            id="businessTaxTypeId">
                                                             {{-- <option value="" class="text-bold">Select Office</option> --}}
-                                                            @forelse ($productTypeList as $tg)
-                                                                <option
-                                                                    data-iscontainer="{{ $tg['isContainer'] == false ? 'false' : 'true' }}"
-                                                                    data-rate="{{ $tg['rate'] }}"
-                                                                    data-fuelrateId="{{ $tg['fuelRateId'] }}"
-                                                                    data-quantity="{{ $tg['quantity'] }}"
-                                                                    value="{{ $tg['productTypeId'] }}"
-                                                                    {{ $tg['productTypeId'] == $editData['productTypeId'] ? 'selected' : '' }}>
-                                                                    {{ __($tg['productTypeName']) }}
-
-
+                                                            @forelse ($businessTaxTypes as $tg)
+                                                                <option value="{{ $tg['businessTaxTypeId'] }}"
+                                                                    data-docrequired="{{ $tg['isDocRequired'] }}"
+                                                                    {{ $tg['businessTaxTypeId'] == ($editData['businessTaxTypeId'] == null ? 3 : $editData['businessTaxTypeId']) ? 'selected' : '' }}>
+                                                                    {{ __($tg['businessTaxTypeName']) }}
                                                                 </option>
                                                             @empty
                                                                 <option value="">{{ __('No record found') }}
@@ -130,10 +121,102 @@
                                                         </select>
                                                     </div>
                                                 </div>
+
+                                                <div class="col-md-3 col-6 sr-only">
+                                                    <div class="form-group">
+
+                                                        <label for="submittedDocumentNo"
+                                                            id="DocNoLabel">{{ __('Document No') }}</label>
+                                                        <input type="text" class="form-control"
+                                                            id="submittedDocumentNo" name="submittedDocumentNo"
+                                                            readonly value="{{ $editData['submittedDocumentNo'] }}"
+                                                            oninput="this.value = this.value.toUpperCase()"
+                                                            placeholder="{{ __('') }} ">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 ">
+                                                    <div class="form-group">
+
+                                                        <label for="productTypeId">{{ __('ProductType') }} <span
+                                                                class="text-danger">*</span></label>
+
+                                                        <select class="form-control " name="productTypeId"
+                                                            id="productTypeId">
+                                                            {{-- <option value="" class="text-bold">Select Office</option> --}}
+                                                            @forelse ($productTypeList as $tg)
+                                                                @php
+                                                                    $item_title = $tg['productTypeName'] . (isset($tg['secondaryUnitId']) ? '(' . $tg['quantity'] . ' ' . $tg['secondaryUnitShortName'] . ')' : '');
+                                                                    $item_rate = '@' . number_format($tg['rate'], 2, ',', '') . ' INR /' . $tg['primaryUnitSingularShortName'];
+                                                                    $item_title = str_pad($item_title, 25, '.');
+                                                                @endphp
+                                                                <option
+                                                                    data-iscontainer="{{ $tg['isContainer'] == false ? 'false' : 'true' }}"
+                                                                    data-rate="{{ $tg['rate'] }}"
+                                                                    data-fuelrateId="{{ $tg['fuelRateId'] }}"
+                                                                    data-quantity="{{ $tg['quantity'] }}"
+                                                                    data-primaryunitid="{{ $tg['primaryUnitId'] }}"
+                                                                    data-primaryunitname="{{ $tg['primaryUnitName'] }}"
+                                                                    data-primaryunitshortname="{{ $tg['primaryUnitShortName'] }}"
+                                                                    data-primaryunitsingularshortname="{{ $tg['primaryUnitSingularShortName'] }}"
+                                                                    data-usesecondaryunit="{{ isset($tg['useSecondaryUnit']) ? $tg['useSecondaryUnit'] : '' }}"
+                                                                    data-secondaryUnitName="{{ isset($tg['secondaryUnitName']) ? $tg['secondaryUnitName'] : '' }}"
+                                                                    data-secondaryUnitShortName="{{ isset($tg['secondaryUnitShortName']) ? $tg['secondaryUnitShortName'] : '' }}"
+                                                                    data-secondaryUnitSingularShortName="{{ isset($tg['secondaryUnitSingularShortName']) ? $tg['secondaryUnitSingularShortName'] : '' }}"
+                                                                    data-secondaryUnitRatio="{{ isset($tg['secondaryUnitRatio']) ? $tg['secondaryUnitRatio'] : '' }}"
+                                                                    value="{{ $tg['productTypeId'] }}"
+                                                                    {{ $tg['productTypeId'] == $editData['productTypeId'] ? 'selected' : '' }}>
+                                                                    {{ $item_title . $item_rate }}
+                                                                </option>
+                                                            @empty
+                                                                <option value="">{{ __('No record found') }}
+                                                                </option>
+                                                            @endforelse
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-3  ">
+                                                    <div class="form-group">
+                                                        <label for="godownId">{{ __('Godown') }}<span
+                                                                class="text-danger">*</span>
+                                                        </label>
+                                                        <select class="form-control " name="godownId" id="godownId">
+                                                            {{-- <option value="" class="text-bold">Select Office</option> --}}
+                                                            @forelse ($godownList as $tg)
+                                                                @if ($tg['godownId'] == $editData['godownId'])
+                                                                    {{ $currentStock = $tg['currentStock'] }}
+                                                                @endif
+                                                                <option value="{{ $tg['godownId'] }}"
+                                                                    data-isreserver="{{ $tg['isReserver'] == 1 ? '1' : '0' }}"
+                                                                    data-capacity="{{ $tg['capacity'] }}"
+                                                                    data-currentstock="{{ $tg['currentStock'] }}"
+                                                                    {{ $tg['godownId'] == $editData['godownId'] ? 'selected' : '' }}>
+                                                                    {{ __($tg['godownName']) }}
+                                                                </option>
+                                                            @empty
+                                                                <option value="">{{ __('No record found') }}
+                                                                </option>
+                                                            @endforelse
+                                                        </select>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-md-3 col-6">
                                                     <div class="form-group">
-                                                        <label for="rate">{{ __('Rate') }}{{__('(INR)')}} <span
-                                                                class="text-danger">*</span></label>
+                                                        <label for="currentStock">{{ __('Current Stock') }} <span
+                                                                class="unit-short-name">{{ __('(ltr)') }}</span>
+                                                            <span class="text-danger">*</span></label>
+                                                        <input type="text" size="10" readonly
+                                                            class="form-control" id="currentStock"
+                                                            name="currentStock"
+                                                            oninput="this.value =  this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1') ;"
+                                                            value="{{ $currentStock }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 col-6">
+                                                    <div class="form-group">
+                                                        <label for="rate">{{ __('Rate') }}{{ __('(INR)') }}
+                                                            <span class="text-danger">*</span></label>
                                                         <input type="text" class="sr-only" id="fuelRateId"
                                                             name="fuelRateId" value="{{ $editData['fuelRateId'] }}">
                                                         <input type="text" size="10" readonly
@@ -148,20 +231,21 @@
                                                 <div class="col-md-3 col-6">
                                                     <div class="form-group">
                                                         <label for="quantity">{{ __('Quantity') }} <span
+                                                                class="unit-short-name">{{ __('(ltr)') }}</span><span
                                                                 class="text-danger">*</span></label>
                                                         <input type="text" size="10" class="form-control"
                                                             id="quantity" name="quantity"
-                                                           {{$editData['isContainer']?'readonly':''}}
                                                             value="{{ $editData['quantity'] }}"
                                                             oninput="this.value =this.value.replace(/[^0-9.]/g, '').replace(/^([0-9]*\.[0-9]{0,3}).*/,'$1');"
                                                             placeholder="{{ __('Enter Quantity') }}">
+                                                        <span id="secondaryQuantity"></span>
                                                     </div>
                                                 </div>
-
                                                 {{-- oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" --}}
                                                 <div class="col-md-3 col-6 ">
                                                     <div class="form-group">
-                                                        <label for="discount">{{ __('Discount') }}{{__('(INR)')}}</label>
+                                                        <label
+                                                            for="discount">{{ __('Discount') }}{{ __('(INR)') }}</label>
                                                         <input type="text" size="10" class="form-control"
                                                             id="discount" name="discount"
                                                             value="{{ $editData['discount'] }}"
@@ -171,8 +255,8 @@
                                                 </div>
                                                 <div class="col-md-3 col-6">
                                                     <div class="form-group">
-                                                        <label for="total">{{ __('Total') }}{{__('(INR)')}} <span
-                                                                class="text-danger">*</span></label>
+                                                        <label for="total">{{ __('Total') }}{{ __('(INR)') }}
+                                                            <span class="text-danger">*</span></label>
                                                         <input type="text" size="10" readonly
                                                             class="form-control" id="total" name="total"
                                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
@@ -202,10 +286,10 @@
                                                 </div>
 
 
-                                                <div class="col-md-12">
+                                                <div class="col-md-9">
                                                     <div class="form-group">
                                                         <label for="comment">{{ __('Comment') }}</label>
-                                                        <textarea class="form-control" rows="1" id="comment" name="comment"
+                                                        <textarea class="form-control color-y" rows="1" id="comment" name="comment"
                                                             placeholder="{{ __('Enter Comment') }}">{{ $editData['comment'] }}</textarea>
 
                                                     </div>
@@ -214,10 +298,11 @@
                                             </div>
                                             <div class="row text-center">
                                                 <div class="col-6 mx-auto">
-                                                    <input type="text" class="sr-only" id="salesId"
-                                                        name="salesId" value={{ $editData['salesId'] }}>
-                                                    <button type="submit" {{ in_array($editData['status'],[1,2]) && !in_array($routeRole,['companyadmin'])? 'disabled':'' }}
-                                                        class=" btn-rounded  px-4  {{in_array($editData['status'],[1,2]) && !in_array($routeRole,['companyadmin'])?  'disabled  ':'submit btn animated-shine' }}">
+                                                    <input type="text" id="salesId" name="salesId"
+                                                        class="sr-only" value="{{ $editData['salesId'] }}">
+                                                    <button type="submit"
+                                                        {{ in_array($editData['status'], [1, 2]) && !in_array($routeRole, ['companyadmin']) ? 'disabled' : '' }}
+                                                        class=" btn-rounded  px-4  {{ in_array($editData['status'], [1, 2]) && !in_array($routeRole, ['companyadmin']) ? 'disabled  ' : 'submit btn animated-shine' }}">
                                                         {{ __('Save') }}</button>
 
                                                 </div>
@@ -237,11 +322,60 @@
             </div>
 
         </form>
+        <input type="text" class="sr-only" id="edit_data" data-editdata="{{ json_encode($editData, true) }}">
     </div>
+    <style scoped>
+        .color-y {
+            background: #f7efc5;
+            border: 1px solid #e9dfae;
+        }
+
+        .color-y:focus {
+            background: #f7ecb8;
+            border: 2px solid #cec492;
+            outline: 2px solid transparent;
+            box-shadow: none;
+        }
+
+        #secondaryQuantity {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6c757d;
+            padding: 2px 0 0 12px;
+        }
+
+        .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 12px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 100px;
+            height: 100px;
+            background: #22222262;
+            -webkit-animation: spin 4s linear infinite;
+            /* Safari */
+            animation: spin 4s linear infinite;
+            z-index: 9999;
+        }
+
+        @keyframes spin() {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <script></script>
     <script>
         // setEnvWithRate(1);
         var routeRole = "{{ $routeRole }}";
-        var loadQuantity = "{{ $editData['quantity'] }}";
+
 
         function setEnvWithRate(productTypeId) {
             // console.log(productTypeId);
@@ -249,7 +383,15 @@
             var rate = $("#productTypeId").find(':selected').attr('data-rate');
             var fuelRateId = $("#productTypeId").find(':selected').attr('data-fuelrateid');
             var quantity = $("#productTypeId").find(':selected').attr('data-quantity');
+            var primaryUnitName = $("#productTypeId").find(':selected').attr('data-primaryunitname');
+            var primaryUnitShortName = $("#productTypeId").find(':selected').attr('data-primaryunitshortname');
+            var primaryUnitSingularShortName = $("#productTypeId").find(':selected').attr(
+                'data-primaryunitsingularshortname');
+            var useSecondaryUnit = $("#productTypeId").find(':selected').attr('data-usesecondaryunit');
+            var secondaryUnitShortName = $("#productTypeId").find(':selected').attr('data-secondaryunitshortname');
+            var secondaryUnitRatio = $("#productTypeId").find(':selected').attr('data-secondaryunitratio');
 
+            $('.unit-short-name').html(' (' + primaryUnitShortName + ')');
             $("#rate").val(rate);
             $("#fuelRateId").val(fuelRateId);
             if (isContainer == 'true') {
@@ -259,16 +401,16 @@
             } else {
                 isContainer = false;
             }
-            if (!isContainer) {
-                $("#quantity").val(loadQuantity);
-                $("#quantity").attr('readonly', false);
+            // if (!isContainer) {
+            //     //$("#quantity").val('');
+            //     $("#quantity").attr('readonly', false);
 
 
-            } else {
-                $("#quantity").val(quantity);
-                $("#quantity").attr('readonly', true);
+            // } else {
+            //     // $("#quantity").val(quantity);
+            //     $("#quantity").attr('readonly', false);
 
-            }
+            // }
             CalculateTotal();
         }
 
@@ -306,18 +448,15 @@
                     $.each(data.errors, function(key, value) {
                         $('#' + key).addClass('is-invalid');
                         $('#' + key).next().text(value);
+                        toastr.error(value);
                     });
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong!',
-                    })
+
                 } else {
-                    //console.log(data);
+                    console.log(data);
                     var isContainer = data.isContainer;
                     if (isContainer == true) {
                         $("#quantity").val(data.quantity);
-                        $("#quantity").attr('readonly', true);
+                        $("#quantity").attr('readonly', false);
                     } else {
                         $("#quantity").attr('readonly', false);
                     }
@@ -359,7 +498,7 @@
                         text: 'Something went wrong!',
                     })
                 } else {
-                    // console.log(data);
+                    console.log(data);
                     $('#rate').val(data.rate);
                     $('#fuelRateId').val(data.fuelRateId);
                     $('#discount').val() == '' ? '0' : $('#discount').val();
@@ -375,13 +514,40 @@
             });
         }
         $(document).ready(function() {
-            //  $("#officeId").select2();
+            // $("#officeId").select2();
+            // $("#godownId").select2();
             $("#customerName").focus();
-
+            // var officeId_filter = $('#officeId_filter').val();
+            // $('#officeId').val(officeId_filter);
+            // setTimeout(() => {
+            //     $("#officeId").change();
+            // }, 100);
             $('#invoiceDate').on('change', function() {
                 setTimeout(() => {
                     $("#officeId").change();
-                }, 500);
+                }, 100);
+
+            });
+            let oldDocNo = '';
+            $("#salesTypeId").change(function() {
+                var salesTypeId = $('#salesTypeId').val();
+                var docRequired = $(this).children("option:selected").attr('data-docrequired');
+                var textValue = $(this).children("option:selected").html();
+                textValue = textValue.replace('Based', 'No').trim();
+                oldDocNo = $('#submittedDocumentNo').val().length > 0 ? $('#submittedDocumentNo')
+                    .val() : oldDocNo;
+                //console.log(oldDocNo);
+                if (docRequired) {
+                    $('#submittedDocumentNo').attr('readonly', false);
+                    $('#submittedDocumentNo').val(oldDocNo);
+                    $('#submittedDocumentNo').attr('placeholder', textValue);
+                    $('#DocNoLabel').html(textValue + '<span class="text-danger">*</span>');
+                } else {
+                    $('#submittedDocumentNo').attr('readonly', true);
+                    $('#submittedDocumentNo').attr('placeholder', '');
+                    $('#submittedDocumentNo').val('');
+                    $('#DocNoLabel').html('Document No');
+                }
 
             });
             $("#officeId").change(function() {
@@ -389,12 +555,11 @@
                 var officeId = $('#officeId').val();
                 var invoiceDate = $('#invoiceDate').val();
                 var url = "{{ route($routeRole . '.productType_by_office_id', [':id', ':date']) }}";
-                // if(routeRole == 'pumpadmin'){
-                //     url = "{{ route('pumpadmin.productType_by_office_id', ':id') }}";
-                // }
+
                 url = url.replace(':id', officeId);
                 url = url.replace(':date', invoiceDate);
-                console.log(url);
+                //console.log(url);
+
                 $.ajax({
                         type: "GET",
                         url: url,
@@ -417,32 +582,196 @@
                         } else {
                             //console.log(data);
                             $('#productTypeId').empty();
-                            $('#quantity').val(loadQuantity);
+                            // $('#quantity').val('');
                             // $('#productTypeId').append('<option value="">Select Product Type</option>');
                             //console.log(data.response);
                             var pTypeid = 0;
+                            //console.log(data.response);
+                            var item_title = '';
+                            var item_rate = '';
+                            var title_length = 0;
                             $.each(data.response, function(key, value) {
                                 //console.log(eval(value));
                                 if (pTypeid == 0) {
                                     pTypeid = value.productTypeId;
                                 }
-
+                                item_title = value.productTypeName +
+                                    (value.secondaryUnitId != null ? ('(' + value
+                                        .quantity +
+                                        ' ' + value.secondaryUnitShortName +
+                                        ')') : '');
+                                //console.log();
+                                title_length = item_title.length;
+                                //console.log((40 - title_length));
+                                // item_title = item_title.padEnd((40 - title_length), ".");
+                                item_title = item_title.rpad(25, '.');
+                                //console.log(item_title);
+                                item_rate = '@' +
+                                    Number(value.rate).toFixed(
+                                        2) + ' INR /' +
+                                    value.primaryUnitSingularShortName;
                                 $('#productTypeId').append('<option value="' + value
                                     .productTypeId +
                                     '" data-iscontainer="' + value.isContainer +
                                     '" data-fuelrateid="' + value.fuelRateId +
-                                    '" data-rate="' + value.rate + '" data-quantity="' +
-                                    value.quantity + '">' + value.productTypeName +
+                                    '" data-rate="' + value.rate +
+                                    '" data-quantity="' + value.quantity +
+                                    '" data-primaryunitname="' + value.primaryUnitName +
+                                    '" data-primaryunitshortname="' + value
+                                    .primaryUnitShortName +
+                                    '" data-primaryunitsingularshortname="' + value
+                                    .primaryUnitSingularShortName +
+                                    '" data-usesecondaryunit="' + (value
+                                        .useSecondaryUnit ? '1' : '0') +
+                                    '" data-secondaryunitname="' + (value
+                                        .secondaryUnitName != null ? value
+                                        .secondaryUnitName : "") +
+                                    '" data-secondaryunitshortname="' + (value
+                                        .secondaryUnitShortName != null ? value
+                                        .secondaryUnitShortName : "") +
+                                    '" data-secondaryunitsingularshortname="' + (value
+                                        .secondaryUnitSingularShortName != null ? value
+                                        .secondaryUnitSingularShortName : "") +
+                                    '" data-secondaryunitratio="' + (value
+                                        .secondaryUnitRatio != null ? value
+                                        .secondaryUnitRatio : "") + '">' +
+                                    item_title +
+                                    item_rate +
                                     '</option>');
                             });
                             setEnvWithRate(pTypeid)
+                            changeGodownList()
+
 
                         }
+                        $('#productTypeId').select2();
                     });
             });
 
+            String.prototype.lpad || (String.prototype.lpad = function(length, pad) {
+                if (length < this.length)
+                    return this;
+
+                pad = pad || ' ';
+                let str = this;
+
+                while (str.length < length) {
+                    str = pad + str;
+                }
+
+                return str.substr(-length);
+            });
+
+            String.prototype.rpad || (String.prototype.rpad = function(length, pad) {
+                if (length < this.length)
+                    return this;
+
+                pad = pad || ' ';
+                let str = this;
+
+                while (str.length < length) {
+                    str += pad;
+                }
+
+                return str.substr(0, length);
+            });
+
+            function changeGodownList() {
+                $('#godownId').empty();
+                var officeId = $('#officeId').val();
+                var productId = $('#productTypeId').val();
+                var productAsContainer = $('#productTypeId').children("option:selected").attr(
+                    'data-iscontainer');
+
+                var url = "{{ route($routeRole . '.godownlist', ':id') }}";
+                // var url = "{{ route('companyadmin.godownlist', ':id') }}";
+                url = url.replace(':id', officeId);
+                $.ajax({
+                        type: "GET",
+                        url: url,
+                        dataType: "json",
+                        encode: true,
+                    })
+                    .done(function(data) {
+
+                        if (!data) {
+
+                            $.each(data.errors, function(key, value) {
+                                $('#' + key).addClass('is-invalid');
+                                $('#' + key).next().text(value);
+                            });
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong!',
+                            })
+                        } else {
+                            //console.log(data);
+                            $('#godownId').empty();
+                            // $('#quantity').val('');
+                            // $('#productTypeId').append('<option value="">Select Product Type</option>');
+                            //console.log(data.response);
+                            var gTypeid = 0;
+                            //console.log(data.response);
+                            let cnt = 0;
+                            $.each(data.response, function(key, value) {
+                                // console.log(value.godownProduct)
+                                if (value.productTypeId == productId) {
+                                    $.each(value.godownProduct, function(inside_key, inside_value) {
+                                        if (!inside_value.isReserver) {
+                                            if (cnt == 0) {
+                                                $('#currentStock').val(inside_value
+                                                    .currentStock);
+                                                if (inside_value.currentStock <= 0) {
+                                                    $('#currentStock').addClass(
+                                                        'is-invalid');
+                                                    // $('#currentStock').next().text(value);
+                                                } else {
+                                                    if ($('#currentStock').hasClass(
+                                                            'is-invalid')) {
+                                                        $('#currentStock').removeClass(
+                                                            'is-invalid');
+                                                    }
+                                                }
+                                            }
+                                            cnt++;
+                                            $('#godownId').append('<option value="' +
+                                                inside_value.godownId +
+                                                '" data-isreserver="' + inside_value
+                                                .isReserver +
+                                                '" data-capacity="' + inside_value
+                                                .capacity +
+                                                '" data-currentstock="' + inside_value
+                                                .currentStock +
+                                                '">' + inside_value
+                                                .godownName +
+                                                '</option>');
+                                        }
+
+                                    });
+
+                                }
 
 
+                            });
+                            //setProductEnvWithRate(gTypeid);
+
+                        }
+                    });
+            };
+
+            $('#godownId').on('change', () => {
+                let currentStock = $('#godownId').children("option:selected").attr('data-currentstock');
+                $('#currentStock').val(currentStock);
+                if (currentStock <= 0) {
+                    $('#currentStock').addClass('is-invalid');
+                    // $('#currentStock').next().text(value);
+                } else {
+                    if ($('#currentStock').hasClass('is-invalid')) {
+                        $('#currentStock').removeClass('is-invalid');
+                    }
+                }
+            });
 
 
 
@@ -457,6 +786,7 @@
                 total = Number.isNaN(total) ? 0 : total;
                 $('#total').val(total == 0 ? '' : total.toFixed(2));
             });
+            var quantityBlurCount=0;
             $('#quantity').on('keyup', function() {
                 var productTypeId = $('#productTypeId').val();
                 //getRate(productTypeId);
@@ -467,10 +797,48 @@
                 var total = (quantity * rate) - discount;
                 total = Number.isNaN(total) ? 0 : total;
                 $('#total').val(total == 0 ? '' : total.toFixed(2));
+                // console.log(quantity);
+                calculateSecondary();
+                quantityBlurCount=0;
+                checkAvailability();
             });
+            $('#quantity').on('blur',()=>{
+
+checkAvailability();
+quantityBlurCount++;
+});
+            function checkAvailability(){
+                var quantity = $("#quantity").val();
+                var currentStock=$("#currentStock").val();
+                if(parseFloat(quantity)>parseFloat(currentStock)){
+                    if(quantityBlurCount==0){
+                         toastr.warning("<h3 class='text-danger font-weight-bold'>Stock is low</h3>Please Change the Tank..");
+                    }
+
+                }
+
+            }
+            function calculateSecondary() {
+                var quantity = $("#quantity").val();
+                var useSecondaryUnit = $("#productTypeId").find(':selected').attr('data-usesecondaryunit');
+                var secondaryUnitShortName = $("#productTypeId").find(':selected').attr(
+                    'data-secondaryunitshortname');
+                var secondaryUnitRatio = $("#productTypeId").find(':selected').attr(
+                    'data-secondaryunitratio');
+                if (useSecondaryUnit == '1') {
+                    quantity = quantity * secondaryUnitRatio;
+                    quantity = Number.isNaN(quantity) ? 0 : quantity;
+                    quantity = quantity > 0 ? (quantity + ' ' + secondaryUnitShortName) : '';
+                } else {
+                    quantity = '';
+                }
+                $('#secondaryQuantity').html(quantity);
+            }
             $("#productTypeId").change(function() {
                 var productTypeId = $(this).val();
                 setEnvWithRate(productTypeId);
+                changeGodownList();
+                calculateSecondary();
                 //setEnv(productTypeId);
                 //getRate(productTypeId);
 
@@ -483,11 +851,14 @@
                 //spinner
                 $('.submit').html(
                     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> '
-                    );
-                var url = "{{ route($routeRole . '.sales.update') }}";
+                );
+                var url = "{{ route('companyadmin.sales.update') }}";
+                if (routeRole == 'pumpadmin') {
+                    url = "{{ route('pumpadmin.sales.update') }}";
+                }
                 var serializeData = $(this).serialize();
                 // alert(serializeData);
-                // alert(url);
+                //alert(url);
 
                 $.ajax({
                     type: "POST",
@@ -501,35 +872,53 @@
                         //  console.log(data.errors);
 
 
-
-
+                        $('.submit').attr('disabled', false);
+                        $('.submit').html('Submit');
                         $.each(data.errors, function(key, value) {
                             $('#' + key).addClass('is-invalid');
                             $('#' + key).next().text(value);
                             toastr.error(value);
                         });
-                        $('.submit').html('{{ __('Save') }}');
-                        $('.submit').attr('disabled', false);
 
                     } else {
                         setTimeout(() => {
                             $('.search').click();
                             $('.close').click();
                             toastr.success(data.message);
-                        }, 500);
+                        }, 1000);
                         //location.reload();
                     }
                 }).fail(function(data) {
-                    toastr.error(data.message);
                     $('.submit').attr('disabled', false);
-                    $('.submit').html('{{ __('Save') }}');
-
+                    $('.submit').html('Submit');
+                    toastr.error(data.message);
 
                     // console.log(data);
                 });
 
 
             });
+
+            setTimeout(() => {
+                // var editModeGodownId = $('#godownId').val();
+                // console.log(editModeGodownId);
+                // changeGodownList();
+                // $('#godownId').val(editModeGodownId);
+                // console.log($('#godownId').val());
+                if ($("#salesId").val() > 0) {
+                    $("#officeId").attr('disabled', true);
+                    $("#productTypeId").attr('disabled', true);
+
+                }
+                var primaryUnitShortName = $("#productTypeId").find(':selected').attr(
+                    'data-primaryunitshortname');
+
+                $('.unit-short-name').html(' (' + primaryUnitShortName + ')');
+                calculateSecondary()
+                $('.loader').hide();
+            }, 1000);
+
         });
     </script>
+
 </div>

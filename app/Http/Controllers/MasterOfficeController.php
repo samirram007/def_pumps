@@ -2,12 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Services\OfficeService;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class MasterOfficeController extends Controller
 {
+    protected $routeRole='superadmin';
+    protected $roleName='superadmin';
+
+    public function __construct(OfficeService $officeService)
+    {
+        $this->officeService =  $officeService;
+        $this->limit = 10;
+
+        $user=   session()->has('userData')?json_decode(json_encode(session()->get('userData')),true):ApiController::user(session()->get('loginid'));
+        $roleName=session()->get('roleName');
+
+        $this->user=json_decode(json_encode($user),true);
+        $this->roleName=session()->get('roleName');
+        $this->routeRole= str_replace(' ','_',strtolower($this->roleName));
+    }
     /**
      * Display a listing of the resource.
      *
@@ -15,9 +31,11 @@ class MasterOfficeController extends Controller
      */
     public function index()
     {
-        // get all the users from Api
+        $data['roleName']=$this->roleName;
+        $data['routeRole']=$this->routeRole;
+
         $offices=ApiController::GetMasterOfficeList();
-//dd($offices);
+
         foreach ($offices as $key => $value){
 
             if ($value['masterOfficeId'] != null){
@@ -39,6 +57,9 @@ class MasterOfficeController extends Controller
     public function create()
     {
         // load the create form (app/views/users/create.blade.php)
+        $data['roleName']=$this->roleName;
+        $data['routeRole']=$this->routeRole;
+
         $data['masterOfficeId'] =null;
         $offices=ApiController::GetMasterOfficeList();
 
@@ -103,6 +124,7 @@ class MasterOfficeController extends Controller
                 'officeName' => base64_encode($request->input('officeName')) ,
                 'officeTypeId' =>$request->input('officeTypeId'),
                 'masterOfficeId' => null,
+                'registeredAddress' => base64_encode($request->input('registeredAddress')),
                 'officeAddress' => base64_encode($request->input('officeAddress')),
                 'officeContactNo' => $request->input('officeContactNo'),
                 'officeEmail' => $request->input('officeEmail'),
@@ -158,6 +180,9 @@ class MasterOfficeController extends Controller
     public function edit($id)
     {
         // get the user
+        $data['roleName']=$this->roleName;
+        $data['routeRole']=$this->routeRole;
+
         $data['masterOfficeId'] =null;
         $office=[ApiController::GetOffice($id)];
         $data['editData']=(object)$office[0];
@@ -265,6 +290,7 @@ public function features_toggle(Request $request)
                 'officeTypeId' => $request->input('officeTypeId'),
                 'masterOfficeId' => null,
                 'officeAddress' => base64_encode($request->input('officeAddress')),
+                'registeredAddress' => base64_encode($request->input('registeredAddress')),
                 'officeContactNo' => $request->input('officeContactNo'),
                 'officeEmail' => $request->input('officeEmail'),
                 'longitude' => $request->input('longitude'),

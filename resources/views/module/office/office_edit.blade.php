@@ -22,12 +22,17 @@
                                             <div class="form-group">
                                                 <input type="text" class="sr-only" name="masterOfficeId"
                                                     id="masterOfficeId"
-                                                    value="{{ $editData->masterOfficeId == null ? $editData->officeId : $editData->masterOfficeId }}">
+                                                    value="{{ $editData->masterOfficeId}}">
+                                                    {{-- value="{{ $editData->masterOfficeId == null ? $editData->officeId : $editData->masterOfficeId }}"> --}}
                                                 <label for="officeName">{{ __('Business Entity') }}<span
                                                         class="text text-danger  ">*</span></label>
+                                                        <small id="officeName-count-char"
+                                                    class="count-char  position-absolute right-0  ">{{strlen($editData->officeName)}}/20</small>
                                                 <input type="text" class="form-control" id="officeName"
+                                                maxlength="20"
                                                     name="officeName" value="{{ $editData->officeName }}"
-                                                    placeholder="{{ __('Enter Business Entity') }}">
+                                                    placeholder="{{ __('Enter Business Entity') }}"
+                                                    onkeyup="countchar(this,'officeName',20);">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -59,10 +64,15 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="officeContactNo">{{ __('Contact No') }}</label>
+                                                <small id="officeContactNo-count-char"
+                                                class="count-char  position-absolute right-0  ">0/10</small>
                                                 <input type="text" size="10" class="form-control"
+                                                maxlength="10"
                                                     id="officeContactNo" name="officeContactNo"
                                                     value="{{ $editData->officeContactNo }}"
-                                                    placeholder="{{ __('Enter Contact no') }}">
+                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/^([0-9]*\.[0-9]{0,2}).*/,'$1');"
+                                                    placeholder="{{ __('Enter Contact no') }}"
+                                                    onkeyup="countchar(this,'officeContactNo',10);">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -86,13 +96,23 @@
                                                 <label for="gstNumber">{{ __('GST No') }} <span
                                                         class="text text-danger  "
                                                         id="gst_number_require">{{ $editData->gstTypeId > 0 ? '*' : '' }}</span></label>
-                                                <input type="text" size="15" class="form-control" id="gstNumber"
+                                                        <small id="gstNumber-count-char"
+                                                        class="count-char  position-absolute right-0  ">0/15</small>
+                                                <input type="text" size="15" maxlength="15" class="form-control" id="gstNumber"
                                                     name="gstNumber" value="{{ $editData->gstNumber }}"
                                                     readonly
-                                                    placeholder="{{ __('Enter GST no') }}">
+                                                    placeholder="{{ __('Enter GST no') }}"
+                                                    onkeyup="countchar(this,'gstNumber',15);">
                                             </div>
                                         </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="registeredAddress">{{ __('Registered Address') }}</label>
+                                                <textarea class="form-control" rows="2" id="registeredAddress" name="registeredAddress"
+                                                    placeholder="{{ __('Enter Registered Address') }}">{{ $editData->registeredAddress }}</textarea>
 
+                                            </div>
+                                        </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="officeAddress">{{ __('Address') }}</label>
@@ -101,6 +121,7 @@
 
                                             </div>
                                         </div>
+
                                         {{-- <div class="col-md-6">
                                             <div class="form-group">
 
@@ -226,6 +247,36 @@
     </div>
 
 </form>
+<style>
+    .count-char {
+        right: 14px;
+        bottom: 0;
+        font-size: 0.75rem;
+        font-weight: bolder;
+        color: #0689bd;
+    }
+
+    .form-group>label {
+        margin-bottom: .1rem !important;
+    }
+</style>
+<script>
+    function countchar(sender,component,max){
+
+//console.log(sender);
+
+    var len = $(sender).val().length;
+    if (len >= max) {
+        $('#'+component+'-count-char').text(len+'/' + max);
+        $('#'+component+'-count-char').css('color', '#0689bd');
+    } else {
+        var ch = max - len;
+        $('#'+component+'-count-char').text(len + '/' + max);
+         $('#'+component+'-count-char').css('color', ' #0689bd');
+    }
+
+}
+</script>
 <script>
     $(document).ready(function() {
         $('#officeAddress').on('click', function() {
@@ -266,5 +317,45 @@
                 $('#gst_number_require').html('*');
             }
         }
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        // $('#formCreate').submit();
+        $("#formCreate").on("submit", function(event) {
+            event.preventDefault();
+            //spenner
+            $('.submit').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+            const url = "{{ route($routeRole.'.office.update', $editData->officeId) }}";
+            var serializeData = $(this).serialize();
+
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                _token: "{{ csrf_token() }}",
+                data: serializeData,
+                dataType: "json",
+                encode: true,
+            }).done(function(data) {
+                if (!data.status) {
+                    $.each(data.errors, function(key, value) {
+                        $('#' + key).addClass('is-invalid');
+                        $('#' + key).next().text(value);
+                        toastr.error(value);
+                    });
+
+                    $('.submit').html('Save');
+                } else {
+                    toastr.success(data.message);
+                    location.reload();
+                }
+            }).fail(function(data) {
+                toastr.error(data.message);
+                $('.submit').html('Save');
+            });
+
+
+        });
     });
 </script>

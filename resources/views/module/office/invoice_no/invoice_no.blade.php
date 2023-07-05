@@ -4,7 +4,7 @@
         <div class="modal-header">
             <h4 class="modal-title text-light">{{ __('Invoice No. Update') }} </h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+                <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
             </button>
         </div>
         <form id="formCreate">
@@ -106,10 +106,13 @@
 
                 event.preventDefault();
                 $('.submit').attr('disabled', 'disabled');
-                $('.submit').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+                $('.submit').html(
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...'
+                );
                 var roleName = "{{ $roleName }}";
 
                 var url = "{{ route('superadmin.office.store_invoice_no') }}";
+                //console.info(roleName);
                 if (roleName == 'companyadmin') {
                     url = "{{ route('companyadmin.office.store_invoice_no') }}";
                 }

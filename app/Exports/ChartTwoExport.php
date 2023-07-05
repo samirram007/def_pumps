@@ -60,21 +60,21 @@ class ChartTwoExport implements FromCollection, WithHeadings,WithMapping, WithCu
                 $event->sheet->getColumnDimension('A')->setAutoSize(false);
                 $event->sheet->getDelegate()->getColumnDimension('A')->setWidth(70);
                 $sheet = $event->sheet;
-                $sheet->mergeCells('A1:B1');
+                $sheet->mergeCells('A1:C1');
                  $sheet->setCellValue('A1', __("Product-wise Summery"));
                 $sheet->getStyle('A1')->getFont()->setSize(12);
                 $sheet->getStyle('A1')->getFont()->setBold(true);
                 $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                 $sheet->getStyle('A1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
 
-                $sheet->mergeCells('A2:B2');
+                $sheet->mergeCells('A2:C2');
                 $sheet->setCellValue('A2', __("Period").": ".date('d-m-Y',strtotime($this->request->fromDate))." to  ".date('d-m-Y',strtotime($this->request->toDate)));
                 $sheet->getStyle('A2')->getFont()->setSize(8);
                 $sheet->getStyle('A2')->getFont()->setBold(true);
 
 
                 $office=ApiController::GetOffice($this->request->officeId);
-                $sheet->mergeCells('A3:B3');
+                $sheet->mergeCells('A3:C3');
                 $sheet->setCellValue('A3', __("Business Entity").": ".$office['officeName']);
                 $sheet->getStyle('A3')->getFont()->setSize(8);
                 $sheet->getStyle('A3')->getFont()->setBold(true);
@@ -99,10 +99,10 @@ class ChartTwoExport implements FromCollection, WithHeadings,WithMapping, WithCu
                         // $cellRange = 'A1:G1'; // All headers
                         // $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(14);
 
-                $cellRange = 'A1:B3'; // All headers
+                $cellRange = 'A1:C3'; // All headers
                 $event->sheet->getDelegate()->getStyle($cellRange)->applyFromArray($styleArray)
                 ->getFont()->setName('Calibri')->setSize(14)->setBold(true);
-                $cellRange = 'A4:B4'; // All headers
+                $cellRange = 'A4:C4'; // All headers
 
                 $event->sheet->getDelegate()
                 ->getStyle($cellRange)
@@ -151,14 +151,19 @@ class ChartTwoExport implements FromCollection, WithHeadings,WithMapping, WithCu
             foreach($graph_data['lstproduct'] as $key=>$graph_data1){
                 if(!isset($product_sales[$graph_data1['productName']])    ){
                     $product_sales[$graph_data1['productName']]=$graph_data1['totalSale'];
+                    $product_sales_with_qty[$graph_data1['productName']]['sale'] = $graph_data1['totalSale'];
+                    $product_sales_with_qty[$graph_data1['productName']]['qty'] = $graph_data1['qty'];
+                    $product_sales_with_qty[$graph_data1['productName']]['PrimaryUnit'] = $graph_data1['primaryUnit'];
                     }
                 else{
                     $product_sales[$graph_data1['productName']] += (double)$graph_data1['totalSale'];
+                    $product_sales_with_qty[$graph_data1['productName']]['sale']+= (double) $graph_data1['totalSale'];
+                    $product_sales_with_qty[$graph_data1['productName']]['qty'] += (double)$graph_data1['qty'];
                     }
             }
 
         }
-        $data['graph2'] = collect($product_sales);
+        $data['graph2'] = collect($product_sales_with_qty);
 
         $data['product_sales'] = collect($product_sales)->values();
 
@@ -166,15 +171,32 @@ class ChartTwoExport implements FromCollection, WithHeadings,WithMapping, WithCu
 
 
 $total_amount=0;
-            for ($i = 0; $i < count( $data['product_sales_labels'] ); $i++){
-                $report[$i]['ProductName']=  $data['product_sales_labels'][$i];
+            // for ($i = 0; $i < count( $data['graph2'] ); $i++){
+            //     dd($data['graph2'] );
+            //     $report[$i]['ProductName']=  $data['graph2'][$i]['productName'];
+            //     $report[$i]['Quantity']=  $data['graph2'][$i]['qty'];
 
-                $report[$i]['Amount']= number_format($data['product_sales'][$i],2,'.','');
-                $total_amount+=$data['product_sales'][$i];
+            //     $report[$i]['Amount']= number_format($data['graph2'][$i]['totalSale'],2,'.','');
+            //     $total_amount+=$data['graph2'][$i]['totalSale'];
+            // }
+            $index=0;
+            foreach ($data['graph2']  as $product => $value){
+             //   dd($value);
+             if($value['sale']!=0){
+
+
+$report[$index]['ProductName']=  $product;
+$report[$index]['Quantity']= $value['qty']==0?'': ($value['qty'].' '. $value['PrimaryUnit']['unitShortName']);
+$report[$index]['Amount']= $value['sale']==0?'':(number_format($value['sale'],2,'.',''));
             }
-$report[count( $data['product_sales_labels'] )]['ProductName']=__('Total');
-$report[count( $data['product_sales_labels'] )]['Amount']=number_format($total_amount,2,'.','');
+$total_amount+=$value['sale'];
+$index++;
+            }
 
+$report[count( $data['product_sales_labels'] )]['ProductName']=__('Total');
+$report[count( $data['product_sales_labels'] )]['Quantity']='';
+$report[count( $data['product_sales_labels'] )]['Amount']=number_format($total_amount,2,'.','');
+//dd($report);
         $report=collect($report);
         //dd($report);
          return  $report;
@@ -183,6 +205,7 @@ $report[count( $data['product_sales_labels'] )]['Amount']=number_format($total_a
     {
         return [
             __('ProductName'),
+            __('Quantity'),
             __('Amount'),
          ];
         }
@@ -196,6 +219,7 @@ $report[count( $data['product_sales_labels'] )]['Amount']=number_format($total_a
        // dd($row);
         return [
             $row['ProductName'],
+            $row['Quantity'],
             $row['Amount'],
         ];
 
