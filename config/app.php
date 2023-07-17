@@ -219,7 +219,7 @@ return [
         // 'PDF' => Barryvdh\DomPDF\Facade::class,
         'PDF' => Mccarlosen\LaravelMpdf\Facades\LaravelMpdf::class,
         'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
-
+        'Helper' => App\Helpers\Helper::class,
     ])->toArray(),
 
 ];

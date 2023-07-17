@@ -50,30 +50,7 @@
                         </tr>
 
                     </thead>
-                    {{-- <tbody>
 
-                        @foreach ($delivery_plans as $key => $plan)
-                        <tr>
-                            <td>{{ $plan['planTitle'] }}</td>
-                             <td><span class="sr-only">{{  $plan['planDate']}}</span>{{  __(date('d-m-Y', strtotime($plan['planDate'])))}}</td>
-                             <td>{{ $plan['startPoint']['cityName'] }}</td>
-                             <td>{{ $plan['product']['productTypeName'] }}</td>
-                             <td>{{ $plan['containerSize'] }}</td>
-                            <td>
-
-                                <a href="{{ route($routeRole.'.delivery_plan.view', $plan['deliveryPlanId']) }}"
-                                title="{{ __('View Full Plan') }}" class="view_plan  btn btn-rounded animated-shine ">
-                                <i class="fa fa-desktop m-0 "></i></a>
-
-                                <a href="javascript:" data-param="" data-url="{{ route($routeRole.'.delivery_plan.edit', $plan['deliveryPlanId']) }}"
-                                    title="{{ __('Edit Deliver Plan') }}" class="load-popup edit   btn btn-rounded animated-shine ">
-                                    <i class="fa fa-edit m-0 "></i></a>
-                                    <a href="{{ route($routeRole.'.delivery_plan.delete', $plan['deliveryPlanId']) }}" title="{{__('Delete')}}" class="delete  btn btn-rounded animated-shine-danger    "><i class="fa fa-trash m-0 "></i></a>
-
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody> --}}
 
                 </table>
             </div>
@@ -150,7 +127,7 @@
                     {
                         "data": null,
                         "render": function(data, type, full, meta) {
-                            return data.startPoint.cityName;
+                            return data.startPoint.hubName;
                         }
                     },
                     {

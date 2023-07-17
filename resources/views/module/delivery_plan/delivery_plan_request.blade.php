@@ -271,6 +271,9 @@
         justify-content: space-between;
         flex-flow: column nowrap;
     }
+    .modified{
+         background-color:#ffd9dd!important;
+    }
 
     .draggable {
         cursor: grabbing !important;
@@ -290,7 +293,17 @@
         opacity: 0.5;
     }
 
-    .dragList .dragHeader {}
+  .dragHeader>div>div {
+
+  }
+  .rowHeader{
+    display: flex;
+    gap:20px;
+    flex-direction: row;
+  }
+  .rowHeader::before{
+    content: '';
+  }
 
     .dragBlockHeader,
     .dragBlockFooter {
@@ -538,7 +551,7 @@
 
         function deleteNow(index) {
             extraList.push(newList[index]);
-
+            modifiedOffice.push(newList[index]['officeId']);
             newList.splice(index, 1);
 
             // console.log(newList);
@@ -560,7 +573,8 @@
 
             //Old Method
             // console.log(typeof(newList));
-            // console.log(typeof(extraList));
+            // console.log( extraList[index]['officeId']);
+            modifiedOffice.push(extraList[index]['officeId']);
             newList.splice(newList.length - 1, 0, extraList[index]);
             // console.log(newList);
             newList = reindex_array_keys(newList);
@@ -697,8 +711,10 @@
 
                 }
             });
-            var strOne = `<div><div>Pump(s) to be visited : ${(newList.length - 2)} <div>` +
-                `<div>Total Requirement : ${ parseFloat(addOne.atDeliveryRequirement).toFixed(0)} ltr<div>` +
+            // let newListLength=newList.length - 2;
+            var strOne = `<div class="rowHeader">`+
+                `<div>Total requirements for  suggested ${(newList.length - 2)} pump(s) is `+
+                    `: ${ parseFloat(addOne.atDeliveryRequirement).toFixed(0)} ltr</div>` +
                 `</div>`;
             $('#SummaryOne').html(strOne);
 
@@ -709,8 +725,9 @@
 
                 }
             });
-            var strTwo = `<div><div>${extraList.length}  more Pump(s) in the queue<div>` +
-                `<div>Total Requirement : ${parseFloat(addTwo.atDeliveryRequirement).toFixed(0)} ltr<div>` +
+            var strTwo = `<div class="rowHeader">`+
+                `<div>Total requirements for  more  ${extraList.length}  Pump(s) is `+
+                ` : ${parseFloat(addTwo.atDeliveryRequirement).toFixed(0)} ltr</div>` +
                 `</div>`;
             $('#SummaryTwo').html(strTwo);
 
@@ -718,6 +735,8 @@
 
 
         function swapNow(index1, index2) {
+            modifiedOffice.push(newList[index1]['officeId']);
+            modifiedOffice.push(newList[index2]['officeId']);
             newList = swap(newList, index1, index2);
             dt_table1.clear().rows.add(newList.slice(1, -1)).draw();
         }
@@ -751,6 +770,7 @@
     </script>
     <script>
         var idx = 1;
+        var modifiedOffice=[]
         var dt_table1 = $('#table1').DataTable({
             responsive: true,
             select: false,
@@ -768,8 +788,11 @@
                 $(row).attr('data-index', index + 1);
                 $(row).attr('data-source', 'table1');
                 $(row).attr('onDragStart', 'dragStart(event)');
+                if(modifiedOffice.includes(data.officeId)){
+                    $(row).addClass('modified');
+                    console.log(row);
+                }
 
-                // console.log(row);
             },
             columns: [{
                     "data": null,
@@ -841,8 +864,9 @@
                 $(row).attr('data-index', index);
                 $(row).attr('data-source', 'table2');
                 $(row).attr('onDragStart', 'dragStart(event)');
-
-                // console.log(row);
+                if(modifiedOffice.includes(data.officeId)){
+                    $(row).addClass('modified');
+                }
             },
             columns: [{
                     "data": null,

@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\Admin\ReportController as AdminReportController;
-use App\Http\Controllers\LocalizationController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\MapController;
-use App\Http\Controllers\OfficeController;
-use App\Http\Controllers\SalesController;
-use App\Http\Controllers\SupportController;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HubController;
+use App\Http\Controllers\MapController;
+use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\SalesController;
+use App\Http\Controllers\OfficeController;
+use App\Http\Controllers\SupportController;
+use App\Http\Controllers\LocalizationController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,7 @@ Route::get('lang/{locale}', [LocalizationController::class, 'index'])->name('lan
 Route::get('/si/{invoice_no}', [SalesController::class, 'sales_invoice'])->name('sales_invoice');
 
 Route::get('/office/search', [OfficeController::class, 'address_search'])->name('office.address.search');
+Route::get('/hub/search', [HubController::class, 'address_search'])->name('hub.address.search');
 Route::group(['middleware' => 'preventbackhistory'], function () {
     Route::get('/switchmode/{userId}', [LoginController::class, 'switchmode'])->name('switchmode');
     Route::group(['middleware' => 'isNotLoggedIn'], function () {

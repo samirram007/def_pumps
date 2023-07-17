@@ -11,6 +11,7 @@
                     <thead>
                         <tr>
                             <th>{{ __('Product') }} </th>
+                            <th>{{ __('#') }} </th>
                             <th class="text-center">{{ __('Unit of Mesurement') }} </th>
                             <th class="text-center">{{ __('Container') }} ? </th>
                             <th class="text-center">{{ __('Quantity') }} ({{ __('in Ltr') }})</th>
@@ -24,6 +25,7 @@
                             <tr>
 
                                 <td> {{ $item['productTypeName'] }} </td>
+                                <td><div class="color-box" style="background:  {{ $item['color']  }}"></div>  </td>
                                 <td class="text-center">
                                     {{ $item['primaryUnitName'] }}
                                     {{ isset($item['secondaryUnitName']) ? ' (' . $item['secondaryUnitRatio'] . ' ' . $item['secondaryUnitName'] . ')' : '' }}
@@ -78,7 +80,13 @@
         </div>
     </div>
 </div>
-
+<style scoped>
+.color-box{
+    width:20px;
+    height: 20px;
+    border-radius: 50%;
+}
+</style>
 <script>
     $(document).ready(function() {
         var table = $('#table').DataTable({

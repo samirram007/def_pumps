@@ -40,17 +40,17 @@
 
             </div>
             <div class="reportPanel mt-3  ">
-                <table id="table" class="table   table-striped table-bordered   ">
+                <table id="tableDetails" class="table   table-striped table-bordered   ">
                     <thead>
                         <tr>
-                            <th>Planing Date</th>
+                            <th>Plan Title</th>
+                            <th>Plan Date</th>
                             <th>Pump</th>
                             <th>Product</th>
                             <th class="text-center qty"> Suggested Qty.</th>
                             <th class="text-center qty"> Ordered Qty.</th>
                             <th class="text-center qty"> Received Qty.</th>
                             <th class="text-center">Status</th>
-                            <th>Action</th>
                         </tr>
 
                     </thead>
@@ -87,10 +87,42 @@
         #table th:first-child {
             text-align: center;
         }
+        #tableDetails {
+            width: 100% !important;
+        }
+        #table_wrapper.form-inline, #tableDetails_wrapper.form-inline, #table1_wrapper.form-inline, #table2_wrapper.form-inline {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: stretch;
+}
+        #tableDetails td:first-child {
+            max-width: 30rem;
+            font-weight:bold;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            word-break: break-all;
+            overflow: hidden;
+        }
+        #tableDetails td:nth-child(2) {
+            text-align: center;
+        }
+        @media screen and (max-width:480px){
+            #tableDetails td:first-child {
+            max-width: 20rem;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            word-break: break-all;
+            overflow: hidden;
+            padding-block: 0.5rem;
+        }
+        }
     </style>
+
     <script>
         let delivery_details = @json($delivery_details);
-        console.log(delivery_details);
+        //console.log(delivery_details);
         let approval_url = `{{ route($routeRole . '.delivery_plan_details.approve_requirement', ':id') }}`;
         let receive_url = `{{ route($routeRole . '.delivery_plan_details.receive_delivery', ':id') }}`;
         var start = moment().subtract(6, 'days');
@@ -98,7 +130,7 @@
         let isReady = false;
         let filterActive = false;
         $(function() {
-            var listTable = $('#table').DataTable({
+            var listTable = $('#tableDetails').DataTable({
                 responsive: true,
                 select: false,
                 paging: false,
@@ -108,7 +140,14 @@
                 info: false,
                 "oLanguage": langOpt,
                 data: delivery_details,
-                columns: [{
+                columns: [
+                    {
+                        "data": null,
+                        "render": function(data, type, full, meta) {
+                            return data['deliveryPlan']['planTitle'];
+                        }
+                    },
+                    {
                         "data": null,
                         "render": function(data, type, full, meta) {
                             const d = new Date(data['deliveryPlan']['planDate']);
@@ -307,15 +346,6 @@
 
 
                             return `${ this_status  }`;
-                        }
-                    },
-                    {
-                        "data": null,
-                        "render": function(data, type, full, meta) {
-                            let action = `<a href="" title="{{ __('View Full Plan') }}"
-                                        class="view_plan_details  btn btn-rounded animated-shine ">
-                                        <i class="fa fa-desktop m-0 "></i></a>`;
-                            return action;
                         }
                     }
                 ]

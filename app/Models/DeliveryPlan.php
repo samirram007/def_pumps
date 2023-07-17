@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+
+use App\Helpers\Helper;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 
 class DeliveryPlan extends Model
 {
@@ -20,9 +23,10 @@ class DeliveryPlan extends Model
     public static function get_all()
     {
         //dd($data);
-        $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*"];
-        $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'DeliveryPlan')->json();
-        return $res;
+        return Helper::GetResource('DeliveryPlan');
+        // $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*"];
+        // $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'DeliveryPlan')->json();
+        // return $res;
     }
     public static function GetManufacturingHub(){
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];

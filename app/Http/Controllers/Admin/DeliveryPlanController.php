@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Hub;
+use App\Models\Godown;
 use App\Models\Product;
 use App\Models\DeliveryPlan;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Concerns\ToArray;
 
 class DeliveryPlanController extends Controller
 {
@@ -47,6 +50,7 @@ class DeliveryPlanController extends Controller
             $data['MasterOffice'] = session()->has('officeData') ? session()->get('officeData') : ApiController::GetOffice($user['officeId']);
 
             $data['delivery_plans']=DeliveryPlan::get_all();
+
             $data['planningDate']=date('Y-m-d');
             $data['expectedDeliveryDate']=date('Y-m-d', strtotime($data['planningDate'] . ' + 4 days'));
 
@@ -58,10 +62,10 @@ class DeliveryPlanController extends Controller
 
              $data['officeList'] = ApiController::GetOfficeByMasterOfficeId($this->officeId);
               $data['delivery_details']=DeliveryPlan::GetDeliveryPlanDetailsByOfficeId($this->officeId);
-              //$data['delivery_plans']=DeliveryPlan::get_all();
+               //$data['delivery_plans']=DeliveryPlan::get_all();
               $data['delivery_status']=DeliveryPlan::GetDeliveryStatus();
             // dd(session()->get('masterOfficeId'));
-             dd($data);
+              //dd($data);
             return view('module.delivery_plan.delivery_details_index',$data);
         }
 
@@ -72,8 +76,14 @@ class DeliveryPlanController extends Controller
 
         $data['roleName'] = $this->roleName;
         $data['routeRole'] = $this->routeRole;
-        $date_diff=date_diff(date_create($request->expectedDeliveryDate),date_create($request->planningDate))->format("%a");
-        //dd($date_diff);
+       // $date_diff=date_diff(date_create($request->expectedDeliveryDate),date_create($request->planningDate))->format("%a");
+
+       //dd($today);
+       $date_diff=date_diff(date_create($request->expectedDeliveryDate),date_create(date('Y-m-d')))->format("%a");
+        // dd(date_create($request->ExpectedDeliveryDate));
+        // dd(date_create(date('Y-m-d')));
+        //  $date_diff=date_diff(date_create($request->ExpectedDeliveryDate),date_create(date('Y-m-d')))->format("%a");
+
         $data['request']=[
             "ProductTypeId"=> (int)$request->productId,
             "StartingPointId"=> (int)$request->manufactureingHub,
@@ -83,8 +93,7 @@ class DeliveryPlanController extends Controller
             "DeliveryPlanId"=>0,
             "OfficeIdList"=> []
         ];
-        //$DeliveryPlanId=0;
-        //dd($data);
+       // dd(json_encode($data['request']));
         $data['response'] = DeliveryPlan::GetDeliveryRequest($data['request']);
 
         $data['request']['planningDate']=$request->planningDate;
@@ -110,7 +119,8 @@ class DeliveryPlanController extends Controller
 
         $data['roleName'] = $this->roleName;
         $data['routeRole'] = $this->routeRole;
-        $date_diff=date_diff(date_create($request->ExpectedDeliveryDate),date_create($request->PlanDate))->format("%a");
+        //$date_diff=date_diff(date_create($request->ExpectedDeliveryDate),date_create($request->PlanDate))->format("%a");
+        $date_diff=date_diff(date_create($request->ExpectedDeliveryDate),date_create(date('Y-m-d')))->format("%a");
         // dd(json_decode($request->OfficeIdList));
         //  dd(stripslashes(implode('","', json_decode($request->OfficeIdList))));
         //  dd([implode('","', json_decode($request->OfficeIdList))]);
@@ -125,7 +135,7 @@ class DeliveryPlanController extends Controller
             "DeliveryPlanId"=>[],
             "OfficeIdList"=> json_decode($request->OfficeIdList)
         ];
-         //dd(json_encode($data['request']));
+        // dd(json_encode($data['request']));
         // dd($data);[implode('","', json_decode($request->OfficeIdList))]
         $data['response'] = DeliveryPlan::GetDeliveryRequest($data['request']);
         $data['request']['planningDate']=$request->planningDate;
@@ -158,7 +168,8 @@ class DeliveryPlanController extends Controller
         $offices = ApiController::GetOfficeList($user['officeId']);
         $data['MasterOffice'] = session()->has('officeData') ? session()->get('officeData') : ApiController::GetOffice($user['officeId']);
 
-        $data['manufacturingHubs']=DeliveryPlan::GetManufacturingHub();
+        // $data['manufacturingHubs']=DeliveryPlan::GetManufacturingHub();
+        $data['manufacturingHubs']=Hub::GetHubList();
 
         $data['products']=Product::get_all($user['officeId']);
         $data['planningDate']=date('Y-m-d');
@@ -416,7 +427,8 @@ class DeliveryPlanController extends Controller
         $data['roleName']=$this->roleName;
         $data['routeRole']= $this->routeRole;
         $data['planDetails'] = DeliveryPlan::GetDeliveryPlanDetailsById($id);
-
+        $officeId=$data['planDetails']['officeId'];
+        $data['godowns']=Godown::GetCurrentStockWithGodownByOfficeId($officeId);
         $GetView = view('module.delivery_plan.receive_delivery', $data)->render();
         return response()->json([
             "status" => true,
@@ -452,6 +464,9 @@ class DeliveryPlanController extends Controller
             'receivedQuantity'=>$receivedQuantity,
             'receivedBy'=>$user['id'],
         ];
+        $deliveryGodownList=$request->deliveryGodownList;
+        $submitData['deliveryGodownMapper']=json_decode($deliveryGodownList)->toarray();
+        // dd($submitData);
         $response = DeliveryPlan::UpdateReceiveDelivery($submitData);
         //dd($response['message']);
         if(!$response['status']==true){

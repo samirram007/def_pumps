@@ -13,7 +13,7 @@
                 <div class="col-md-6">
 
                     {{ __('Hub') }}: <span
-                        class="font-weight-bold">{{ $planDetails['startPoint']['cityName'] }}</span>
+                        class="font-weight-bold">{{ $planDetails['startPoint']['hubName'] }}</span>
                 </div>
                 <div class="col-md-6">
                     {{ __('Plan Date') }}: <span
@@ -62,17 +62,58 @@
                                                 @foreach ($deliveryPlanStatus as $key => $item)
                                                     @if ($item['deliveryPlanStatusId'] < $planDetails['deliveryPlanStatusId'])
                                                         <li class="list-group-item text-secondary">
-                                                            {{ $item['deliveryPlanStatus'] }}</li>
-                                                    @elseif ($item['deliveryPlanStatusId'] == $planDetails['deliveryPlanStatusId'])
+                                                            <div class="row">
+                                                                <div class="col-8  text-info">
+                                                                    {{ $item['deliveryPlanStatus'] }} </div>
+                                                                <div
+                                                                    class=" col-4 text-center font-weight-bold">
+                                                                    @if ($planDetails['deliveryPlanStatusId']==5)
+                                                                    <i class="fa fa-times text-danger "></i>
+                                                                        @else
+                                                                        <i class="fa fa-check text-success "></i>
+                                                                    @endif
+
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                     @elseif ($item['deliveryPlanStatusId'] == $planDetails['deliveryPlanStatusId'])
                                                         <li class="list-group-item">
                                                             <div class="row">
                                                                 <div class="col-8  text-info">
                                                                     {{ $item['deliveryPlanStatus'] }} </div>
                                                                 <div
                                                                     class=" col-4 text-info text-center font-weight-bold">
-                                                                    Current Status</div>
+                                                                    Current Status </div>
                                                             </div>
                                                         </li>
+                                                        @elseif ($item['deliveryPlanStatusId'] == 5)
+                                                        <li class="list-group-item alert-success">
+                                                            <div class="row">
+                                                                <div class="col-8 d-flex align-items-center  ">
+                                                                    {{ $item['deliveryPlanStatus'] }}</div>
+
+                                                                    <div class="col-4 ">
+                                                                        <form id="FormSetStatusCancel"
+                                                                            enctype="multipart/form-data">
+                                                                            @csrf
+                                                                            <input type="text" class="sr-only"
+                                                                                name="deliveryPlanId"
+                                                                                value="{{ $planDetails['deliveryPlanId'] }}">
+                                                                            <input type="text" class="sr-only"
+                                                                                name="deliveryPlanStatusId"
+                                                                                value="{{ $item['deliveryPlanStatusId'] }}">
+                                                                            <button type="submit"
+                                                                                class=" submit w-100  btn btn-rounded animated-shine px-2  inline-block">Set</button>
+                                                                        </form>
+                                                                        @php
+                                                                            $next++;
+                                                                        @endphp
+                                                                    </div>
+
+                                                            </div>
+
+                                                        </li>
+
                                                     @else
                                                         <li class="list-group-item alert-success">
                                                             <div class="row">
@@ -183,6 +224,67 @@
             // });
 
             $("#FormSetStatus").on("submit", function(event) {
+                event.preventDefault();
+                // console.log(parseFloat($('#approvedQuantity').val()) ,$('#plannedQuantity').val());
+
+
+                $('.submit').html(
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> '
+                );
+                $('.submit').attr('disabled', true);
+                var submit_url = "{{ route($routeRole . '.delivery_plan.update_status', ':id') }}";
+                var deliveryPlanId = {{ $planDetails['deliveryPlanId'] }};
+                // console.log(deliveryPlanDetailsId);
+                submit_url = submit_url.replace(':id', deliveryPlanId);
+
+                // console.log(submit_url);
+                var formData = new FormData($(this)[0]);
+
+
+                $.ajax({
+                    type: "POST",
+                    url: submit_url,
+                    data: formData,
+                    processData: false, // don't process the data
+                    contentType: false, // set content type to false as jQuery will tell the server its a query string request
+                }).done(function(data) {
+                    if (!data.status) {
+
+                        $('.submit').attr('disabled', false);
+                        $('.submit').html('Set');
+                        $.each(data.errors, function(key, value) {
+                            $('#' + key).addClass('is-invalid');
+                            $('#' + key).next().text(value);
+                            toastr.error(value);
+                        });
+
+                    } else {
+                        // console.log(data.data);
+                        //  $('#reportPanel').html(data.html);
+                        toastr.success(data.message);
+                        setTimeout(() => {
+
+                            // $('.submit').attr('disabled', false);
+                            // $('.submit').html('Approve');
+                            $('#filter').click();
+                            $("#modal-popup .close").click()
+                            // window.location.reload();
+                        }, 1000);
+                        return;
+                        // toggleRequestPanel();
+                    }
+                    $('.submit').attr('disabled', false);
+                    $('.submit').html('Set');
+                }).fail(function(data) {
+
+                    $('.submit').attr('disabled', false);
+                    $('.submit').html('Set');
+                    toastr.error(data.message);
+
+                    // console.log(data);
+                });
+            });
+            $("#FormSetStatusCancel").on("submit", function(event) {
                 event.preventDefault();
                 // console.log(parseFloat($('#approvedQuantity').val()) ,$('#plannedQuantity').val());
 

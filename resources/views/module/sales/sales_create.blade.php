@@ -844,6 +844,10 @@
                 if (routeRole == 'pumpadmin') {
                     url = "{{ route('pumpadmin.sales.store') }}";
                 }
+                // if($('#godownId').val()=='' || $('#godownId').val()==null){
+
+                //     Swal.fire('',"Please select godown",'warning');
+                // }
                 var serializeData = $(this).serialize();
                 // alert(serializeData);
                 //alert(url);
@@ -862,12 +866,14 @@
 
                         $('.submit').attr('disabled', false);
                         $('.submit').html('Submit');
+                        let errorStr=''
                         $.each(data.errors, function(key, value) {
                             $('#' + key).addClass('is-invalid');
-                            $('#' + key).next().text(value);
+                            // $('#' + key).next().text(value);
+                            errorStr+=`<p>${value}</p>`;
                             toastr.error(value);
                         });
-
+                        Swal.fire('',errorStr,'warning');
                     } else {
                         setTimeout(() => {
                             $('.search').click();

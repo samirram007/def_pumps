@@ -109,6 +109,7 @@ class ProductTypeController extends Controller
 
         $data['productTypeId'] = $request->productTypeId;
         $data['productTypeName'] = $request->productTypeName;
+        $data['color'] = $request->color;
         $data['isContainer'] = $request->isContainer;
         $data['quantity'] = $request->quantity == null ? 0 : $request->quantity;
         $data['organizationId'] = $request->organizationId;
@@ -118,11 +119,12 @@ class ProductTypeController extends Controller
         $data['useSecondaryUnit'] = $request->useSecondaryUnit == 0 ? false : true;
         $data['secondaryUnitId'] = $request->useSecondaryUnit == 1 ? $request->secondaryUnitId : null;
         $data['secondaryUnitRatio'] = $request->useSecondaryUnit == 1 ? $request->secondaryUnitRatio : null;
-        //dd($data);
+
         if ($data['productTypeId'] == null || $data['productTypeId'] == 0) {
             //  dd($data);
             $productType['productTypeName'] = base64_encode($data['productTypeName']);
             $productType['isContainer'] = $data['isContainer'] == 0 ? false : true;
+            $productType['color'] = $data['color'];
             $productType['quantity'] = $data['quantity'];
             $productType['organizationId'] = $data['organizationId'];
             $productType['recorderPoint'] = $data['recorderPoint'];
@@ -152,6 +154,7 @@ class ProductTypeController extends Controller
             $productType['productTypeId'] = $data['productTypeId'];
             $productType['productTypeName'] = base64_encode($data['productTypeName']);
             $productType['isContainer'] = $data['isContainer'] == 0 ? false : true;
+            $productType['color'] = $data['color'];
             $productType['quantity'] = $data['quantity'];
             $productType['organizationId'] = $data['organizationId'];
             $productType['recorderPoint'] = $data['recorderPoint'];
@@ -160,7 +163,7 @@ class ProductTypeController extends Controller
             $productType['useSecondaryUnit'] = $data['useSecondaryUnit'];
             $productType['secondaryUnitId'] = $data['secondaryUnitId'];
             $productType['secondaryUnitRatio'] = $data['secondaryUnitRatio'];
-            //dd(json_encode($productType));
+             //dd(json_encode($productType));
             $response = ApiController::updateProductType($productType);
             // $data['products'] = ApiController::GetProductByOrgId($request->organizationId);
             // $data['office'] = [ApiController::GetOffice($request->organizationId)];

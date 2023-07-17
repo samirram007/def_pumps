@@ -327,6 +327,7 @@ class SalesController extends Controller
             'mobileNo' => 'nullable|numeric|digits:10',
             'quantity' => 'required|numeric',
             'total' => 'required|numeric|min:1',
+            'godownId' => 'required',
             'paymentModeId' => 'required',
         ]);
 
@@ -433,6 +434,7 @@ class SalesController extends Controller
             'vehicleNo' => 'nullable|max:255',
             'mobileNo' => 'nullable|numeric|digits:10',
             'quantity' => 'required|numeric',
+            'godownId' => 'required',
             'total' => 'required|numeric|min:1',
             'paymentModeId' => 'required',
         ]);

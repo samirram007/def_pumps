@@ -101,15 +101,22 @@ class DashboardController extends Controller
         foreach ($DEFDashBoardGraphData['graph2'] as $key => $graph_data) {
             foreach ($graph_data['lstproduct'] as $key => $graph_data1) {
                 if (!isset($product_sales[$graph_data1['productName']])) {
+                    if($graph_data1['totalSale']==0){
+                        continue;
+                    }
                     $product_sales[$graph_data1['productName']] = $graph_data1['totalSale'];
                     $product_sales_with_qty[$graph_data1['productName']]['sale'] = $graph_data1['totalSale'];
                     $product_sales_with_qty[$graph_data1['productName']]['qty'] = $graph_data1['qty'];
                     $product_sales_with_qty[$graph_data1['productName']]['PrimaryUnit'] = $graph_data1['primaryUnit'];
-                } else {
-                    $product_sales[$graph_data1['productName']] += (double) $graph_data1['totalSale'];
+                    continue;
+                }
+                if($graph_data1['totalSale']==0){
+                    continue;
+                }
+                    $product_sales[$graph_data1['productName']]+= (double) $graph_data1['totalSale'];
                     $product_sales_with_qty[$graph_data1['productName']]['sale']+= (double) $graph_data1['totalSale'];
                     $product_sales_with_qty[$graph_data1['productName']]['qty'] += (double)$graph_data1['qty'];
-                }
+
             }
 
         }
@@ -228,15 +235,19 @@ class DashboardController extends Controller
         foreach ($DEFDashBoardGraphData['graph2'] as $key => $graph_data) {
             foreach ($graph_data['lstproduct'] as $key => $graph_data1) {
                 if (!isset($product_sales[$graph_data1['productName']])) {
+                    if($graph_data1['totalSale']==0){
+                        continue;
+                    }
                     $product_sales[$graph_data1['productName']] = $graph_data1['totalSale'];
                     $product_sales_with_qty[$graph_data1['productName']]['sale'] = $graph_data1['totalSale'];
                         $product_sales_with_qty[$graph_data1['productName']]['qty'] = $graph_data1['qty'];
                         $product_sales_with_qty[$graph_data1['productName']]['PrimaryUnit'] = $graph_data1['primaryUnit'];
-                } else {
+                        continue;
+                }
                     $product_sales[$graph_data1['productName']] += (double) $graph_data1['totalSale'];
                     $product_sales_with_qty[$graph_data1['productName']]['sale']+= (double) $graph_data1['totalSale'];
                     $product_sales_with_qty[$graph_data1['productName']]['qty'] += (double)$graph_data1['qty'];
-                }
+
             }
 
         }

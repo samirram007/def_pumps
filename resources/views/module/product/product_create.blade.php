@@ -137,6 +137,15 @@
                                                         <span class="text-danger" id="maxStockLevelError"></span>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-3 col-6 mb-4">
+                                                    <div class="form-group">
+                                                        <label for="color">{{ __('Colour') }} <span
+                                                                class="text-danger">*</span></label>
+                                                        <input type="color" class="form-control" id="color"
+                                                            name="color" placeholder="Colour"   value="{{ old('color') }}">
+                                                        <span class="text-danger" id="color"></span>
+                                                    </div>
+                                                </div>
                                             </fieldset>
 
                                             <div class="row text-center">
@@ -216,6 +225,7 @@
             var productTypeName = $('#productTypeName').val();
             var isContainer = $('#isContainer').val();
             var quantity = $('#quantity').val();
+            var color = $('#color').val();
             var organizationId = $('#organizationId').val();
             var recorderPoint = $('#recorderPoint').val();
             var maxStockLevel = $('#maxStockLevel').val();
@@ -270,6 +280,7 @@
                     productTypeId: productTypeId,
                     productTypeName: productTypeName,
                     isContainer: isContainer,
+                    color: color,
                     quantity: quantity,
                     organizationId: organizationId,
                     recorderPoint: recorderPoint,
@@ -379,6 +390,7 @@
                 $('#secondaryUnitId').val(product.secondaryUnitId);
 
                 ToggleQtyInput();
+                $('#color').val(product.color);
                 $('#quantity').val(product.quantity);
                 ToggleSecondaryUnit();
                 $('#secondaryUnitRatio').val(product.secondaryUnitRatio);

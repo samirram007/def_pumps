@@ -1,14 +1,10 @@
-<div class="col-lg-4 col-md-6">
+{{-- <div class="col-lg-4 col-md-6">
     <div class="form-group">
         <label for="deliveryPlanId">{{ __('Delivery Plan') }} :</label>
         <div>
             <select name="deliveryPlanId" id="deliveryPlanId" class="form-control">
 
                 @if ($delivery_plans != null)
-
-
-
-
                     <option value="{{ $delivery_plans[0]['deliveryPlanId'] }}" data-isRetail="-1" data-isAdmin="1"
                         class="">{{ __('All Delivery Plan') }}</option>
 
@@ -49,8 +45,6 @@
                     <option value="{{ $officeList[0]['masterOfficeId'] }}" data-isRetail="-1" data-isAdmin="1"
                         class="">{{ __('All Pumps') }}</option>
 
-
-                    {{-- Retail --}}
                     @forelse ($officeList as $key => $office)
                         @if ($office['officeTypeId'] == 3 || $office['officeTypeId'] == 2)
                             <option value="{{ $office['officeId'] }}" data-isRetail="0" data-isAdmin="0"
@@ -72,7 +66,7 @@
 
 
     </div>
-</div>
+</div> --}}
 <div class="col-lg-3 col-md-6">
     <div class="form-group">
         <label for="reportrange">{{ __('Period') }} : </label>

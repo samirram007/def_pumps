@@ -81,16 +81,16 @@
                                         <div class="d-flex">
                                             <select name="manufactureingHub" id="manufactureingHub"
                                                 class="form-control form-inline">
-                                                @foreach ($manufacturingHubs as $manufacturingHub)
-                                                    <option value="{{ $manufacturingHub['cityId'] }}"
+                                                {{-- @foreach ($manufacturingHubs as $manufacturingHub)
+                                                    <option value="{{ $manufacturingHub['hubId'] }}"
                                                         data-lat="{{ $manufacturingHub['latitude'] }}"
                                                         data-long="{{ $manufacturingHub['longitude'] }}">
-                                                        {{ __($manufacturingHub['cityName']) }}</option>
-                                                @endforeach
+                                                        {{ __($manufacturingHub['hubName']) }}</option>
+                                                @endforeach --}}
                                             </select>
 
                                             <a href="javascript:" data-param=""
-                                                data-url="{{ route($routeRole . '.city.search_form') }}"
+                                                data-url="{{ route($routeRole . '.hub.create') }}"
                                                 title="{{ __('Add New Hub') }}"
                                                 class="load-popup  btn-sm   btn-info circle form-inline px-2 ">
                                                 <i class="fa fa-plus"></i></a>
@@ -159,16 +159,22 @@
                                         <button type="submit" title="{{ __('New Delivery Plan') }}"
                                             class="submit   btn btn-rounded animated-shine px-2 ">
                                             {{ __('Request a plan') }}</button>
+                                        {{-- <button type="button" title="{{ __('load') }}"
+                                        onclick="LoadManufactureingHub()"
+                                            class="  btn btn-rounded animated-shine px-2 ">
+                                            {{ __('load') }}</button> --}}
                                     </div>
 
 
                                 </div>
                             </form>
+                            <div class="btn btn-primary" onClick="axiosCall();">Call Axios</div>
+
                         </div>
 
                     </div>
                 </div>
-                <div id="requestProcessPanel" class=" sr-only col-md-8">
+                <div id="requestProcessPanel" style="opacity:0" class="   ">
                     <div class="card border border-primary p-3 py-0">
                         <div class="card-content">
                             <div id="reportPanel" class="reportPanel mt-3 sr-only">
@@ -188,7 +194,27 @@
 
         </section>
     </div>
+    <style scoped>
+        .bg-loaded {
+            background: #fff;
+            animation: fadein 0.5s ease forwards, blink 0.5s linear 3 alternate;
+        }
 
+        @keyframes blink {
+            0% {
+                background: #8c6aca34;
+            }
+
+            70% {
+                background: #9293d167;
+            }
+
+            100% {
+                background: #fff;
+            }
+
+        }
+    </style>
 
     <script>
         $("#requestForm").on("submit", function(event) {
@@ -231,11 +257,7 @@
                     // console.log(data.data);
                     $('#reportPanel').html(data.html);
                     setTimeout(() => {
-                        if ($('#requestProcessPanel').hasClass("sr-only")) {
-                            $('#requestProcessPanel').removeClass("sr-only");
-                            $('#requestPanel').removeClass("offset-md-4");
 
-                        }
                         toastr.success(data.message);
                     }, 1000);
                     toggleRequestPanel();
@@ -252,6 +274,73 @@
             });
         });
 
+
+        async function axiosCall() {
+            let url = 'api/v1/dashboard/dropdown_list/8379AC15-C52A-4F2E-D69C-08DAF9596B0B';
+            // let url = 'http://115.124.120.251:5059/api/DeliveryPlan/DeliveryPlanDetailsByDeliveryPlanId/1';
+            // Storing response
+            let options = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                }
+            }
+            const officeData = await axios.get(url).then(resp => {
+               // console.log(resp.data);
+                return resp.data;
+
+            });
+            console.log(officeData);
+
+        }
+
+        function LoadManufactureingHub() {
+
+            if ($('#manufactureingHub').hasClass('bg-loaded')) {
+                $('#manufactureingHub').removeClass('bg-loaded')
+            }
+            let url = "{{ route($routeRole . '.hub.list', ':id') }}";
+
+            $.ajax({
+                url: url,
+                type: "GET",
+                dataType: 'json',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                contentType: "application/json; charset=utf-8",
+                success: (response) => {
+
+                    $('#manufactureingHub').val('');
+                    let htmlStr = ''
+                    response.data.forEach(element => {
+
+                        htmlStr += `<option value="${ element['hubId'] }" ` +
+                            `data-lat="${ element['latitude'] }"` +
+                            `data-long="${ element['longitude'] }">` +
+                            `${ element['hubName'] } ` +
+                            `</option>`;
+
+                    });
+                    // console.log( htmlStr);
+                    $('#manufactureingHub').html(htmlStr)
+
+                    setTimeout(() => {
+                        $('#manufactureingHub').addClass('bg-loaded')
+                        $('#manufactureingHub').select2()
+
+                    }, 1500);
+
+
+
+
+                },
+                error: function(xhr, status, error) {
+
+                }
+            });
+        }
+
         function toggleRequestPanel() {
             if ($('#requestPanel').hasClass("col-md-4")) {
                 $('#requestPanel').addClass("sr-only");
@@ -259,7 +348,14 @@
                 if ($('#requestProcessPanel').hasClass("col-md-8")) {
                     $('#requestProcessPanel').removeClass("col-md-8");
                     $('#requestProcessPanel').addClass("col-md-12");
+                } else {
+                    $('#requestPanel').removeClass("offset-md-4");
+                    $('#requestProcessPanel').addClass("col-md-12");
+                    $('#requestProcessPanel').css({
+                        opacity: 1
+                    })
                 }
+
                 return;
             }
             if ($('#requestPanel').hasClass("sr-only")) {
@@ -294,6 +390,7 @@
             }
 
         }
+        LoadManufactureingHub();
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ env('MAP_KEY') }}&callback=initMap" async defer></script>
     <script>

@@ -38,17 +38,17 @@
 
             </div>
             <div class="reportPanel mt-3  ">
-                <table id="table" class="table   table-striped table-bordered   ">
+                <table id="tableDetails" class="table   table-striped table-bordered   ">
                     <thead>
                         <tr>
-                            <th>Planing Date</th>
+                            <th>Plan Name</th>
+                            <th>Plan Date</th>
                             <th>Pump</th>
                             <th>Product</th>
                             <th class="text-center qty"> Suggested Qty.</th>
                             <th class="text-center qty"> Ordered Qty.</th>
                             <th class="text-center qty"> Received Qty.</th>
                             <th class="text-center">Status</th>
-                            <th>Action</th>
                         </tr>
 
                     </thead>
@@ -80,6 +80,38 @@
             align-self: center;
             padding-inline-start: 5px;
         }
+
+        #tableDetails {
+            width: 100% !important;
+        }
+        #table_wrapper.form-inline, #tableDetails_wrapper.form-inline, #table1_wrapper.form-inline, #table2_wrapper.form-inline {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: stretch;
+}
+        #tableDetails td:first-child {
+            max-width: 30rem;
+            font-weight:bold;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            word-break: break-all;
+            overflow: hidden;
+        }
+        #tableDetails td:nth-child(2) {
+            text-align: center;
+        }
+        @media screen and (max-width:480px){
+            #tableDetails td:first-child {
+            max-width: 20rem;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            word-break: break-all;
+            overflow: hidden;
+            padding-block: 0.5rem;
+        }
+        }
     </style>
     <script>
         let delivery_details = @json($delivery_details);
@@ -91,7 +123,7 @@
         let isReady = false;
 
         $(function() {
-            var listTable = $('#table').DataTable({
+            var listTable = $('#tableDetails').DataTable({
                 responsive: true,
                 select: false,
                 paging: false,
@@ -102,6 +134,12 @@
                 "oLanguage": langOpt,
                 data: delivery_details,
                 columns: [{
+                        "data": null,
+                        "render": function(data, type, full, meta) {
+                            return `${data['deliveryPlan']['planTitle']}`;
+                        }
+                    },
+                    {
                         "data": null,
                         "render": function(data, type, full, meta) {
                             const d = new Date(data['deliveryPlan']['planDate']);
@@ -172,17 +210,17 @@
                             let this_approval_url = approval_url.replace(':id', this_id);
                             let this_receive_url = receive_url.replace(':id', this_id);
                             var this_status =
-                            ` <div class="d-flex align-items-center justify-content-center">` +
-                                        `<a href="javascript:" ` +
-                                        `class="load-popup edit-quantity    text-secondary p-2 font-weight-bolder " ` +
-                                        `style="color:gray;" data-param="${this_id}" data-url="${this_approval_url}">` +
-                                        `<label >Waiting for approval</label>` +
-                                        `</a>` +
-                                        `<a href="javascript:" data-param="${this_id}" data-url="${this_approval_url}"` +
-                                        `title="Approve Requirement"` +
-                                        `class="load-popup edit-quantity    text-info p-2 ">` +
-                                        `<i class="fas fa-pencil-alt m-0 "></i></a>` +
-                                        `</div>`;
+                                ` <div class="d-flex align-items-center justify-content-center">` +
+                                `<a href="javascript:" ` +
+                                `class="load-popup edit-quantity    text-secondary p-2 font-weight-bolder " ` +
+                                `style="color:gray;" data-param="${this_id}" data-url="${this_approval_url}">` +
+                                `<label >Waiting for approval</label>` +
+                                `</a>` +
+                                `<a href="javascript:" data-param="${this_id}" data-url="${this_approval_url}"` +
+                                `title="Approve Requirement"` +
+                                `class="load-popup edit-quantity    text-info p-2 ">` +
+                                `<i class="fas fa-pencil-alt m-0 "></i></a>` +
+                                `</div>`;
                             if (data['approveStatus'] == -1) {
                                 this_status =
                                     ` <div class="d-flex align-items-center justify-content-center">` +
@@ -197,7 +235,7 @@
                                         `class="load-popup edit-quantity    text-success p-2 font-weight-bolder " ` +
                                         `data-param="${this_id}" data-url="${this_approval_url}">` +
                                         `<label style="color:red;">Rejected</label>` +
-                                        `</a>`+`</div>`;
+                                        `</a>` + `</div>`;
                                 } else if (data['approveStatus'] == 2) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
@@ -300,15 +338,6 @@
 
 
                             return `${ this_status  }`;
-                        }
-                    },
-                    {
-                        "data": null,
-                        "render": function(data, type, full, meta) {
-                            let action = `<a href="" title="{{ __('View Full Plan') }}"
-                                        class="view_plan_details  btn btn-rounded animated-shine ">
-                                        <i class="fa fa-desktop m-0 "></i></a>`;
-                            return action;
                         }
                     }
                 ]
@@ -415,9 +444,10 @@
 
 
     <style>
-        .text-break{
-            white-space:pre-wrap;
+        .text-break {
+            white-space: pre-wrap;
         }
+
         .optionGroup {
             font-weight: bold;
             font-style: italic;

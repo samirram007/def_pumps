@@ -118,7 +118,8 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="officeAddress">{{ __('Address') }}</label>
-                                                <textarea class="form-control" rows="1" id="officeAddress" name="officeAddress" readonly
+                                                <textarea class="form-control" rows="1" id="officeAddress" name="officeAddress"
+                                                readonly
                                                     placeholder="{{ __('Enter Address') }}">{{ old('officeAddress') }}</textarea>
 
                                             </div>

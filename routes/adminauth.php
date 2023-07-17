@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HubController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Admin\MapController;
@@ -47,7 +48,9 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
         Route::get('/city/search_form', [CityController::class, 'city_search_form'])->name('companyadmin.city.search_form');
         Route::get('/city/search/{str}', [CityController::class, 'city_search'])->name('companyadmin.city.search');
         Route::post('/city/add', [CityController::class, 'city_add'])->name('companyadmin.city.add');
-
+        Route::get('/hub/create', [HubController::class,  'create'])->name('companyadmin.hub.create');
+        Route::get('/hub/list', [HubController::class,  'list'])->name('companyadmin.hub.list');
+        Route::post('/hub/add', [HubController::class,  'store'])->name('companyadmin.hub.add');
         //Admin Dashboard
         Route::post('/dashboard_filter', [AdminDashboardController::class, 'dashboard_filter'])->name('companyadmin.dashboard_filter');
         Route::post('/dashboard/chart1_export', [AdminDashboardController::class, 'chart1_export'])->name('companyadmin.chart1_excel');

@@ -14,7 +14,7 @@
                 </div>
                 <div class="col-md-6">
 
-                    {{ __('Hub') }}: <span class="font-weight-bold">{{ $planDetails['startPoint']['cityName'] }}</span>
+                    {{ __('Hub') }}: <span class="font-weight-bold">{{ $planDetails['startPoint']['hubName'] }}</span>
                 </div>
                 <div class="col-md-6">
                     {{ __('Plan Date') }}: <span class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails['deliveryPlan']['planDate'])) }}</span>

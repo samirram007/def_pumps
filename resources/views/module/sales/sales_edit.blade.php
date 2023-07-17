@@ -190,7 +190,7 @@
                                                                     data-isreserver="{{ $tg['isReserver'] == 1 ? '1' : '0' }}"
                                                                     data-capacity="{{ $tg['capacity'] }}"
                                                                     data-currentstock="{{ $tg['currentStock'] }}"
-                                                                    {{ $tg['godownId'] == $editData['godownId'] ? 'selected' : '' }}>
+                                                                    {{ $editData['godownId']!=null? ( $tg['godownId'] == $editData['godownId'] ? 'selected' : '') :''}} >
                                                                     {{ __($tg['godownName']) }}
                                                                 </option>
                                                             @empty
@@ -874,11 +874,14 @@ quantityBlurCount++;
 
                         $('.submit').attr('disabled', false);
                         $('.submit').html('Submit');
-                        $.each(data.errors, function(key, value) {
+                        let errorStr=''
+                            $.each(data.errors, function(key, value) {
                             $('#' + key).addClass('is-invalid');
-                            $('#' + key).next().text(value);
+                            // $('#' + key).next().text(value);
+                            errorStr+=`<p>${value}</p>`;
                             toastr.error(value);
                         });
+                        Swal.fire('',errorStr,'warning');
 
                     } else {
                         setTimeout(() => {
