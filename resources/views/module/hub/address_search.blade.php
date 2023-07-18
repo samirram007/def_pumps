@@ -24,6 +24,7 @@
 <script>
     $('#address_search').on('keyup', function() {
         var address = $(this).val();
+        var stateName = $('#stateId').find("option:selected").text();
         //console.log(address);
         if (address.length > 3) {
             $.ajax({
@@ -31,6 +32,7 @@
                 type: "GET",
                 data: {
                     address: address,
+                    stateName:stateName,
                     _token: "{{ csrf_token() }}"
                 },
                 success: function(response) {

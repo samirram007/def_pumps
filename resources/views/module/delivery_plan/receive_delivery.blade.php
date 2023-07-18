@@ -34,20 +34,36 @@
                         $status = '<span class="font-weight-bold text-gray">Receive Confirmation Pending</span>';
                         if ($planDetails['approveStatus'] == -1) {
                             $status = '<span class="font-weight-bold text-danger">Rejected</span>';
-                        }
-                        if ($planDetails['approveStatus'] == 2) {
-                            $status = '<span class="font-weight-bold text-success">Order Placed</span>';
+                        } elseif ($planDetails['approveStatus'] == 2) {
+                            if ($planDetails['deliveryPlan']['deliveryPlanStatusId'] == 2) {
+                                $status = '<span class="font-weight-bold text-success">Order Placed</span>';
+                            } elseif ($planDetails['deliveryPlan']['deliveryPlanStatusId'] == 3) {
+                                $status = '<span class="font-weight-bold text-success">Delivery On The Way</span>';
+                            }
+                        } elseif ($planDetails['approveStatus'] == 3) {
+                            $status = '<span class="font-weight-bold text-success">Received</span>';
                         }
 
                     @endphp
                     {{ __('Status') }}: {!! $status !!}
                 </div>
                 <div class="col-md-6">
-                    {{ __('Received Quantity') }}: <span class="font-weight-bold"
-                        id="receivedQty">{{ $planDetails['approvedQuantity'] }}</span>
+                    @if ($planDetails['approveStatus'] == 3)
+                        {{ __('Received Quantity') }}: <span class="font-weight-bold"
+                            id="receivedQty">{{ $planDetails['receivedQuantity'] }}</span>
+                    @else
+                        {{ __('Receiving Quantity') }}: <span class="font-weight-bold"
+                            id="receivedQty">{{ $planDetails['approvedQuantity'] }}</span>
+                    @endif
                 </div>
                 <div class="col-md-6">
-                    {{ __('Distributed Quantity') }}: <span class="font-weight-bold" id="distributedQty">0</span>
+                    @if ($planDetails['approveStatus'] == 3)
+                        {{ __('Distributed Quantity') }}: <span class="font-weight-bold"
+                            id="distributedQty">{{ $planDetails['receivedQuantity'] }}</span>
+                    @else
+                        {{ __('Distributed Quantity') }}: <span class="font-weight-bold" id="distributedQty">0</span>
+                    @endif
+
                 </div>
 
 
@@ -540,7 +556,7 @@
             </button>` +
                     `<label>${ godown.godownName } to be filled</label>` +
                     `<div>` +
-                    `<input name="" type="number" max="${ godown.capacity.toFixed(0) }" step="100" `+
+                    `<input name="" type="number" max="${ godown.capacity.toFixed(0) }" step="100" ` +
                     ` onkeypress="fuelUpByEnter(event,${ godown.godownId },${ index })" class="form-control inputBox" placeholder="0" >` +
                     ` <button type="button" class="btn-fuel btn-sm btn-info" onclick="fuelUp(${ godown.godownId },${ index })"><i class="fa fa-plus"></i> </button>` +
                     `</div>` +

@@ -79,7 +79,22 @@ class HubController extends Controller
     {
        // dd($request->all());
         $data['addressList'] = ApiController::GetAddressList($request->input('address'))->json();
-       //  dd($data['addressList']);
+        //dd($request->input('stateName'));
+        foreach ($data['addressList']['results'] as $index => $value) {
+            //print_r($value['formatted_address']);
+            if (!str_contains($value['formatted_address'],$request->input('stateName'))) {
+                unset($data['addressList']['results'][$index]);
+            }
+            // print_r($value);
+            // $key = array_search($request->input('stateName'), $value['formatted_address'], true);
+
+            // if ($key !== false) {
+            //     unset($data['addressList']['results'][$key]);
+            // }
+        }
+
+
+      //dd($data['addressList']);
         $GetView= view('module.hub.address_list',$data)->render();
         return response()->json([
             "status" => true,

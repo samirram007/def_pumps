@@ -220,6 +220,9 @@
                     )
 
                 var address = $(this).val();
+                var stateName = $('#stateId').find("option:selected").text();
+               // console.log(stateName);
+
                 if ($('#google_address_search_panel').hasClass('sr-only')) {
                     $('#google_address_search_panel').removeClass('sr-only');
                     // var address = $('#hubAddress').val();
@@ -237,6 +240,7 @@
                             type: "GET",
                             data: {
                                 address: address,
+                    stateName:stateName,
                                 _token: "{{ csrf_token() }}"
                             },
                             success: function(response) {

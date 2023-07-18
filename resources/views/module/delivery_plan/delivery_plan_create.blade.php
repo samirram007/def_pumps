@@ -168,7 +168,7 @@
 
                                 </div>
                             </form>
-                            <div class="btn btn-primary" onClick="axiosCall();">Call Axios</div>
+                            {{-- <div class="btn btn-primary" onClick="axiosCall();">Call Axios</div> --}}
 
                         </div>
 
