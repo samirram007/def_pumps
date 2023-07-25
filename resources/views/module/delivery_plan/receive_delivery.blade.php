@@ -57,11 +57,14 @@
                     @endif
                 </div>
                 <div class="col-md-6">
+                    {{-- {{ $planDetails['approveStatus'] }} --}}
                     @if ($planDetails['approveStatus'] == 3)
-                        {{ __('Distributed Quantity') }}: <span class="font-weight-bold"
+                        {{ __('Remaining Quantity') }}: <span class="font-weight-bold" id="remainingQty">0</span>
+                        <span class="sr-only"
                             id="distributedQty">{{ $planDetails['receivedQuantity'] }}</span>
                     @else
-                        {{ __('Distributed Quantity') }}: <span class="font-weight-bold" id="distributedQty">0</span>
+                        {{ __('Remaining Quantity') }}: <span class="font-weight-bold" id="remainingQty">{{ $planDetails['approvedQuantity'] }}</span>
+                        <span class="sr-only" id="distributedQty">0</span>
                     @endif
 
                 </div>
@@ -269,6 +272,9 @@
                             margin: .3rem auto;
                             z-index: 1;
                         }
+                        .panelInputStock>label {
+                            white-space: nowrap;
+                        }
 
                         .btn-fuel {
                             font-size: 1.5rem;
@@ -289,7 +295,8 @@
     <script>
         var godownsArray = [];
         var godowns = @JSON($godowns[0]['godownProduct']);
-        console.log(godowns);
+        var deliveryGodownMapper = @JSON($planDetails['deliveryGodownMapper']);
+        console.log(deliveryGodownMapper);
         $(document).ready(() => {
             setTimeout(() => {
                 $('#receivedQuantity').focus();
@@ -303,11 +310,22 @@
 
         function showPanel(godownId, index) {
             let tankElement = document.getElementById('godown' + godownId);
+
+            let current = tankElement.dataset.index;
+            let tankArray = godowns[index];
+            let target = tankArray.currentStock;
+            let capacity=tankArray.capacity ;
+            let remainingCapacity=parseFloat(document.getElementById('remainingQty').innerHTML);
+
+            let fillableQty=(capacity-target)>remainingCapacity?remainingCapacity:(capacity-target);
+
             if (tankElement.querySelector('.panelInputStock').classList.contains('sr-only')) {
                 tankElement.querySelector('.panelInputStock').classList.remove('sr-only')
                 tankElement.querySelector('.inputBox').focus();
+                tankElement.querySelector('.inputBox').value=parseInt(fillableQty)
             } else {
                 tankElement.querySelector('.panelInputStock').classList.add('sr-only')
+                tankElement.querySelector('.inputBox').value=''
             }
 
         }
@@ -323,12 +341,14 @@
             let tankElement = document.getElementById('godown' + godownId);
             var thisStock = tankElement.querySelector('.inputBox').value;
             var lastCalculated = $('#distributedQty').html();
+
             //console.log(thisStock);
             if (tankElement.querySelector('.inputBox').value > 0) {
                 if (!canLoad(godownId, index, thisStock)) {
                     tankElement.querySelector('.inputBox').focus();
                     let errorStr = "Quantity overflow!<br>Please! check your input"
-                    Swal.fire('', errorStr, 'warning');
+                    toastr.warning(errorStr)
+                   // Swal.fire('', errorStr, 'warning');
 
                     return;
                 }
@@ -337,7 +357,8 @@
             } else {
                 tankElement.querySelector('.inputBox').focus();
                 let errorStr = "Enter value to be transfer"
-                Swal.fire('', errorStr, 'warning');
+                toastr.warning(errorStr)
+                // Swal.fire('', errorStr, 'warning');
 
                 return;
             }
@@ -494,6 +515,7 @@
                 return accumulator + parseInt(object.quantity);
             }, 0);
             $('#distributedQty').html(distributed)
+            $('#remainingQty').html(rcvdQty-distributed)
             // console.log(distributed, rcvdQty);
             if (distributed >= parseInt(rcvdQty)) {
                 // console.log(distributed);
@@ -518,27 +540,33 @@
             let receivedQty = $('#receivedQuantity').val();
             let distributedQty = $('#distributedQty').val();
 
-            let strGodown = ''
+            let strGodown = '';
             godowns.forEach((godown, index) => {
 
+                let thisdeliveryGodownMapper = deliveryGodownMapper.filter(
+                    function(currentValue, index, arr) {
+
+                        return godown.godownId == currentValue.godownId
+                    }
+                );
+                // console.log(thisdeliveryGodownMapper);
+               let LoadedQuantity=thisdeliveryGodownMapper.length==0?0:thisdeliveryGodownMapper[0].quantity;
+                    console.log(LoadedQuantity);
+                    godown.currentStock-=LoadedQuantity;
                 let fluidPercentage = parseInt(godown.currentStock) / parseInt(godown.capacity) * 100;
+
                 let styleText = `background: ` +
-                    `linear-gradient(0deg, rgba(0,151,255,0.6) ${fluidPercentage}%, rgba(255,255,255,0) ${fluidPercentage}% )`;
+                    `linear-gradient(0deg, rgba(0,201,210,0.3) ${fluidPercentage}%, rgba(255,255,255,0) ${fluidPercentage}% )`;
+                    if(LoadedQuantity>0){
+                        let LoadedPercentage=parseInt(LoadedQuantity) / parseInt(godown.capacity) * 100;
+                        styleText = `background: ` +
+                    `linear-gradient(0deg, rgba(00,201,200,0.6) ${fluidPercentage}%, rgba(151,151,151,0.6) ${fluidPercentage}%,rgba(151,151,155,0.2) ${LoadedPercentage+fluidPercentage}%,rgba(255,255,255,0) ${fluidPercentage}% )`;
+                    }
                 strGodown += `<div id="godown${ godown.godownId }" ` +
                     `style="${styleText}"` +
                     `data-index="${ index }"` +
                     `data-godownid="${ godown.godownId }" class="godown">` +
-                    `<div class="position-absolute"><svg viewBox="0 0 200 200" xmlns='http://www.w3.org/2000/svg'>
-                            <filter id='noiseFilter'>
-                                <feTurbulence
-                                type='fractalNoise'
-                                baseFrequency='0.65'
-                                numOctaves='3'
-                                stitchTiles='stitch' />
-                            </filter>
-
-                            <rect width='100%' height='100%' filter='url(#noiseFilter)' />
-                            </svg></div>` +
+                    `<div class="position-absolute"></div>` +
 
                     `<button class="img-btn" type="button" onclick="showPanel(${ godown.godownId },${ index });">` +
                     `<i class="fa fa-plus"></i>` +
@@ -549,14 +577,15 @@
                     `<div class="isReserver">{{ __('Reserver') }}: ${ godown.isReserver }` +
                     `</div>` +
                     `<div class="currentStock">` +
-                    `{{ __('Current') }}:${ godown.currentStock.toFixed(0) } <span class="addedStock">+</span></div>` +
+                    `{{ __('Current') }}:${ godown.currentStock.toFixed(0) } <span class="addedStock">`+
+                        `+ ${LoadedQuantity>0? LoadedQuantity+'(added)':''}</span></div>` +
                     `<div class="panelInputStock sr-only"  >` +
                     `<button type="button" class="img-btn" onclick="showPanel(${ godown.godownId },${ index });">
                 <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
             </button>` +
                     `<label>${ godown.godownName } to be filled</label>` +
                     `<div>` +
-                    `<input name="" type="number" max="${ godown.capacity.toFixed(0) }" step="100" ` +
+                    `<input name="" type="number" max="${ godown.capacity.toFixed(0) }" step="1" ` +
                     ` onkeypress="fuelUpByEnter(event,${ godown.godownId },${ index })" class="form-control inputBox" placeholder="0" >` +
                     ` <button type="button" class="btn-fuel btn-sm btn-info" onclick="fuelUp(${ godown.godownId },${ index })"><i class="fa fa-plus"></i> </button>` +
                     `</div>` +
@@ -624,8 +653,11 @@
             var receivedQuantity = 0;
             if ($('#receivedQuantity').val() > 0) {
                 $('#receivedQty').html($('#receivedQuantity').val())
+                $('#remainingQty').html($('#receivedQuantity').val())
+
             } else {
                 $('#receivedQty').html($('#approvedQuantity').val())
+                $('#remainingQty').html($('#approvedQuantity').val())
             }
 
         });
@@ -684,16 +716,17 @@
                         $('#filter').click();
                         $("#modal-popup .close").click()
                         // window.location.reload();
+
                     }, 1000);
                     return;
                     // toggleRequestPanel();
                 }
                 $('.submit').attr('disabled', false);
-                $('.submit').html('Approve');
+                $('.submit').html('Confirm');
             }).fail(function(data) {
 
                 $('.submit').attr('disabled', false);
-                $('.submit').html('Approve');
+                $('.submit').html('Confirm');
                 toastr.error(data.message);
 
                 // console.log(data);

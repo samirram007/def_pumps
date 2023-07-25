@@ -31,32 +31,6 @@
         let destinationCord = [];
 
         let infoHTML = '';
-        //   await fetch("{{ asset('route.json') }}",)
-        //     .then((response) => response.json())
-        //     .then((json) => {
-        //       json=json["Routes"]["Algorithm_1"]
-        //       console.log(json);
-        //       for (let index = 0; index < json["Route"].length - 1; index++) {
-        //         const latitude = json["Route"][index]["latitude"];
-        //         const longitude = json["Route"][index]["longitude"];
-        //         const latitude2 = json["Route"][index + 1]["latitude"];
-        //         const longitude2 = json["Route"][index + 1]["longitude"];
-        //         if (index + 1 < json["Route"].length - 1) {
-        //           waypt.push({
-        //             location: new google.maps.LatLng(latitude2, longitude2)
-        //           });
-        //         }
-        //         // new google.maps.Marker({
-        //         //   position: new google.maps.LatLng(latitude, longitude),
-        //         //   map,
-        //         //   title: json["Route"][index]["officeName"],
-        //         //   label: { text: index.toString(), color: "white" },
-        //         // });
-
-        //       }
-        //     }
-
-        //     );
 
 
         json["Route"] = newList;
@@ -91,17 +65,13 @@
 
 
         }
-        // console.log(parseFloat(destinationCord["latitude"]) );
-        // let orgLat=
-        //   origin: new google.maps.LatLng(24.317600, 82.973900), //Varanasi location
-        //   destination: new google.maps.LatLng(24.317600, 82.973900),//Varanasi location
-        //origin: new google.maps.LatLng(parseFloat(originCord["latitude"]), parseFloat(originCord["longitude"])), //Varanasi location
+
         directionsService
             .route({
                 origin: new google.maps.LatLng(parseFloat(originCord["latitude"]), parseFloat(originCord[
-                    "longitude"])), //Varanasi location
+                    "longitude"])),
                 destination: new google.maps.LatLng(parseFloat(destinationCord["latitude"]), parseFloat(
-                    destinationCord["longitude"])), //Varanasi location
+                    destinationCord["longitude"])),
                 waypoints: waypt,
                 optimizeWaypoints: false,
                 travelMode: google.maps.TravelMode.DRIVING,
@@ -184,6 +154,7 @@
         return hours + '<b>h</b> ' + minutes + '<b>m</b> ' + seconds + '<b>s</b>';
     }
 </script>
+
 <!-- <script src="mapsJavaScriptAPI.js" async defer></script> -->
 <script>
    // console.clear();

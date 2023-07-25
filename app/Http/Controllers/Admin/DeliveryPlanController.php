@@ -26,11 +26,14 @@ class DeliveryPlanController extends Controller
 
         // $this->paymentMode = ApiController::GetPaymentMode();
         // $this->fiscalYear = ApiController::GetFiscalYears();
-        $roles = ApiController::GetRoles();
+        //dd(session()->all());
+        $roles = session()->has('roles')? json_decode(json_encode(session()->get('roles')), true): session()->put('roles',ApiController::GetRoles());
         $del_val = ['SuperAdmin', 'CompanyAdmin'];
-        foreach ($roles as $key => $value) {
-            if (!in_array($value['name'], $del_val)) {
-                $this->roles[$value['name']] = $value['name'];
+        if($roles){
+            foreach ($roles as $key => $value) {
+                if (!in_array($value['name'], $del_val)) {
+                    $this->roles[$value['name']] = $value['name'];
+                }
             }
         }
         $user = session()->has('userData') ? json_decode(json_encode(session()->get('userData')), true) : ApiController::user(session()->get('loginid'));
@@ -51,8 +54,8 @@ class DeliveryPlanController extends Controller
 
             $data['delivery_plans']=DeliveryPlan::get_all();
 
-            $data['planningDate']=date('Y-m-d');
-            $data['expectedDeliveryDate']=date('Y-m-d', strtotime($data['planningDate'] . ' + 4 days'));
+            $data['planDate']=date('Y-m-d');
+            $data['expectedDeliveryDate']=date('Y-m-d', strtotime($data['planDate'] . ' + 4 days'));
 
             return view('module.delivery_plan.delivery_plan_index',$data);
         }
@@ -76,7 +79,7 @@ class DeliveryPlanController extends Controller
 
         $data['roleName'] = $this->roleName;
         $data['routeRole'] = $this->routeRole;
-       // $date_diff=date_diff(date_create($request->expectedDeliveryDate),date_create($request->planningDate))->format("%a");
+       // $date_diff=date_diff(date_create($request->expectedDeliveryDate),date_create($request->planDate))->format("%a");
 
        //dd($today);
        $date_diff=date_diff(date_create($request->expectedDeliveryDate),date_create(date('Y-m-d')))->format("%a");
@@ -84,27 +87,29 @@ class DeliveryPlanController extends Controller
         // dd(date_create(date('Y-m-d')));
         //  $date_diff=date_diff(date_create($request->ExpectedDeliveryDate),date_create(date('Y-m-d')))->format("%a");
 
-        $data['request']=[
+             $data['request']=[
             "ProductTypeId"=> (int)$request->productId,
             "StartingPointId"=> (int)$request->manufactureingHub,
             "MinimumMultiple"=> (double)$request->deliveryLimit,
             "TankCapacity"=> (float)$request->tankerCapacity,
             "No_of_days_for_delivery"=>(int)$date_diff,
-            "DeliveryPlanId"=>0,
+            "DeliveryPlanId"=>(int)$request->deliveryPlanId,
             "OfficeIdList"=> []
-        ];
+            ];
+
+
        // dd(json_encode($data['request']));
         $data['response'] = DeliveryPlan::GetDeliveryRequest($data['request']);
-
-        $data['request']['planningDate']=$request->planningDate;
+//dd($data['response']);
+        $data['request']['planDate']=$request->planDate;
         $data['request']['expectedDeliveryDate']=$request->expectedDeliveryDate;
         //dd($data['request']);
        // $data['jsonData'] = json_encode($data['response']);
        // dd($data['jsonData'] );
-       $data['planTitle']='DeliveryPlan_'.str_replace(' ','_',$request->product).'_'.$request->tankerCapacity .'_'.$request->deliveryLimit.'_'.$request->mfgHub.'_'.date_create($request->expectedDeliveryDate)->format('d-m-Y');
+       $data['planTitle']='DP_'.str_replace(' ','_',$request->product).'_'.$request->tankerCapacity .'_'.$request->deliveryLimit.'_'.$request->mfgHub.'_'.date_create($request->expectedDeliveryDate)->format('d-m-Y');
 
        $data['requestData']=$data['request'];
-       //dd($data['planTitle']);
+       // dd($data['response']);
         $view=view('module.delivery_plan.delivery_plan_request',$data)->render();
         return response()->json([
             "status" => true,
@@ -138,7 +143,7 @@ class DeliveryPlanController extends Controller
         // dd(json_encode($data['request']));
         // dd($data);[implode('","', json_decode($request->OfficeIdList))]
         $data['response'] = DeliveryPlan::GetDeliveryRequest($data['request']);
-        $data['request']['planningDate']=$request->planningDate;
+        $data['request']['planDate']=$request->planDate;
         $data['request']['expectedDeliveryDate']=$request->expectedDeliveryDate;
         //dd($data['response']);
        // $data['jsonData'] = json_encode($data['response']);
@@ -171,9 +176,15 @@ class DeliveryPlanController extends Controller
         // $data['manufacturingHubs']=DeliveryPlan::GetManufacturingHub();
         $data['manufacturingHubs']=Hub::GetHubList();
 
-        $data['products']=Product::get_all($user['officeId']);
-        $data['planningDate']=date('Y-m-d');
-        $data['expectedDeliveryDate']=date('Y-m-d', strtotime($data['planningDate'] . ' + 4 days'));
+        $products=Product::get_all($user['officeId']);
+        $data['products'] = array_filter($products, function ($item)  {
+            if (stripos($item['productTypeId'], 1) !== false) {
+                return true;
+            }
+            return false;
+        });
+
+       // dd($data['products']);
         $data['tankerCapacities']=[
             ['capacity'=>5000],
             ['capacity'=>10000],
@@ -187,7 +198,17 @@ class DeliveryPlanController extends Controller
             ['limit'=>2000]
 
         ];
-        $data['planTitle']='';
+        $data['deliveryPlanId']=0;
+        $data['delivery_details']=null;
+
+        $data['planDate']=date('Y-m-d');
+        $data['expectedDeliveryDate']=date('Y-m-d', strtotime($data['planDate'] . ' + 4 days'));
+        $data['tankerCapacity']=12000;
+        $data['deliveryLimit']=500;
+        $data['planTitle']='New';
+        $data['deliveryPlanStatusId']=0;
+        $data['manufactureingHub']=1;
+        $data['productId']=1;
         return view('module.delivery_plan.delivery_plan_create',$data);
     }
 
@@ -206,6 +227,7 @@ class DeliveryPlanController extends Controller
         $validator = Validator::make($request->all(), [
             'planTitle' => 'required|max:60',
             'PlanDate' => 'required',
+            'StartingPointId' => 'required',
             'ExpectedDeliveryDate' => 'required',
             'productId' => 'required|numeric|min:1',
             'TankCapacity' => 'required|numeric|min:1',
@@ -219,6 +241,7 @@ class DeliveryPlanController extends Controller
                 "errors" => $validator->errors()
             ]);
         }
+
         $data=[
             'planTitle'=>base64_encode($request->planTitle),
             'planDate'=>$request->PlanDate,
@@ -226,7 +249,7 @@ class DeliveryPlanController extends Controller
             'productId'=>$request->productId,
             'startPointId'=>$request->StartingPointId,
             'containerSize'=>$request->TankCapacity,
-            'deliveryLimit'=>$request->TankCapacity,
+            'deliveryLimit'=>$request->MinimumMultiple,
             'deliveryPlanStatusId'=>1,
             'userId'=>$user['id'],
         ];
@@ -243,9 +266,16 @@ class DeliveryPlanController extends Controller
             array_push($data['deliveryPlanDetails'],$detailsArray);
 
         }
+        if($request->deliveryPlanId>0){
+            $data['deliveryPlanId']=$request->deliveryPlanId;
+
+            $response = DeliveryPlan::UpdateDeliveryPlan($data);
+        }
+        else{
+            $response = DeliveryPlan::SaveDeliveryPlan($data);
+        }
 
 
-        $response = DeliveryPlan::SaveDeliveryPlan($data);
         //dd($response['message']);
         if(!$response['status']==true){
             return response()->json([
@@ -255,7 +285,7 @@ class DeliveryPlanController extends Controller
         }
        return response()->json([
             "status" => true,
-            "message" => "Delivery Plan Added successfully"
+            "message" => "Delivery Plan Updated successfully"
         ]);
 
     }
@@ -316,9 +346,14 @@ class DeliveryPlanController extends Controller
 
         $data['manufacturingHubs']=DeliveryPlan::GetManufacturingHub();
 
-        $data['products']=Product::get_all($user['officeId']);
-        $data['planningDate']=date('Y-m-d');
-        $data['expectedDeliveryDate']=date('Y-m-d', strtotime($data['planningDate'] . ' + 4 days'));
+
+        $products=Product::get_all($user['officeId']);
+        $data['products'] = array_filter($products, function ($item)  {
+            if (stripos($item['productTypeId'], 1) !== false) {
+                return true;
+            }
+            return false;
+        });
         $data['tankerCapacities']=[
             ['capacity'=>5000],
             ['capacity'=>10000],
@@ -332,8 +367,17 @@ class DeliveryPlanController extends Controller
             ['limit'=>2000]
 
         ];
+        $data['deliveryPlanId']=$id;
         $data['delivery_details']=DeliveryPlan::GetDeliveryPlanDetailsByDeliveryPlanId($id);
-        $data['planTitle']='';
+     // dd($data['delivery_details'][0]['deliveryPlan']);
+        $data['planDate']=date('Y-m-d',strtotime($data['delivery_details'][0]['deliveryPlan']['planDate']));
+        $data['expectedDeliveryDate']=date('Y-m-d',strtotime($data['delivery_details'][0]['deliveryPlan']['expectedDeliveryDate']));
+        $data['tankerCapacity']=$data['delivery_details'][0]['deliveryPlan']['containerSize'];
+        $data['deliveryLimit']=$data['delivery_details'][0]['deliveryPlan']['deliveryLimit'];
+        $data['planTitle']=$data['delivery_details'][0]['deliveryPlan']['planTitle'];
+        $data['deliveryPlanStatusId']=$data['delivery_details'][0]['deliveryPlan']['deliveryPlanStatusId'];
+        $data['manufactureingHub']=$data['delivery_details'][0]['deliveryPlan']['startPointId'];
+        $data['productId']=$data['delivery_details'][0]['deliveryPlan']['productId'];
         return view('module.delivery_plan.delivery_plan_create',$data);
     }
 
@@ -427,6 +471,7 @@ class DeliveryPlanController extends Controller
         $data['roleName']=$this->roleName;
         $data['routeRole']= $this->routeRole;
         $data['planDetails'] = DeliveryPlan::GetDeliveryPlanDetailsById($id);
+       // dd($data['planDetails']);
         $officeId=$data['planDetails']['officeId'];
         $data['godowns']=Godown::GetCurrentStockWithGodownByOfficeId($officeId);
         $GetView = view('module.delivery_plan.receive_delivery', $data)->render();
@@ -465,10 +510,9 @@ class DeliveryPlanController extends Controller
             'receivedBy'=>$user['id'],
         ];
         $deliveryGodownList=$request->deliveryGodownList;
-        $submitData['deliveryGodownMapper']=json_decode($deliveryGodownList)->toarray();
-        // dd($submitData);
+        $submitData['deliveryGodownMapper']=json_decode($deliveryGodownList);
+        //dd($submitData);
         $response = DeliveryPlan::UpdateReceiveDelivery($submitData);
-        //dd($response['message']);
         if(!$response['status']==true){
             return response()->json([
                 "status" => false,
@@ -490,8 +534,8 @@ class DeliveryPlanController extends Controller
             $data['MasterOffice'] = session()->has('officeData') ? session()->get('officeData') : ApiController::GetOffice($user['officeId']);
 
             $data['delivery_plans']=DeliveryPlan::get_all();
-            $data['planningDate']=date('Y-m-d');
-            $data['expectedDeliveryDate']=date('Y-m-d', strtotime($data['planningDate'] . ' + 4 days'));
+            $data['planDate']=date('Y-m-d');
+            $data['expectedDeliveryDate']=date('Y-m-d', strtotime($data['planDate'] . ' + 4 days'));
             return response()->json([
                 "status" => true,
                 "data"=>$data,

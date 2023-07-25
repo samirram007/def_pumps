@@ -17,20 +17,25 @@
             <input type="text" name="productId" class="sr-only" value="{{ $requestData['ProductTypeId'] }}">
             <input type="text" name="productTypeId" class="sr-only" value="{{ $requestData['ProductTypeId'] }}">
             <input type="text" name="StartingPointId" class="sr-only" value="{{ $requestData['StartingPointId'] }}">
+            <input type="text" name="manufactureingHub" class="sr-only" value="{{ $requestData['StartingPointId'] }}">
             <input type="text" name="MinimumMultiple" class="sr-only" value="{{ $requestData['MinimumMultiple'] }}">
             <input type="text" name="TankCapacity" class="sr-only" value="{{ $requestData['TankCapacity'] }}">
             <input type="text" name="No_of_days_for_delivery" class="sr-only"
                 value="{{ $requestData['No_of_days_for_delivery'] }}">
-            <input type="date" name="PlanDate" class="sr-only" value="{{ $requestData['planningDate'] }}">
+            <input type="date" name="PlanDate" class="sr-only" value="{{ $requestData['planDate'] }}">
             <input type="date" name="ExpectedDeliveryDate" class="sr-only"
                 value="{{ $requestData['expectedDeliveryDate'] }}">
         @endif
 
         <div class="col-12 col-md-4 d-flex flex-row align-items-center justify-content-center  ">
 
-            <button id="save_plan" type="submit"
-                class="save_plan btn btn-rounded animated-shine px-2 mx-4">{{ __('Save Plan') }}</button>
-
+            @if (isset($requestData) && $requestData['DeliveryPlanId'] > 0)
+                <button id="save_plan" type="submit"
+                    class="save_plan btn btn-rounded animated-shine px-2 mx-4 w-100">{{ __('Update Plan') }}</button>
+            @else
+                <button id="save_plan" type="submit"
+                    class="save_plan btn btn-rounded animated-shine px-2 mx-4 ">{{ __('Save Plan') }}</button>
+            @endif
             <a href="javascript:" onclick="updateRoute();" title="{{ __('Update route') }}"
                 class="update-route   btn btn-rounded animated-shine px-2  ">
                 <i class="fa fa-bullseye"></i></a>
@@ -54,11 +59,12 @@
         <input type="text" name="productId" class="sr-only" value="{{ $requestData['ProductTypeId'] }}">
         <input type="text" name="productTypeId" class="sr-only" value="{{ $requestData['ProductTypeId'] }}">
         <input type="text" name="StartingPointId" class="sr-only" value="{{ $requestData['StartingPointId'] }}">
+        <input type="text" name="manufactureingHub" class="sr-only" value="{{ $requestData['StartingPointId'] }}">
         <input type="text" name="MinimumMultiple" class="sr-only" value="{{ $requestData['MinimumMultiple'] }}">
         <input type="text" name="TankCapacity" class="sr-only" value="{{ $requestData['TankCapacity'] }}">
         <input type="text" name="No_of_days_for_delivery" class="sr-only"
             value="{{ $requestData['No_of_days_for_delivery'] }}">
-        <input type="date" name="PlanDate" class="sr-only" value="{{ $requestData['planningDate'] }}">
+        <input type="date" name="PlanDate" class="sr-only" value="{{ $requestData['planDate'] }}">
         <input type="date" name="ExpectedDeliveryDate" class="sr-only"
             value="{{ $requestData['expectedDeliveryDate'] }}">
         <button id="modify_plan" type="submit" class="modify_plan  sr-only">{{ __('Update Plan') }}</button>
@@ -86,73 +92,7 @@
                         <td class="">{{ __('Suggested(in ltr)') }}</td>
                     </tr>
                 </thead>
-                {{-- <tbody id="wrapperOne">
-                    @php
-                        $sl_no = 0;
-                        $totalRequirement = 0;
-                        $totalCurrentStock = 0;
-                        $totalAvailability = 0;
-                    @endphp
-                    @if (isset($response))
-                        @forelse ($response['Routes']['Algorithm_1']['Route'] as $key => $item)
-                            @if ($item['atDeliveryRequirement'] > 0)
-                                <tr class="">
-                                    <td class="">{{ ++$sl_no }}</td>
-                                    <td class="">{{ $item['officeName'] }}</td>
-                                    <td class="">{{ number_format($item['currentStock'], 3, '.', '') }}</td>
-                                    <td class="">
-                                        {{ number_format($item['totalCapacity'] - $item['currentStock'], 3, '.', '') }}
-                                    </td>
-                                    <td class="">{{ number_format($item['atDeliveryRequirement'], 3, '.', '') }}
-                                    </td>
-                                    <td class="">
-                                        <div class="dragItem">
-                                            <div class=" {{ $key > 1 && $key < count($response['Routes']['Algorithm_1']['Route']) - 1 ? 'active' : 'not-active disabled' }}"
-                                                onclick="swapNow({{ $key }},{{ $key - 1 }});"><i
-                                                    class="fas fa-arrow-up"></i></div>
-                                            @php
-                                                // echo count($response['Routes']['Algorithm_1']['Route']);
-                                            @endphp
-                                            <div class=" {{ $key > 0 && $key < count($response['Routes']['Algorithm_1']['Route']) - 2 ? 'active' : 'not-active disabled' }}"
-                                                onclick="swapNow({{ $key }},{{ $key + 1 }});">
-                                                <i class="fas fa-arrow-down"></i>
-                                            </div>
-                                            <div onclick="deleteNow({{ $key }});">
-                                                <i class="fas    fa-download"></i>
-                                            </div>
-                                        </div>
 
-
-                                    </td>
-                                </tr>
-                                @php
-                                    $totalRequirement = $totalRequirement + $item['atDeliveryRequirement'];
-                                    $totalCurrentStock = $totalCurrentStock + $item['currentStock'];
-                                    $totalAvailability = $totalAvailability + ($item['totalCapacity'] - $item['currentStock']);
-                                @endphp
-                            @endif
-                        @empty
-                            <div class="dragBlock ">{{ __('No Data Found') }}</div>
-                        @endforelse
-                    @else
-                        <div class="dragBlock ">{{ __('No Data Found') }}</div>
-                    @endif
-
-                </tbody>
-                <tfoot id="tableFooterOne">
-                    <tr class=" ">
-                        <th colspan="2" class="">{{ __('Total Pumps( as ready ) : ') }}{{ $sl_no }}
-                        </th>
-
-                        <th class=" text-white">{{ number_format($totalCurrentStock, 3, '.', '') }}</th>
-                        <th class=" text-white">{{ number_format($totalAvailability, 3, '.', '') }}</th>
-
-
-                        <th class="pl-0 ">{{ number_format($totalRequirement, 3, '.', '') }}</th>
-
-                        <th></th>
-                    </tr>
-                </tfoot> --}}
             </table>
         </div>
 
@@ -266,13 +206,27 @@
 </div>
 
 <style scoped>
+    .set-transparent {
+        animation: opec 1s ease-in 1;
+    }
+
+    @keyframes opec {
+        0% {
+            opacity: 1
+        }
+        80% {
+            0
+        }
+    }
+
     .dragList {
         display: flex;
         justify-content: space-between;
         flex-flow: column nowrap;
     }
-    .modified{
-         background-color:#ffd9dd!important;
+
+    .modified {
+        background-color: #ffd9dd !important;
     }
 
     .draggable {
@@ -293,17 +247,17 @@
         opacity: 0.5;
     }
 
-  .dragHeader>div>div {
+    .dragHeader>div>div {}
 
-  }
-  .rowHeader{
-    display: flex;
-    gap:20px;
-    flex-direction: row;
-  }
-  .rowHeader::before{
-    content: '';
-  }
+    .rowHeader {
+        display: flex;
+        gap: 20px;
+        flex-direction: row;
+    }
+
+    .rowHeader::before {
+        content: '';
+    }
 
     .dragBlockHeader,
     .dragBlockFooter {
@@ -393,8 +347,9 @@
 
             // console.log(formData);
             //return;reportPanel
-            $('.save_plan').attr('disabled', true);
-            $('.save_plan').html(
+            let btnText = $('#save_plan').html();
+            $('#save_plan').attr('disabled', true);
+            $('#save_plan').html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> '
             );
 
@@ -409,8 +364,8 @@
             }).done(function(data) {
                 if (!data.status) {
 
-                    $('.save_plan').attr('disabled', false);
-                    $('.save_plan').html('Save Plan');
+                    $('#save_plan').attr('disabled', false);
+                    $('#save_plan').html(btnText);
 
                     if (data.errors != 'undefined') {
                         $.each(data.errors, function(key, value) {
@@ -423,21 +378,25 @@
                         toastr.error(data.message);
                     }
 
-                    $('.save_plan').attr('disabled', false);
-                    $('.save_plan').html('Save Plan');
+                    $('#save_plan').attr('disabled', false);
+                    $('#save_plan').html(btnText);
                 } else {
+                    toastr.success(data.message);
+                    $('#content-wrapper').addClass('set-transparent');
+
                     setTimeout(() => {
                         //$('.search').click();
                         // $('.close').click();
-                        $('.save_plan').attr('disabled', false);
-                        $('.save_plan').html('Save Plan');
-                        toastr.success(data.message);
-                    }, 1000);
+                        // $('#save_plan').attr('disabled', false);
+                        // $('#save_plan').html(btnText);
+
+                        window.location.href = `{{ route('companyadmin.delivery_plan') }}`;
+                    }, 100);
                 }
             }).fail(function(data) {
 
-                $('.save_plan').attr('disabled', false);
-                $('.save_plan').html('Save Plan');
+                $('#save_plan').attr('disabled', false);
+                $('#save_plan').html(btnText);
                 toastr.error(data.message);
 
                 // console.log(data);
@@ -525,20 +484,7 @@
         var extra_list = response.Not_selected;
 
         var extraList = extra_list;
-        // console.log(newList);
-        // console.log(extraList);
-        // $.each(routeList, function(key, value) {
-        //     console.log(key + ": " + value);
-        //     if (key == 3) {
-        //         let tmp = routeList[1];
-        //         routeList[1] = value;
-        //         routeList[key] = tmp;
-        //         console.log(routeList);
 
-
-        //     }
-
-        // });
         function replacer(key, value) {
             if (typeof value === 'string') {
                 //to avoid ///"
@@ -712,9 +658,9 @@
                 }
             });
             // let newListLength=newList.length - 2;
-            var strOne = `<div class="rowHeader">`+
-                `<div>Total requirements for  suggested ${(newList.length - 2)} pump(s) is `+
-                    `: ${ parseFloat(addOne.atDeliveryRequirement).toFixed(0)} ltr</div>` +
+            var strOne = `<div class="rowHeader">` +
+                `<div>Total requirements for  suggested ${(newList.length - 2)} pump(s) is ` +
+                `: ${ parseFloat(addOne.atDeliveryRequirement).toFixed(0)} ltr</div>` +
                 `</div>`;
             $('#SummaryOne').html(strOne);
 
@@ -725,8 +671,8 @@
 
                 }
             });
-            var strTwo = `<div class="rowHeader">`+
-                `<div>Total requirements for  more  ${extraList.length}  Pump(s) is `+
+            var strTwo = `<div class="rowHeader">` +
+                `<div>Total requirements for  more  ${extraList.length}  Pump(s) is ` +
                 ` : ${parseFloat(addTwo.atDeliveryRequirement).toFixed(0)} ltr</div>` +
                 `</div>`;
             $('#SummaryTwo').html(strTwo);
@@ -770,7 +716,7 @@
     </script>
     <script>
         var idx = 1;
-        var modifiedOffice=[]
+        var modifiedOffice = []
         var dt_table1 = $('#table1').DataTable({
             responsive: true,
             select: false,
@@ -788,7 +734,7 @@
                 $(row).attr('data-index', index + 1);
                 $(row).attr('data-source', 'table1');
                 $(row).attr('onDragStart', 'dragStart(event)');
-                if(modifiedOffice.includes(data.officeId)){
+                if (modifiedOffice.includes(data.officeId)) {
                     $(row).addClass('modified');
                     console.log(row);
                 }
@@ -864,7 +810,7 @@
                 $(row).attr('data-index', index);
                 $(row).attr('data-source', 'table2');
                 $(row).attr('onDragStart', 'dragStart(event)');
-                if(modifiedOffice.includes(data.officeId)){
+                if (modifiedOffice.includes(data.officeId)) {
                     $(row).addClass('modified');
                 }
             },
@@ -1000,13 +946,10 @@
         //         console.log("Drop Others");
         //     }
         // })
-        $(document).ready(function() {
-            // let draggable = document.querySelectorAll('.draggable')
-            // let container = document.querySelectorAll('.table')
-            // console.log(draggable, container);
-
+        $(document).ready(() => {
             calculateSummary();
         });
+
     </script>
 @endif
 

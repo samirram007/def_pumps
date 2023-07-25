@@ -32,13 +32,17 @@ class LoginController extends Controller
     public function __construct()
     {
 
-        $roles = ApiController::GetRoles();
+       // $roles = ApiController::GetRoles();
+        $roles = session()->has('roles')? json_decode(json_encode(session()->get('roles')), true): session()->put('roles',ApiController::GetRoles());
         $del_val = ['SuperAdmin'];
-        foreach ($roles as $key => $value) {
+       if($roles){
+         foreach ($roles as $key => $value) {
             if (!in_array($value['name'], $del_val)) {
                 $this->roles[$value['name']] = $value['name'];
             }
         }
+       }
+
     }
     public function welcome()
     {

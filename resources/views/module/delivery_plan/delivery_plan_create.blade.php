@@ -18,7 +18,7 @@
         // let Longitude = '140.887';
         // let newList=[];
     </script>
-    <div class="content-wrapper">
+    <div class="content-wrapper" id="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2 justify-content-between align-items-center">
@@ -29,7 +29,12 @@
                                     class="text-active">{{ __('Dashboard') }}</a></li>
                             <li class="breadcrumb-item "><a href="{{ route($routeRole . '.delivery_plan') }}"
                                     class="text-active">{{ __('Delivery plan') }}</a></li>
-                            <li class="breadcrumb-item active">{{ __('create') }}</li>
+                            @if ($deliveryPlanId > 0)
+                                <li class="breadcrumb-item active">{{ __('modify') }}</li>
+                            @else
+                                <li class="breadcrumb-item active">{{ __('create') }}</li>
+                            @endif
+
                         </ol>
                     </div><!-- /.col -->
                     <div class="col-sm-6 sr-only">
@@ -66,12 +71,15 @@
                         <div class="card-content">
                             <form id="requestForm" enctype="multipart/form-data">
                                 @csrf
+                                <input type="text" class="sr-only" name="deliveryPlanId" value="{{ $deliveryPlanId }}">
+
                                 <div class="row">
                                     <div class="col-md-6 pt-3">
                                         <div class="label-text">{{ __('Product') }}</div>
                                         <select name="productId" id="productId" class="form-control">
                                             @foreach ($products as $product)
-                                                <option value="{{ $product['productTypeId'] }}">
+                                                <option value="{{ $product['productTypeId'] }}"
+                                                    {{ $product['productTypeId'] == $productId ? 'selected' : '' }}>
                                                     {{ __($product['productTypeName']) }}</option>
                                             @endforeach
                                         </select>
@@ -108,11 +116,11 @@
                                 </div>
                                 <div class="row">
                                     <div class=" col-6 pt-3">
-                                        <div class="text-center-lg text-left-md label-text">{{ __('Planning Date') }}</div>
+                                        <div class="text-center-lg text-left-md label-text">{{ __('Plan Date') }}</div>
                                         <div class="d-flex " style="gap:10px;">
                                             <div class="w-100  ">
-                                                <input type="date" class="form-control" name="planningDate"
-                                                    id="planningDate" value="{{ $planningDate }}">
+                                                <input type="date" class="form-control" name="planDate" id="planDate"
+                                                    value="{{ $planDate }}">
                                             </div>
 
                                         </div>
@@ -135,8 +143,8 @@
                                 <div class="row">
                                     <div class="col-6 pt-3">
                                         <div class="label-text">{{ __('Tanker Capacity') }}</div>
-                                        <input type="text" class="form-control" value="10000" id="tankerCapacity"
-                                            name="tankerCapacity">
+                                        <input type="text" class="form-control" value="{{ $tankerCapacity }}"
+                                            id="tankerCapacity" name="tankerCapacity">
                                         {{-- <select name="tankerCapacity" id="tankerCapacity" class="form-control">
                                             @foreach ($tankerCapacities as $tankerCapacity)
                                                 <option value="{{ $tankerCapacity['capacity'] }}">
@@ -146,8 +154,8 @@
                                     </div>
                                     <div class="col-6 pt-3">
                                         <div class="label-text">{{ __('Delivery Limit') }}</div>
-                                        <input type="text" class="form-control" value="500" id="deliveryLimit"
-                                            name="deliveryLimit">
+                                        <input type="text" class="form-control" value="{{ $deliveryLimit }}"
+                                            id="deliveryLimit" name="deliveryLimit">
                                         {{-- <select name="deliveryLimit" id="deliveryLimit" class="form-control">
                                             @foreach ($deliveryLimits as $deliveryLimit)
                                                 <option value="{{ $deliveryLimit['limit'] }}">
@@ -156,7 +164,7 @@
                                         </select> --}}
                                     </div>
                                     <div class="col-12 pt-3 d-flex justify-content-center ">
-                                        <button type="submit" title="{{ __('New Delivery Plan') }}"
+                                        <button id="RequestPlan" type="submit" title="{{ __('New Delivery Plan') }}"
                                             class="submit   btn btn-rounded animated-shine px-2 ">
                                             {{ __('Request a plan') }}</button>
                                         {{-- <button type="button" title="{{ __('load') }}"
@@ -200,6 +208,7 @@
             animation: fadein 0.5s ease forwards, blink 0.5s linear 3 alternate;
         }
 
+
         @keyframes blink {
             0% {
                 background: #8c6aca34;
@@ -217,6 +226,10 @@
     </style>
 
     <script>
+        const deliveryPlanId = {{ $deliveryPlanId }};
+
+        const delivery_details = @json($delivery_details);
+
         $("#requestForm").on("submit", function(event) {
             event.preventDefault();
             if ($('#reportPanel').hasClass('sr-only')) {
@@ -286,7 +299,7 @@
                 }
             }
             const officeData = await axios.get(url).then(resp => {
-               // console.log(resp.data);
+                // console.log(resp.data);
                 return resp.data;
 
             });
@@ -313,6 +326,7 @@
 
                     $('#manufactureingHub').val('');
                     let htmlStr = ''
+                    let manufactureingHub = {{ $manufactureingHub }};
                     response.data.forEach(element => {
 
                         htmlStr += `<option value="${ element['hubId'] }" ` +
@@ -322,14 +336,18 @@
                             `</option>`;
 
                     });
-                    // console.log( htmlStr);
+                    // console.log( manufactureingHub);
                     $('#manufactureingHub').html(htmlStr)
+                    $('#manufactureingHub').val(manufactureingHub);
+                    $('#manufactureingHub').addClass('bg-loaded')
+                    $('#manufactureingHub').select2()
 
-                    setTimeout(() => {
-                        $('#manufactureingHub').addClass('bg-loaded')
-                        $('#manufactureingHub').select2()
+                    // setTimeout(() => {
+                    //     $('#manufactureingHub').addClass('bg-loaded')
+                    //     $('#manufactureingHub').select2()
 
-                    }, 1500);
+
+                    // }, 500);
 
 
 
@@ -390,7 +408,30 @@
             }
 
         }
-        LoadManufactureingHub();
+
+        function init_loading() {
+           // console.log('Countr');
+            if (!$('#manufactureingHub').val() == '' || !$('#manufactureingHub').val() == 0) {
+                $("#RequestPlan").click();
+                toggleRequestPanel();
+                return;
+            } else {
+                //console.log('Countr wait');
+                setTimeout(() => {
+                    init_loading()
+                }, 1000);
+            }
+
+
+
+        }
+        $(document).ready(() => {
+           LoadManufactureingHub();
+            if (deliveryPlanId > 0) {
+                init_loading()
+
+            }
+        });
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ env('MAP_KEY') }}&callback=initMap" async defer></script>
     <script>

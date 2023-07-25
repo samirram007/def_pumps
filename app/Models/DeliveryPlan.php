@@ -47,6 +47,13 @@ class DeliveryPlan extends Model
        // dd($res);
         return $res;
     }
+    public static function UpdateDeliveryPlan($data){
+        //dd(json_encode($data));
+        $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];
+        $res = Http::withHeaders($headers)->post(env('API_RESOURCE_URL') . 'DeliveryPlan/UpdatePlan',$data);
+       // dd($res);
+        return $res;
+    }
     public static function ApproveDeliveryPlanDetails($data){
        // dd(json_encode($data));
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];

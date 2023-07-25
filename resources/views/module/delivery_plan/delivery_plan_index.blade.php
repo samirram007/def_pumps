@@ -165,12 +165,12 @@
                             let this_delete_url = delete_url.replace(':id', data['deliveryPlanId']);
                             let this_str =
                             ` <a href="${this_edit_url}"` +
-                            ` title="{{ __('Map View') }}" `+
-                                `class="   btn btn-rounded animated-shine px-2  ">` +
-                                `<i class="fas fa-map"></i></a>` +
+                            ` title="{{ __('Edit Plan') }}" `+
+                                `class="   btn btn-rounded  animated-shine px-2  ">` +
+                                `Edit Plan <i class="fas fa-pencil-alt"></i></a>` +
                                 ` <a href="${this_view_url}"` +
-                                `title="{{ __('View Full Plan') }}" class="view_plan  btn btn-rounded animated-shine ">` +
-                                ` <i class="fa fa-desktop m-0 "></i></a>`;
+                                `title="{{ __('Plan Details') }}" class="view_plan  btn btn-rounded animated-shine ">` +
+                                `  Plan Details <i class="fa fa-desktop m-0 "></i></a>`;
 
                             this_str += ` <a href="${this_view_url}"` +
                                 `title="{{ __('Delete') }}" class="delete  btn btn-rounded animated-shine-danger d-none   ">` +

@@ -36,7 +36,7 @@
                 <div class="container">
                     <div class="hero-inner">
                         <div class="hero-copy">
-                            {{ env('APP_DEBUG') ? (Session::has('_refreshtoken') ? Session::get('_refreshtoken') : 'expire') : '' }}
+                            {{-- {{ env('APP_DEBUG') ? (Session::has('_refreshtoken') ? Session::get('_refreshtoken') : 'expire') : '' }} --}}
                             <h1 class="hero-title mt-0">Welcome To<br><span>{{ ENV('APP_NAME') }}</span> </h1>
                             <p class="hero-paragraph">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam
                                 consectetur in sem in feugiat. Mauris a sapien sed felis eleifend tincidunt. Integer

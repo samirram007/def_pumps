@@ -1,4 +1,4 @@
-<div class="modal-dialog modal-lg   mt-4">
+<div class="modal-dialog modal-lg   mt-4 w-100">
     <script>
         var officeId = "{{ $office['officeId'] }}";
 

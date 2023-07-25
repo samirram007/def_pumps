@@ -104,6 +104,7 @@
                 </li>
             @endif
         </ul>
+        <a href="javascript:" class=" btn-sm btn btn-success" onclick="switchDashboard()">Toggle</a>
     </div>
 
 

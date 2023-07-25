@@ -270,8 +270,8 @@
                             if (data['deliveryPlan']['deliveryPlanStatusId'] == 2) {
                                 if (data['approveStatus'] == 2) {
                                     this_status =
-                                        ` <div class="d-flex align-items-center justify-content-center text-break">` +
-                                        `<lavel class="text-info font-weight-bold text-sm ">${ data['approvedQuantity'] } ${ data['productUnit']['unitShortName'] } Order Under Processing</lavel>` +
+                                        ` <div class="d-flex align-items-center justify-content-center text-break text-success p-2 font-weight-bolder">` +
+                                        `<lavel>${ data['approvedQuantity'] } ${ data['productUnit']['unitShortName'] } Order Under Processing</lavel>` +
                                         `</div>`;
                                 } else if (data['approveStatus'] == 3) {
                                     this_status =

@@ -29,7 +29,7 @@
         <div class="col-md-12">
             <div class="row">
                 {{-- @dd($godown['stockDetails']) --}}
-                <table class="table table-bordered  ">
+                <table id="stockTable" class="table table-bordered responsive ">
                     <tr>
                         <td class="  align-item-center">{{__('Product')}}</td>
                         <td class="  align-item-center">{{__('Godowns')}}</td>
@@ -65,7 +65,7 @@
                             <input type="text" name="officeId[]" class="sr-only" value="{{ $office['officeId'] }}">
                             <input type="text" class="form-control sr-only" name="stock[]" value="0">
                         </td>
-                        <td class="w-25 text-center">
+                        <td class="text-center">
                             <input type="text" class="form-control" name="currentStock[]"
                                 onInput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                 value="0">
@@ -95,12 +95,11 @@
                                     @endphp
                                 @endif
                             @endforeach
-                            <tr class="bg-info border-primary font-weight-bold">
-                                <td class="border-primary">{!! $totalStock != $product['currentStock'] ? '<span class="text-danger">Error </span>' : '' !!}
-                                </td>
-                                <td class="text-right border-primary ">Total Stock of {{ $product['productTypeName'] }} :</td>
+                            <tr class="bg-info border-primary font-weight-bold text-light">
+
+                                <td colspan="2" class="text-right border-primary ">Total Stock of {{ $product['productTypeName'] }} :</td>
                                 <td class="border-top border-danger text-center">{{ $product['currentStock'] }}</td>
-                                <td></td>
+                                <td>{!! $totalStock != $product['currentStock'] ? '<span class="text-danger">Error </span>' : '' !!}</td>
                             </tr>
                         @endif
                     @endforeach
@@ -126,7 +125,9 @@
 </style>
 <script>
     $(document).ready(() => {
-
+        $('#stockTable').DataTable({
+            responsive:true
+        });
         $('#godownName').on('keyup', () => {
             $('#godownNameError').html('');
         });
