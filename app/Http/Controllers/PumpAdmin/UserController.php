@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\PumpAdmin;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -16,13 +17,16 @@ class UserController extends Controller
     protected $user=null;
     public function __construct()
     {
-        $roles=ApiController::GetRoles();
-        $del_val=['SuperAdmin','CompanyAdmin'];
-        foreach ($roles as $key => $value){
-               if (!in_array($value['name'],$del_val)){
-                 $this->roles[$value['name']]=$value['name'];
-               }
+        // $roles=ApiController::GetRoles();
+        $roles = session()->has('roles')? json_decode(json_encode(session()->get('roles')), true): session()->put('roles',ApiController::GetRoles());
 
+        $del_val=['SuperAdmin','CompanyAdmin'];
+        if($roles){
+            foreach ($roles as $key => $value) {
+                if (!in_array($value['name'], $del_val)) {
+                    $this->roles[$value['name']] = $value['name'];
+                }
+            }
         }
         $user=   session()->has('userData')?json_decode(json_encode(session()->get('userData')),true):ApiController::user(session()->get('loginid'));
         //dd(getType(json_decode(json_encode(session()->get('userData')),true)));
@@ -53,7 +57,7 @@ class UserController extends Controller
        // dd(json_encode($param_data));
         $users=ApiController::UserListByEmployeeId($param_data);
 
-       // $users=ApiController::getUsers();
+       // $users=User::getUsers();
 
          $loginId = session()->get('loginId');
          $del_val=["SuperAdmin",'CompanyAdmin',"PumpAdmin"];
@@ -95,7 +99,7 @@ class UserController extends Controller
         'officeId'=>$id,
         ];
         //$admin=ApiController::UserByRole($param_data['roleName']);
-        $admin=ApiController::getUsers();
+        $admin=User::getUsers();
         foreach ($admin as $key => $value){
             if (!in_array($value['officeId'],[$id])){
                 unset($admin[$key]);
@@ -301,7 +305,7 @@ class UserController extends Controller
             'officeId'=>$masterOfficeId,
             ];
             //$admin=ApiController::UserByRole($param_data['roleName']);
-            $admin=ApiController::getUsers();
+            $admin=User::getUsers();
             foreach ($admin as $key => $value){
                 if (!in_array($value['officeId'],[$masterOfficeId])){
                     unset($admin[$key]);
@@ -381,7 +385,7 @@ class UserController extends Controller
 
         // ContactNoExistCheck
 
-        if(ApiController::ContactNoExistCheck($request->phoneNumber))
+        if(User::ContactNoExistCheck($request->phoneNumber))
         {
             return response()->json([
                 "status" => false,
@@ -389,7 +393,7 @@ class UserController extends Controller
             ]);
             // return redirect('/user/create')->with('error', 'Contact Number already exist');
         }
-        if(ApiController::EmailExistCheck($request->email))
+        if(User::EmailExistCheck($request->email))
         {
             return response()->json([
                 "status" => false,
@@ -419,7 +423,7 @@ class UserController extends Controller
 
 
         // create a new user
-        $user =  ApiController::createUser($data);
+        $user =  User::createUser($data);
        // dd(json_encode($user));
         if($user['status'])
         {
@@ -558,7 +562,7 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user=(object)ApiController::User($id);
+        $user=(object)User::User($id);
         if($user!=null){
             $validator=Validator::make($request->all(), [
                 'name' => 'required|max:255',
@@ -589,7 +593,7 @@ class UserController extends Controller
             $data['updatedBy'] = Session::get('loginid');
             // dd("update");
             //dd(json_encode($data,true));
-            $response =  ApiController::updateUser($data);
+            $response =  User::updateUser($data);
             if($response['status'])
             {
                 return response()->json([

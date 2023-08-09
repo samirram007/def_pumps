@@ -157,9 +157,10 @@
                                                     <i class="fa fa-eye fa-lg "></i>
                                                 </a>
                                                 <a href="javascript:"
-                                                    data-param="{{ base64_encode(json_encode($office)) }}"
+                                                    data-param=""
+                                                    data-token="{{ csrf_token() }}"
                                                     data-url="{{ route('companyadmin.office.edit', $office['officeId']) }}"
-                                                    title="Edit" class="load-popup   mx-2 text-white d-inline-flex">
+                                                    title="Edit" class="load-popup-post   mx-2 text-white d-inline-flex">
                                                     <i class="fa fa-edit fa-lg "></i>
                                                 </a>
                                                 {{-- @dd(session()->get('user')) --}}
@@ -209,10 +210,11 @@
                                                                 <i class="fa fa-eye fa-lg "></i>
                                                             </a>
                                                             <a href="javascript:"
-                                                                data-param="{{ base64_encode(json_encode($subOffice)) }}"
+                                                                data-param=""
+                                                                data-token="{{ csrf_token() }}"
                                                                 data-url="{{ route('companyadmin.office.edit', $subOffice['officeId']) }}"
                                                                 title="Edit"
-                                                                class="load-popup   mx-2 text-info d-inline-flex">
+                                                                class="load-popup-post  mx-2 text-info d-inline-flex">
                                                                 <i class="fa fa-edit fa-lg "></i>
                                                             </a>
                                                             <a href="{{ route('companyadmin.office.users', $subOffice['officeId']) }}"

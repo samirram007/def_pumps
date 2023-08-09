@@ -93,7 +93,7 @@
                         <div class="w-100">
                             <div class="logo-login p-3 mx-auto" data-aos="fade-left" data-aos-delay="1500"
                                 data-aos-offset="500" data-aos-easing="ease-in-sine">
-                                <a href="javascript:;"><img src="css/bn/bn-images/logo.png" class="img-fluid"
+                                <a href="javascript:;"><img src="{{ asset('images/logo.png') }}" class="img-fluid"
                                         alt="Karm"></a>
                             </div>
                             <div class="row ">

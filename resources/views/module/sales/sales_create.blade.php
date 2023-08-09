@@ -861,19 +861,20 @@
                     encode: true,
                 }).done(function(data) {
                     if (!data.status) {
-                        //  console.log(data.errors);
+                      //   console.log(data);
 
 
                         $('.submit').attr('disabled', false);
                         $('.submit').html('Submit');
                         let errorStr=''
-                        $.each(data.errors, function(key, value) {
+                        $.each(data, function(key, value) {
                             $('#' + key).addClass('is-invalid');
                             // $('#' + key).next().text(value);
                             errorStr+=`<p>${value}</p>`;
                             toastr.error(value);
+                            return;
                         });
-                        Swal.fire('',errorStr,'warning');
+                       // Swal.fire('',errorStr,'warning');
                     } else {
                         setTimeout(() => {
                             $('.search').click();

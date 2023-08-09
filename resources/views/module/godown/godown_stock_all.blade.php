@@ -4,8 +4,9 @@
 </div>
 
 <div class="col-md-6 text-right d-flex flex-row justify-content-end">
-    <div id="addGodown"  onclick=" addGodown();" class="   mb-2 text-info d-flex flex-column align-items-center cursor-pointer btn btn-link ">
-        <i class="fa fa-plus fa-lg mx-2 "></i> <small  class="small mt-2"> {{ __('Add Godown') }}</small>
+    <div id="addGodown" onclick=" addGodown();"
+        class="   mb-2 text-info d-flex flex-column align-items-center cursor-pointer btn btn-link ">
+        <i class="fa fa-plus fa-lg mx-2 "></i> <small class="small mt-2"> {{ __('Add Godown') }}</small>
     </div>
     <div id="backToList" onclick=" backToList();"
         class="    mb-2 text-info d-flex flex-column align-items-center cursor-pointer btn btn-link bg-transparent cursor-none border-0  ">
@@ -13,7 +14,7 @@
     </div>
     <div id="allStock" onclick="  getAllStock();"
         class="   mb-2 text-info d-flex flex-column align-items-center btn  bg-transparent cursor-none border-0 disabled ">
-        <i class="fa fa-cubes fa-lg  "></i> <small  class="small mt-2"> {{ __('All Stock') }}</small>
+        <i class="fa fa-cubes fa-lg  "></i> <small class="small mt-2"> {{ __('All Stock') }}</small>
 
     </div>
 
@@ -23,23 +24,21 @@
 
 
 
-<form id="formCreate" class="w-100 mt-3 mx-3">
-    @csrf
-    <div class=" p-2">
-        <div class="col-md-12">
-            <div class="row">
-                {{-- @dd($godown['stockDetails']) --}}
-                <table id="stockTable" class="table table-bordered responsive ">
-                    <tr>
-                        <td class="  align-item-center">{{__('Product')}}</td>
-                        <td class="  align-item-center">{{__('Godowns')}}</td>
-                        <td class="w-25 text-center">{{__('Available Quantity')}}</td>
-                        <td class="w-25 text-center">{{__('Action')}}</td>
 
-                    </tr>
-                    <tr>
-                        <td class="  align-item-center">
+<div class="">
+    <div class="col-md-12">
+        <div class="card p-2 mb-4 box-shadow">
 
+
+            <form id="formStockUpdate" class="w-100 ">
+                @csrf
+                <div class="row">
+
+                    {{-- @dd($godown['stockDetails']) --}}
+
+                    <div class="col-md-6">
+                        <div class=" form-group  align-item-center">
+                            <label for="productTypeId">{{ __('Product') }}</label>
                             <select name="productTypeId[]" id="productTypeId" class="form-control">
 
                                 @foreach ($productList as $key => $product)
@@ -50,9 +49,11 @@
                                 @endforeach
                             </select>
 
-                        </td>
-                        <td class="  align-item-center">
-
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group  align-item-center">
+                            <label for="godownId">{{ __('Godowns') }}</label>
                             <select name="godownId[]" id="godownId" class="form-control">
                                 @foreach ($godownList as $key => $godown)
                                     <option value="{{ $godown['godownId'] }}"
@@ -64,70 +65,95 @@
                             </select>
                             <input type="text" name="officeId[]" class="sr-only" value="{{ $office['officeId'] }}">
                             <input type="text" class="form-control sr-only" name="stock[]" value="0">
-                        </td>
-                        <td class="text-center">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group text-center">
+                            <label for="currentStock">{{ __('Available Quantity') }}</label>
                             <input type="text" class="form-control" name="currentStock[]"
                                 onInput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                 value="0">
-                        </td>
-                        <td>
-                            <button id="updateGodown" type="submit" class=" submit btn btn-info btn-sm">{{__('Update Stock')}}</button>
-                        </td>
-
-                    </tr>
-                    {{-- @dd($godowns) --}}
-                    @foreach ($godowns as $key => $product)
-                        @php
-                            $totalStock = 0;
-                        @endphp
-                        @if ($product['godownProduct'] != null)
-                            @foreach ($product['godownProduct'] as $data)
-                                @if ($data['godownProductId'] != 0)
-                                    <tr>
-                                        <td>{{ $product['productTypeName'] }}</td>
-                                        <td>{{ $data['godownName'] }} {{ $data['isReserver'] ? '(reserver)' : '' }}
-                                        </td>
-                                        <td class="text-center">{{ $data['currentStock'] }} </td>
-                                        <td></td>
-                                    </tr>
-                                    @php
-                                        $totalStock += $data['currentStock'];
-                                    @endphp
-                                @endif
-                            @endforeach
-                            <tr class="bg-info border-primary font-weight-bold text-light">
-
-                                <td colspan="2" class="text-right border-primary ">Total Stock of {{ $product['productTypeName'] }} :</td>
-                                <td class="border-top border-danger text-center">{{ $product['currentStock'] }}</td>
-                                <td>{!! $totalStock != $product['currentStock'] ? '<span class="text-danger">Error </span>' : '' !!}</td>
-                            </tr>
-                        @endif
-                    @endforeach
-                </table>
-            </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-
+                        </div>
                     </div>
+                    <div class="col-md-6">
+                        <div>
+                            <button id="updateGodown" type="submit"
+                                class=" submit btn btn-info btn-sm">{{ __('Update Stock') }}</button>
+                        </div>
+                    </div>
+
                 </div>
-            </div>
+
+
+            </form>
         </div>
 
     </div>
+    <table id="stockTable" class="table table-bordered responsive ">
+        <tr>
+            <td class="  align-item-center">{{ __('Product') }}</td>
+            <td class="  align-item-center">{{ __('Godowns') }}</td>
+            <td class="w-25 text-center">{{ __('Available Quantity') }}</td>
+            <td class="w-25 text-center">{{ __('Action') }}</td>
 
-</form>
+        </tr>
+        {{-- @dd($godowns) --}}
+        @foreach ($godowns as $key => $product)
+            @php
+                $totalStock = 0;
+            @endphp
+            @if ($product['godownProduct'] != null)
+                @foreach ($product['godownProduct'] as $data)
+                    @if ($data['godownProductId'] != 0)
+                        <tr>
+                            <td>{{ $product['productTypeName'] }}</td>
+                            <td>{{ $data['godownName'] }} {{ $data['isReserver'] ? '(reserver)' : '' }}
+                            </td>
+                            <td class="text-center">{{ $data['currentStock'] }} </td>
+                            <td></td>
+                        </tr>
+                        @php
+                            $totalStock += $data['currentStock'];
+                        @endphp
+                    @endif
+                @endforeach
+                <tr class="bg-info border-primary font-weight-bold text-light">
+                    <td>Total</td>
+                    <td class="border-primary "> Stock of
+                        {{ $product['productTypeName'] }} :</td>
+                    <td class="border-top border-danger text-center">{{ $product['currentStock'] }}</td>
+                    <td>{!! $totalStock != $product['currentStock'] ? '<span class="text-danger">Error </span>' : '' !!}</td>
+                </tr>
+            @endif
+        @endforeach
+    </table>
+
+</div>
+
+</div>
+
+
 <style>
-    .bg-info{
-        background-color:         #17a2b8!important;
+    .bg-info {
+        background-color: #17a2b8 !important;
 
     }
 </style>
 <script>
-    $(document).ready(() => {
-        $('#stockTable').DataTable({
-            responsive:true
+    $(function() {
+        var listTable = $('#stockTable').DataTable({
+            responsive: true,
+            select: false,
+            paging: false,
+            zeroRecords: true,
+            searching: false,
+            order: false,
+            info: false,
+            "oLanguage": langOpt,
         });
+    });
+    $(document).ready(() => {
+
         $('#godownName').on('keyup', () => {
             $('#godownNameError').html('');
         });
@@ -171,39 +197,40 @@
 
 
 
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $('#formCreate').on('submit', function(e) {
-            e.preventDefault();
-            $('.submit').attr('disabled', 'disabled');
-            $('.submit').html(
-                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...'
-            );
-            var data = $(this).serialize();
-            //data._token = _token;
-            //console.log(data);
-            $.ajax({
-                url: "{{ route('companyadmin.godown.stock.update') }}",
-                type: "POST",
-                data: data,
-                success: function(response) {
-                    //console.log(response);
-                    if (response.status) {
-                        toastr.success(response.message);
-                        getAllStock();
-                        //backToList();
-                    } else {
-                        toastr.error(response.message);
-                        $('.submit').removeAttr('disabled');
-                        $('.submit').html('{!!__("Update Stock")!!}');
-                    }
 
+    });
+
+    // $.ajaxSetup({
+    //         headers: {
+    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //         }
+    //     });
+    $('#formStockUpdate').on('submit', function(e) {
+        e.preventDefault();
+        $('.submit').attr('disabled', 'disabled');
+        $('.submit').html(
+            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...'
+        );
+        var data = $(this).serialize();
+        //data._token = _token;
+        //console.log(data);
+        $.ajax({
+            url: "{{ route('companyadmin.godown.stock.update') }}",
+            type: "POST",
+            data: data,
+            success: function(response) {
+                //console.log(response);
+                if (response.status) {
+                    toastr.success(response.message);
+                    getAllStock();
+                    //backToList();
+                } else {
+                    toastr.error(response.message);
+                    $('.submit').removeAttr('disabled');
+                    $('.submit').html('{!! __('Update Stock') !!}');
                 }
-            });
 
+            }
         });
 
     });

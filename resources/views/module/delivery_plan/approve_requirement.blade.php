@@ -224,7 +224,20 @@
 
                         // $('.submit').attr('disabled', false);
                         // $('.submit').html('Approve');
-                        $('#filter').click();
+                        if(document.getElementById('RequestPlan')){
+                            console.log('Available');
+                            //init_loading();
+
+                            $('#requestForm').submit();
+                            //$('#RequestPlan').click();
+                        }
+                        else if(document.getElementById('filter')){
+                            //console.log('Filter Ok');
+                            $('#filter').click();
+                        }
+
+
+
                         $("#modal-popup .close").click()
                         // window.location.reload();
                     }, 1000);

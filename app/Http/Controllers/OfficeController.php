@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\OfficeService;
 use App\Http\Controllers\ApiController;
+use App\Models\Office;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,13 +23,17 @@ class OfficeController extends Controller
     {
         $this->officeService =  $officeService;
         $this->limit = 10;
-        $roles=ApiController::GetRoles();
+        // $roles=ApiController::GetRoles();
+        $roles = session()->has('roles')? json_decode(json_encode(session()->get('roles')), true): session()->put('roles',ApiController::GetRoles());
+
        $del_val=['SuperAdmin'];
-       foreach ($roles as $key => $value){
-              if (!in_array($value['name'],$del_val)){
-                $this->roles[$value['name']]=$value['name'];
-              }
+       if($roles){
+        foreach ($roles as $key => $value) {
+            if (!in_array($value['name'], $del_val)) {
+                $this->roles[$value['name']] = $value['name'];
+            }
         }
+    }
         $user=   session()->has('userData')?json_decode(json_encode(session()->get('userData')),true):ApiController::user(session()->get('loginid'));
         $roleName=session()->get('roleName');
 
@@ -84,6 +89,9 @@ class OfficeController extends Controller
 
         $info['title']="Create Office";
         $info['size']="modal-lg";
+
+        $data['masterOfficeList']=Office::GetMasterOfficeList('D5355D33-02CF-40B0-5246-08DA286D7F4A');
+        // $data['masterOfficeList']=ApiController::GetMasterOfficeList();
 
 
         $GetView= view('superadmin.office.office_create',$data)->render();
@@ -190,6 +198,8 @@ class OfficeController extends Controller
         $info['title']="Create Office";
         $info['size']="modal-lg";
 
+        $data['masterOfficeList']=Office::GetMasterOfficeList('D5355D33-02CF-40B0-5246-08DA286D7F4A');
+        // $data['masterOfficeList']=ApiController::GetMasterOfficeList();
         //dd($data['editData'] );
         $GetView= view('superadmin.office.office_edit',$data)->render();
         return response()->json([

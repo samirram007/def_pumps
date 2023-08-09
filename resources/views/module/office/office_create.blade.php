@@ -16,24 +16,37 @@
                                 <div class="card-body">
 
                                     <div class="row">
+                                        @if (isset($masterOfficeList))
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                <label for="masterOfficeId">{{ __('Parent Entity') }} <span
+                                                    class="text text-danger  ">*</span> </label>
+                                                <select name="masterOfficeId" id="masterOfficeId" class="form-control">
+                                                    <option value="">Select Parent</option>
+                                                    @foreach ($masterOfficeList as $masterOffice)
+                                                        <option value="{{ $masterOffice['officeId'] }}">
+                                                            {{ $masterOffice['officeName'] }}</option>
+                                                    @endforeach
+
+                                                </select>
+                                            </div>
+                                            </div>
+                                        @else
+                                            <input type="text" class="sr-only" name="masterOfficeId"
+                                                id="masterOfficeId" value="{{ $masterOfficeId }}">
+                                        @endif
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <input type="text" class="sr-only" name="masterOfficeId"
-                                                    id="masterOfficeId" value="{{ $masterOfficeId }}">
+
                                                 <label for="officeName">{{ __('Business Entity') }} <span
-                                                        class="text text-danger  ">*</span>
-
-
-
-                                                </label>
+                                                        class="text text-danger  ">*</span> </label>
                                                 <small id="officeName-count-char"
                                                     class="count-char  position-absolute right-0  ">0/20</small>
                                                 <input type="text" class="form-control" id="officeName"
                                                     name="officeName" value="{{ old('officeName') }}" maxlength="20"
                                                     placeholder="{{ __('Enter Business Entity') }}"
-                                                    onkeyup="countchar(this,'officeName',20);"
-                                                    >
+                                                    onkeyup="countchar(this,'officeName',20);">
 
 
                                             </div>
@@ -68,9 +81,8 @@
                                             <div class="form-group">
                                                 <label for="officeContactNo">{{ __('Contact No') }}</label>
                                                 <small id="officeContactNo-count-char"
-                                                class="count-char  position-absolute right-0  ">0/10</small>
-                                                <input type="text" size="10" class="form-control"
-                                                maxlength="10"
+                                                    class="count-char  position-absolute right-0  ">0/10</small>
+                                                <input type="text" size="10" class="form-control" maxlength="10"
                                                     id="officeContactNo" name="officeContactNo"
                                                     value="{{ old('phoneNumber') }}"
                                                     oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/^([0-9]*\.[0-9]{0,2}).*/,'$1');"
@@ -98,10 +110,11 @@
                                                 <label for="gstNumber">{{ __('GST No') }} <span
                                                         class="text text-danger  "
                                                         id="gst_number_require"></span></label>
-                                                        <small id="gstNumber-count-char"
-                                                        class="count-char  position-absolute right-0  ">0/15</small>
-                                                <input type="text" size="15" maxlength="15" class="form-control" id="gstNumber"
-                                                    readonly name="gstNumber" value="{{ old('gstNumber') }}"
+                                                <small id="gstNumber-count-char"
+                                                    class="count-char  position-absolute right-0  ">0/15</small>
+                                                <input type="text" size="15" maxlength="15" class="form-control"
+                                                    id="gstNumber" readonly name="gstNumber"
+                                                    value="{{ old('gstNumber') }}"
                                                     placeholder="{{ __('Enter GST no') }}"
                                                     onkeyup="countchar(this,'gstNumber',15);">
                                             </div>
@@ -118,8 +131,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="officeAddress">{{ __('Address') }}</label>
-                                                <textarea class="form-control" rows="1" id="officeAddress" name="officeAddress"
-                                                readonly
+                                                <textarea class="form-control" rows="1" id="officeAddress" name="officeAddress" readonly
                                                     placeholder="{{ __('Enter Address') }}">{{ old('officeAddress') }}</textarea>
 
                                             </div>
@@ -181,71 +193,70 @@
         margin-bottom: .1rem !important;
     }
 </style>
-  {{-- counter of character --}}
-  <script>
-
+{{-- counter of character --}}
+<script>
     // function countchar('officeName',length){
-    function countchar(sender,component,max){
+    function countchar(sender, component, max) {
 
         //console.log(sender);
 
-            var len = $(sender).val().length;
-            if (len >= max) {
-                $('#'+component+'-count-char').text(len+'/' + max);
-                $('#'+component+'-count-char').css('color', '#0689bd');
-            } else {
-                var ch = max - len;
-                $('#'+component+'-count-char').text(len + '/' + max);
-                 $('#'+component+'-count-char').css('color', ' #0689bd');
-            }
+        var len = $(sender).val().length;
+        if (len >= max) {
+            $('#' + component + '-count-char').text(len + '/' + max);
+            $('#' + component + '-count-char').css('color', '#0689bd');
+        } else {
+            var ch = max - len;
+            $('#' + component + '-count-char').text(len + '/' + max);
+            $('#' + component + '-count-char').css('color', ' #0689bd');
+        }
 
     }
 </script>
 
-    <script>
-        $(document).ready(function() {
+<script>
+    $(document).ready(function() {
 
 
-            $('#officeAddress').on('click', function() {
-                // console.log($('#officeAddress').val());
-                $('#google_address_search_panel').removeClass('sr-only');
-                var address = $('#officeAddress').val();
-                console.log(address);
-                setTimeout(function() {
-                    $('#address_search').val(address);
-                    $('#address_search').focus();
-                }, 1000);
+        $('#officeAddress').on('click', function() {
+            // console.log($('#officeAddress').val());
+            $('#google_address_search_panel').removeClass('sr-only');
+            var address = $('#officeAddress').val();
+            console.log(address);
+            setTimeout(function() {
+                $('#address_search').val(address);
+                $('#address_search').focus();
+            }, 1000);
 
-            });
-            // $('#address_search').on('blur', function() {
-            //     $('#google_address_search_panel').addClass('sr-only');
-            // });
-            $('#gstTypeId').on('change', function() {
-                setGstRequire();
-            });
-            $('#gstTypeId').on('blur', function() {
-                setGstRequire();
-            });
-            var temp_gstNumber = '';
-
-            function setGstRequire() {
-                var gstTypeId = $("#gstTypeId").val();
-                //console.log(gstTypeId);
-                if (gstTypeId == null || gstTypeId == "" || gstTypeId == 0) {
-                    temp_gstNumber = $("#gstNumber").val();
-                    //  console.log(temp_gstNumber);
-                    $("#gstNumber").val('');
-                    $("#gstNumber").attr("readonly", true);
-                    $('#gst_number_require').html('');
-                } else {
-                    $("#gstNumber").val(temp_gstNumber);
-
-                    $("#gstNumber").attr("readonly", false);
-                    $('#gst_number_require').html('*');
-                }
-            }
         });
-    </script>
+        // $('#address_search').on('blur', function() {
+        //     $('#google_address_search_panel').addClass('sr-only');
+        // });
+        $('#gstTypeId').on('change', function() {
+            setGstRequire();
+        });
+        $('#gstTypeId').on('blur', function() {
+            setGstRequire();
+        });
+        var temp_gstNumber = '';
+
+        function setGstRequire() {
+            var gstTypeId = $("#gstTypeId").val();
+            //console.log(gstTypeId);
+            if (gstTypeId == null || gstTypeId == "" || gstTypeId == 0) {
+                temp_gstNumber = $("#gstNumber").val();
+                //  console.log(temp_gstNumber);
+                $("#gstNumber").val('');
+                $("#gstNumber").attr("readonly", true);
+                $('#gst_number_require').html('');
+            } else {
+                $("#gstNumber").val(temp_gstNumber);
+
+                $("#gstNumber").attr("readonly", false);
+                $('#gst_number_require').html('*');
+            }
+        }
+    });
+</script>
 
 <script>
     $(document).ready(function() {
@@ -253,9 +264,11 @@
         $("#formCreate").on("submit", function(event) {
 
             event.preventDefault();
-            $('.submit').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ');
+            $('.submit').html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> '
+                );
 
-            const url = "{{ route($routeRole.'.office.store') }}";
+            const url = "{{ route($routeRole . '.office.store') }}";
             var serializeData = $(this).serialize();
 
 

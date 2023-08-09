@@ -21,9 +21,9 @@
                         <h1 class="m-0">
                             <a href="#">
                                 <img class="header-logo-image asset-light"
-                                    src="{{ asset('landing/dist/images/logo.png') }}" alt="Logo">
+                                    src="{{ asset('images/logo.png') }}" alt="Logo">
                                 <img class="header-logo-image asset-dark"
-                                    src="{{ asset('landing/dist/images/logo-white.png') }}" alt="Logo">
+                                    src="{{ asset('images/logo-white.png') }}" alt="Logo">
                             </a>
                         </h1>
                     </div>

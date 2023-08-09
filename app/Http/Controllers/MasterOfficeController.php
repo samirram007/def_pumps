@@ -11,6 +11,9 @@ class MasterOfficeController extends Controller
 {
     protected $routeRole='superadmin';
     protected $roleName='superadmin';
+    public $officeService;
+    public $limit;
+    public $user;
 
     public function __construct(OfficeService $officeService)
     {

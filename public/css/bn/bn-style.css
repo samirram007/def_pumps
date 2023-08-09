@@ -15,9 +15,8 @@ a:hover {
 }
 
 .bg-primary {
-  background-color:
-    /*#263f6a !important;*/
-    #2d717a !important;
+  background-color: #2d717a !important;
+  background: -webkit-linear-gradient(left,#073660,#13a098)!important;
 }
 
 .sidebar .nav .nav-item.active>.nav-link,

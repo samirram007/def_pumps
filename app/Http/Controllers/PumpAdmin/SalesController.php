@@ -20,13 +20,16 @@ class SalesController extends Controller
     protected $user = null;
     public function __construct()
     {
-        $roles = ApiController::GetRoles();
-        $del_val = ['SuperAdmin', 'CompanyAdmin', 'PumpAdmin'];
-        foreach ($roles as $key => $value) {
-            if (!in_array($value['name'], $del_val)) {
-                $this->roles[$value['name']] = $value['name'];
-            }
+        // $roles = ApiController::GetRoles();
+        $roles = session()->has('roles')? json_decode(json_encode(session()->get('roles')), true): session()->put('roles',ApiController::GetRoles());
 
+        $del_val = ['SuperAdmin', 'CompanyAdmin', 'PumpAdmin'];
+        if($roles){
+            foreach ($roles as $key => $value) {
+                if (!in_array($value['name'], $del_val)) {
+                    $this->roles[$value['name']] = $value['name'];
+                }
+            }
         }
         $this->paymentMode = ApiController::GetPaymentMode();
         $user = session()->has('userData') ? json_decode(json_encode(session()->get('userData')), true) : ApiController::user(session()->get('loginid'));
@@ -177,7 +180,7 @@ class SalesController extends Controller
         $data['routeRole'] = $this->routeRole;
         $data['godownList'] = ApiController::GetGodownsByOfficeId($user->officeId);
 
-        $data['salesTypes'] = ApiController::GetSalesTypes();
+        // $data['salesTypes'] = ApiController::GetSalesTypes();
 
         $data['MasterOffice'] = [ApiController::GetOffice($user->officeId)];
         if ($data['MasterOffice'][0]['masterOfficeId'] == null) {
@@ -311,7 +314,7 @@ class SalesController extends Controller
             $data['officeList'] = $data['MasterOffice'];
         }
         $data['godownList'] = ApiController::GetGodownsByOfficeId($user->officeId);
-        $data['salesTypes'] = ApiController::GetSalesTypes();
+        // $data['salesTypes'] = ApiController::GetSalesTypes();
 
         $data['editData'] = ApiController::GetSalesById($salesId)[0];
         $data['productTypeList'] = ApiController::GetProductTypeWithRate($data['editData']['officeId'], $data['editData']['invoiceDate']);

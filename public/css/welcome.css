@@ -19,6 +19,7 @@ body {font-family: 'Poppins', sans-serif;}
     margin: 0 auto 20px;
     /*border: 5px solid #6c757d;*/
 }
+
 .login-section {
     z-index: 0;
     min-height: 100vh;
@@ -26,14 +27,13 @@ body {font-family: 'Poppins', sans-serif;}
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #356262;
-    /*background-image: linear-gradient(to bottom, #00674c, #21b891);*/
-    /*background: -webkit-linear-gradient(left,#6a11cb,#2575fc);*/
-    /*background: -webkit-linear-gradient(left,#073660,#0551d1);*/
+    background: -webkit-linear-gradient(top,#073660,#13a098)!important;
+    /* background: #0f6d6d; */
+    /* background-image: linear-gradient(to bottom, #00674c, #21b891); */
+    background: -webkit-linear-gradient(left,#6a11cb,#2575fc);
+
     padding: 30px 0;
-
 }
-
 .login-section #particles-js {
     background-size: cover;
     background-position: 50% 50%;

@@ -17,12 +17,32 @@
                                 <div class="card-body">
 
                                     <div class="row">
-
+                                        @if (isset($masterOfficeList))
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <input type="text" class="sr-only" name="masterOfficeId"
+                                            <label for="masterOfficeId">{{ __('Parent Entity') }} <span
+                                                class="text text-danger  ">*</span> </label>
+                                            <select name="masterOfficeId" id="masterOfficeId" class="form-control">
+                                                <option value="">Select Parent</option>
+                                                @foreach ($masterOfficeList as $masterOffice)
+                                                    <option value="{{ $masterOffice['officeId'] }}"
+                                                    {{ $masterOffice['officeId']==$editData->masterOfficeId?'selected':'' }}>
+                                                        {{ $masterOffice['officeName'] }}</option>
+                                                @endforeach
+
+                                            </select>
+                                        </div>
+                                        </div>
+                                    @else
+                                        <input type="text" class="sr-only" name="masterOfficeId"
+                                            id="masterOfficeId" value="{{ $editData->masterOfficeId }}">
+                                    @endif
+                                    {{-- @dd($editData) --}}
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{-- <input type="text" class="sr-only" name="masterOfficeId"
                                                     id="masterOfficeId"
-                                                    value="{{ $editData->masterOfficeId}}">
+                                                    value="{{ $editData->masterOfficeId}}"> --}}
                                                     {{-- value="{{ $editData->masterOfficeId == null ? $editData->officeId : $editData->masterOfficeId }}"> --}}
                                                 <label for="officeName">{{ __('Business Entity') }}<span
                                                         class="text text-danger  ">*</span></label>

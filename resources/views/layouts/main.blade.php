@@ -13,9 +13,9 @@
 
 </head>
 
-<body class="bg-light antialiased   " >
+<body class="bg-light antialiased   ">
 
-     {{-- @dd($light) --}}
+    {{-- @dd($light) --}}
     {{-- pageload animation --}}
     <div class="preloader">
         <div class="loader">
@@ -69,7 +69,7 @@
     @include('layouts.css_js_2')
 
     <script>
-         function date_format(date) {
+        function date_format(date) {
             var d = new Date(date),
                 month = '' + (d.getMonth() + 1),
                 day = '' + d.getDate(),
@@ -138,7 +138,62 @@
                 }
             });
             //jQuery.support.cors = true;
+            $(document).on("click", ".load-popup-post", function(e) {
 
+                var param = $(this).data('param');
+                var url = $(this).data('url');
+                var size = $(this).data('size');
+                var token = $(this).data('token');
+               // alert(token);
+
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    headers: {
+                        'X-CSRF-TOKEN': token
+                    },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: {
+                        '_token':token,
+                        'param': param,
+                        'size': size
+                    },
+                    success: function(data) {
+
+                        if (!data.error) {
+                            // console.log(window.atob(data['html']));
+                            $("#modal-popup").html(window.atob(data['html']));
+                            // $("#modal-popup").modal('show');
+                            //increase modal height 0 to 100 % animated
+                            var init_height = 0;
+
+                            var interval = setInterval(() => {
+                                init_height = (init_height + 0.2);
+                                $("#modal-popup").css('opacity', init_height);
+                                $("#modal-popup").modal('show');
+
+                                if (init_height >= 1) {
+                                    clearInterval(interval);
+
+                                }
+
+                            }, 50);
+
+                        } else {
+
+                        }
+
+
+                    },
+                    error: function(xhr, status, error) {
+
+
+                    }
+
+                });
+
+            });
             $(document).on("click", ".load-popup", function(e) {
 
                 var param = $(this).data('param');
@@ -231,10 +286,10 @@
 
     <script>
         $(document).ready(function() {
-            $('.script_active').click(function() {
-                $('.nav-item').removeClass('active');
-                $(this).toggleClass('active');
-            });
+            // $('.script_active').click(function() {
+            //     $('.nav-item').removeClass('active');
+            //     $(this).toggleClass('active');
+            // });
             setTimeout(() => {
                 $('.preloader').fadeOut();
             }, 500);

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
-use App\Services\OfficeService;
+use App\Models\Office;
 use Illuminate\Http\Request;
+use App\Services\OfficeService;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,11 +31,15 @@ class OfficeController extends Controller
         $this->fiscalYear = ApiController::GetFiscalYears();
 
         $this->office = json_decode(json_encode(session()->get('officeData')), true);
-        $roles = ApiController::GetRoles();
+        // $roles = ApiController::GetRoles();
+        $roles = session()->has('roles')? json_decode(json_encode(session()->get('roles')), true): session()->put('roles',ApiController::GetRoles());
+
         $del_val = ['SuperAdmin', 'CompanyAdmin'];
-        foreach ($roles as $key => $value) {
-            if (!in_array($value['name'], $del_val)) {
-                $this->roles[$value['name']] = $value['name'];
+        if($roles){
+            foreach ($roles as $key => $value) {
+                if (!in_array($value['name'], $del_val)) {
+                    $this->roles[$value['name']] = $value['name'];
+                }
             }
         }
         $user = session()->has('userData') ? json_decode(json_encode(session()->get('userData')), true) : ApiController::user(session()->get('loginid'));
@@ -112,7 +117,7 @@ class OfficeController extends Controller
         //dd($data['masterOfficeId']);
         $data['officeTypes'] = ApiController::GetOfficeTypeList();
         $data['gstTypes'] = ApiController::GetGstTypeList();
-
+        $data['masterOfficeList']=Office::GetMasterOfficeList($user->officeId);
         $info['title'] = "Create Office";
         $info['size'] = "modal-lg";
 
@@ -223,8 +228,9 @@ class OfficeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
+       // dd($id);
         $data['roleName']=$this->roleName;
         $data['routeRole']=$this->routeRole;
         $office = [ApiController::GetOffice($id)];
@@ -234,11 +240,14 @@ class OfficeController extends Controller
         $data['editData'] = (object) $office[0];
         $info['title'] = "Edit Office";
         $info['size'] = "modal-lg";
-
+        $user = (object) $this->user;
+        $data['masterOfficeList']=Office::GetMasterOfficeList($user->officeId);
+        //dd($data);
         $GetView = view('companyadmin.office.office_edit', $data)->render();
+
         return response()->json([
             "status" => true,
-            "html" => $GetView,
+            "html" =>  base64_encode($GetView ),
         ]);
 
     }

@@ -96,7 +96,7 @@
                         <a class="dropdown-item  " href="{{ route('lang', 'bn') }}">
                             <span class="iconify mr-3" data-icon="" data-width="20"
                                 data-height="20">অ<small>আ</small></span> {{ __('Bangla') }} </a>
-                        <a class="dropdown-item" href="{{ route('lang', 'in') }}"><span class="iconify mr-3"
+                        <a class="dropdown-item" href="{{ route('lang', 'hi') }}"><span class="iconify mr-3"
                                 data-icon="uil:letter-hindi-a" style="color: rgb(39, 39, 39);" data-width="20"
                                 data-height="20"></span> {{ __('Hindi') }}</a>
                     </div>
@@ -104,7 +104,7 @@
                 </li>
             @endif
         </ul>
-        <a href="javascript:" class=" btn-sm btn btn-success" onclick="switchDashboard()">Toggle</a>
+        {{-- <a href="javascript:" class=" btn-sm btn btn-success" onclick="switchDashboard()">Toggle</a> --}}
     </div>
 
 

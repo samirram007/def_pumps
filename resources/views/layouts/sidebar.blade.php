@@ -1,6 +1,8 @@
 @php
     //$prefix = Request::route()->getPrefix();
     $route = Route::current()->getName();
+//dd($route);
+
     $user_id = Session::get('loginid');
     $roleName = Session::get('roleName');
     $office_id = Session::get('officeId');
@@ -43,7 +45,7 @@
         @if (session()->has('isSuperAdmin') && session()->get('isSuperAdmin') && session()->get('roleName') != 'superadmin')
 
             @if (session()->has('sessionUserIds') && session()->get('sessionUserIds') != null)
-                <li class="nav-item {{ $route == 'switchmode' ? 'active' : '' }} ">
+                <li class="nav-item   ">
                     <a href="{{ route('switchmode', 'none') }}" class="nav-link my-2">
                         <i class="fa fa-arrow-left mr-3" aria-hidden="true"></i>
                         <span class="menu-title">{{ __('Previous User') }} </span>
@@ -52,7 +54,7 @@
                 </li>
                 {{-- @dd(session()->get('sessionUserIds')) --}}
             @endif
-            <li class="nav-item {{ $route == 'switchmode' ? 'active' : '' }} ">
+            <li class="nav-item  ">
                 <a href="{{ route('switchmode', session()->get('superAdminId')) }}" class="nav-link my-2">
                     <i class="fa fa-power-off mr-3"></i>
                     <span class="menu-title">{{ __('Exit User') }} </span>

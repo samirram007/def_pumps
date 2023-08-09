@@ -97,8 +97,8 @@ class DeliveryPlanController extends Controller
             "OfficeIdList"=> []
             ];
 
-
-       // dd(json_encode($data['request']));
+            //print_r(json_encode($data['request']));
+         //dd(json_encode($data['request']));
         $data['response'] = DeliveryPlan::GetDeliveryRequest($data['request']);
 //dd($data['response']);
         $data['request']['planDate']=$request->planDate;

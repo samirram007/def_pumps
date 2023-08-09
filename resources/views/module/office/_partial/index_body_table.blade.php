@@ -50,7 +50,7 @@
                         @foreach ($collections as $key => $data)
                             @php
                                 $data = (object) $data;
-                                
+
                             @endphp
 
                             <tr>
@@ -84,7 +84,7 @@
                                         <a href="javascript:" data-param=""
                                             data-url="{{ route('companyadmin.office.edit', $data->officeId) }}"
                                             title="{{ __('Edit') }}"
-                                            class="load-popup  btn btn-rounded animated-shine m-0 small ">
+                                            class="load-popup-post  btn btn-rounded animated-shine m-0 small ">
                                             <i class="fa fa-edit "></i>
                                         </a>
                                         <a href="{{ route('companyadmin.office.users', $data->officeId) }}"

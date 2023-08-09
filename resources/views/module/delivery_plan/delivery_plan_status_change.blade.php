@@ -35,11 +35,22 @@
                 <div class="col-md-6">
 
                     {{ __('Status') }}: <span class="text-info">
-                        {{ $planDetails['deliveryPlanStatus']['deliveryPlanStatus'] }}</span>
+                        {{ __($planDetails['deliveryPlanStatus']['deliveryPlanStatus']) }}</span>
                 </div>
                 {{-- @dd($planDetails['product']) --}}
 
             </div>
+            {{-- {{ $planDetails['deliveryPlanStatusId'] }} --}}
+            @if ($planDetails['deliveryPlanStatusId'] < 4)
+                <form id="FormSetStatusCancel" enctype="multipart/form-data">
+                    @csrf
+                    <input type="text" class="sr-only" name="deliveryPlanId"
+                        value="{{ $planDetails['deliveryPlanId'] }}">
+                    <input type="text" class="sr-only" name="deliveryPlanStatusId" value="5">
+                    <button type="submit"
+                        class=" submit btn btn-rounded animated-shine-danger px-2  ">{{ __('Cancel this plan') }}</button>
+                </form>
+            @endif
         </div>
         <div>
             <div class="modal-body bg-light p-0" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="1000">
@@ -60,37 +71,37 @@
                                                     $next = 0;
                                                 @endphp
                                                 @foreach ($deliveryPlanStatus as $key => $item)
-                                                    @if ($item['deliveryPlanStatusId'] < $planDetails['deliveryPlanStatusId'])
-                                                        <li class="list-group-item text-secondary">
-                                                            <div class="row">
-                                                                <div class="col-8  text-info">
-                                                                    {{ $item['deliveryPlanStatus'] }} </div>
-                                                                <div
-                                                                    class=" col-4 text-center font-weight-bold">
-                                                                    @if ($planDetails['deliveryPlanStatusId']==5)
-                                                                    <i class="fa fa-times text-danger "></i>
+                                                    @if ($item['deliveryPlanStatusId'] != 5)
+                                                        @if ($item['deliveryPlanStatusId'] < $planDetails['deliveryPlanStatusId'])
+                                                            <li class="list-group-item text-secondary">
+                                                                <div class="row">
+                                                                    <div class="col-8  text-info">
+                                                                        {{ __($item['deliveryPlanStatus']) }} </div>
+                                                                    <div class=" col-4 text-center font-weight-bold">
+                                                                        @if ($planDetails['deliveryPlanStatusId'] == 5)
+                                                                            <i class="fa fa-times text-danger "></i>
                                                                         @else
-                                                                        <i class="fa fa-check text-success "></i>
-                                                                    @endif
+                                                                            <i class="fa fa-check text-success "></i>
+                                                                        @endif
 
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </li>
-                                                     @elseif ($item['deliveryPlanStatusId'] == $planDetails['deliveryPlanStatusId'])
-                                                        <li class="list-group-item">
-                                                            <div class="row">
-                                                                <div class="col-8  text-info">
-                                                                    {{ $item['deliveryPlanStatus'] }} </div>
-                                                                <div
-                                                                    class=" col-4 text-info text-center font-weight-bold">
-                                                                    Current Status </div>
-                                                            </div>
-                                                        </li>
+                                                            </li>
+                                                        @elseif ($item['deliveryPlanStatusId'] == $planDetails['deliveryPlanStatusId'])
+                                                            <li class="list-group-item">
+                                                                <div class="row">
+                                                                    <div class="col-8  text-info">
+                                                                        {{ __($item['deliveryPlanStatus']) }} </div>
+                                                                    <div
+                                                                        class=" col-4 text-info text-center font-weight-bold">
+                                                                        {{ __('Current Status') }} </div>
+                                                                </div>
+                                                            </li>
                                                         @elseif ($item['deliveryPlanStatusId'] == 5)
-                                                        <li class="list-group-item alert-success">
-                                                            <div class="row">
-                                                                <div class="col-8 d-flex align-items-center  ">
-                                                                    {{ $item['deliveryPlanStatus'] }}</div>
+                                                            <li class="list-group-item alert-success">
+                                                                <div class="row">
+                                                                    <div class="col-8 d-flex align-items-center  ">
+                                                                        {{ __($item['deliveryPlanStatus']) }}</div>
 
                                                                     <div class="col-4 ">
                                                                         <form id="FormSetStatusCancel"
@@ -103,44 +114,44 @@
                                                                                 name="deliveryPlanStatusId"
                                                                                 value="{{ $item['deliveryPlanStatusId'] }}">
                                                                             <button type="submit"
-                                                                                class=" submit w-100  btn btn-rounded animated-shine px-2  inline-block">Set</button>
+                                                                                class=" submit w-100  btn btn-rounded animated-shine px-2  inline-block">{{ __('Set') }}</button>
                                                                         </form>
                                                                         @php
                                                                             $next++;
                                                                         @endphp
                                                                     </div>
 
-                                                            </div>
+                                                                </div>
 
-                                                        </li>
+                                                            </li>
+                                                        @else
+                                                            <li class="list-group-item alert-success">
+                                                                <div class="row">
+                                                                    <div class="col-8 d-flex align-items-center  ">
+                                                                        {{ __($item['deliveryPlanStatus']) }}</div>
+                                                                    @if ($next == 0)
+                                                                        <div class="col-4 ">
+                                                                            <form id="FormSetStatus"
+                                                                                enctype="multipart/form-data">
+                                                                                @csrf
+                                                                                <input type="text" class="sr-only"
+                                                                                    name="deliveryPlanId"
+                                                                                    value="{{ $planDetails['deliveryPlanId'] }}">
+                                                                                <input type="text" class="sr-only"
+                                                                                    name="deliveryPlanStatusId"
+                                                                                    value="{{ $item['deliveryPlanStatusId'] }}">
+                                                                                <button type="submit"
+                                                                                    class=" submit w-100  btn btn-rounded animated-shine px-2  inline-block">Set</button>
+                                                                            </form>
+                                                                            @php
+                                                                                $next++;
+                                                                            @endphp
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
 
-                                                    @else
-                                                        <li class="list-group-item alert-success">
-                                                            <div class="row">
-                                                                <div class="col-8 d-flex align-items-center  ">
-                                                                    {{ $item['deliveryPlanStatus'] }}</div>
-                                                                @if ($next == 0)
-                                                                    <div class="col-4 ">
-                                                                        <form id="FormSetStatus"
-                                                                            enctype="multipart/form-data">
-                                                                            @csrf
-                                                                            <input type="text" class="sr-only"
-                                                                                name="deliveryPlanId"
-                                                                                value="{{ $planDetails['deliveryPlanId'] }}">
-                                                                            <input type="text" class="sr-only"
-                                                                                name="deliveryPlanStatusId"
-                                                                                value="{{ $item['deliveryPlanStatusId'] }}">
-                                                                            <button type="submit"
-                                                                                class=" submit w-100  btn btn-rounded animated-shine px-2  inline-block">Set</button>
-                                                                        </form>
-                                                                        @php
-                                                                            $next++;
-                                                                        @endphp
-                                                                    </div>
-                                                                @endif
-                                                            </div>
-
-                                                        </li>
+                                                            </li>
+                                                        @endif
                                                     @endif
                                                 @endforeach
                                         </div>

@@ -40,13 +40,13 @@
                 <table id="table" class="table   table-striped table-bordered   ">
                     <thead>
                         <tr>
-                            <th>Plan Name</th>
-                            <th>Planing Date</th>
-                            <th>Hub</th>
-                            <th>Product</th>
-                            <th>TankerSize(ltr)</th>
-                            <th class="text-center">Status</th>
-                            <th>Action</th>
+                            <th>{{ __('Plan Name') }}</th>
+                            <th>{{ __('Planing Date') }}</th>
+                            <th>{{ __('Hub') }}</th>
+                            <th>{{ __('Product') }}</th>
+                            <th>{{ __('TankerSize') }}({{ __('ltr') }})</th>
+                            <th class="text-center">{{ __('Status') }}</th>
+                            <th>{{ __('Action') }}</th>
                         </tr>
 
                     </thead>
@@ -93,7 +93,7 @@
 
             $('.search').click(function() {
                 $('.reportPanel').html(
-                    '<div class="alert alert-info"><i class="fa fa-spinner fa-spin"></i> Please wait...</div>'
+                    '<div class="alert alert-info"><i class="fa fa-spinner fa-spin"></i> {{ __('Please wait...') }}</div>'
                 );
             });
             let delivery_plans = @json($delivery_plans);
@@ -146,10 +146,14 @@
                         "data": null,
                         "render": function(data, type, full, meta) {
                             let this_id = data['deliveryPlanId'];
-                            let this_status_change_url = status_change_url.replace(':id', data['deliveryPlanId']);
-                            return `<div class=" text-break  text-info text-weight-bold">${data.deliveryPlanStatus.deliveryPlanStatus}` +
+                            let this_status_change_url = status_change_url.replace(':id', data[
+                                'deliveryPlanId']);
+                            let this_status = data.deliveryPlanStatus.deliveryPlanStatus;
+                            // console.log(typeof(this_status));
+                            // console.log(trans(this_status));
+                            return `<div class=" text-break  text-info text-weight-bold">${this_status}` +
                                 `<a href="javascript:" data-param="${this_id}" data-url="${this_status_change_url}"` +
-                                `title="Change Status"` +
+                                `title="{{ __('Change Status') }}"` +
                                 `class="load-popup status_change  text-break  text-info p-2 ">` +
                                 `<i class="fas fa-pencil-alt m-0 "></i></a>` +
                                 `</div>`;
@@ -164,13 +168,10 @@
                             let this_edit_url = edit_url.replace(':id', data['deliveryPlanId']);
                             let this_delete_url = delete_url.replace(':id', data['deliveryPlanId']);
                             let this_str =
-                            ` <a href="${this_edit_url}"` +
-                            ` title="{{ __('Edit Plan') }}" `+
+                                ` <a href="${this_edit_url}"` +
+                                ` title="{{ __('Edit Plan') }}" ` +
                                 `class="   btn btn-rounded  animated-shine px-2  ">` +
-                                `Edit Plan <i class="fas fa-pencil-alt"></i></a>` +
-                                ` <a href="${this_view_url}"` +
-                                `title="{{ __('Plan Details') }}" class="view_plan  btn btn-rounded animated-shine ">` +
-                                `  Plan Details <i class="fa fa-desktop m-0 "></i></a>`;
+                                `{{ __('Edit Plan') }} <i class="fas fa-pencil-alt"></i></a>`;
 
                             this_str += ` <a href="${this_view_url}"` +
                                 `title="{{ __('Delete') }}" class="delete  btn btn-rounded animated-shine-danger d-none   ">` +

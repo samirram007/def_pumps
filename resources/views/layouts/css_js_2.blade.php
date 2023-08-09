@@ -39,8 +39,11 @@
 
     if (x == 'on') {
         document.body.classList.remove('lights-off');
+
         lightSwitch.checked = true;
         labelText.innerHTML = 'dark';
+
+
 
     } else {
         document.body.classList.add('lights-off');
@@ -87,25 +90,51 @@
 
         function checkLights() {
             let labelText = lightSwitch.parentNode.querySelector('.label-text')
+
+            // console.log(document.getElementById("object"))
+
             if (lightSwitch.checked) {
                 body.classList.remove('lights-off')
+                // changeDashboardTheme('dark', 'light')
+
                 //   deleteCookie('lights-off');
                 // setCookie('lights','on')
                 localStorage.setItem('lights', 'on');
-               // sessionStorage.setItem('lights', 'on');
-              //  setCookie('lights', 'on');
+                if (document.getElementById("object") != null) {
+
+                    newDashboard()
+                }
+                // sessionStorage.setItem('lights', 'on');
+                //  setCookie('lights', 'on');
                 if (labelText) {
                     labelText.innerHTML = 'dark'
                 }
+
             } else {
                 body.classList.add('lights-off')
+
                 //   setCookie('lights','off')
                 localStorage.setItem('lights', 'off')
-               // sessionStorage.setItem('lights', 'off')
-               // setCookie('lights', 'off');
+                if (document.getElementById("object") != null) {
+                    newDashboard()
+                }
+                // sessionStorage.setItem('lights', 'off')
+                // setCookie('lights', 'off');
                 if (labelText) {
                     labelText.innerHTML = 'light'
                 }
+
+            }
+
+        }
+
+        function changeDashboardTheme(value1, value2) {
+            console.log(document.getElementById("object"));
+            if (document.getElementById("object") != null) {
+                var dashboardObject = document.getElementById("object")
+                var objData = dashboardObject.data;
+                objData.replace(`theme=${value1}`, `theme=${value2}`);
+                console.log(objData)
             }
 
         }

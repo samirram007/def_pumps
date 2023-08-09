@@ -228,7 +228,7 @@ class GodownController extends Controller
     }
     public function stock_update(Request $request)
     {
-        //dd($request->all());
+        // dd($request->all());
         $this->validate($request, [
             'godownId' => 'required',
             'productTypeId' => 'required',

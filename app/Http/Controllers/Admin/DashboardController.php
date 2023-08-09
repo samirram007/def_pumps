@@ -38,14 +38,16 @@ class DashboardController extends Controller
     protected $user = null;
     public function __construct()
     {
-        $roles = ApiController::GetRoles();
+        //$roles = ApiController::GetRoles();
+        $roles = session()->has('roles')? json_decode(json_encode(session()->get('roles')), true): session()->put('roles',ApiController::GetRoles());
 
         $del_val = ['SuperAdmin', 'CompanyAdmin'];
-        foreach ($roles as $key => $value) {
-            if (!in_array($value['name'], $del_val)) {
-                $this->roles[$value['name']] = $value['name'];
+        if($roles){
+            foreach ($roles as $key => $value) {
+                if (!in_array($value['name'], $del_val)) {
+                    $this->roles[$value['name']] = $value['name'];
+                }
             }
-
         }
         $user = session()->has('userData') ? json_decode(json_encode(session()->get('userData')), true) : ApiController::user(session()->get('loginid'));
         $roleName = session()->get('roleName');
@@ -213,6 +215,7 @@ class DashboardController extends Controller
         $mpdf->WriteHTML($html);
         $fileName = $data['office'][0]['officeName'] . '_Sales-Expense Summary_' . date('d-m-Y', strtotime($fromDate)) . '_' . date('d-m-Y', strtotime($fromDate)) . '.pdf';
         return $mpdf->Output($fileName, 'I');
+        
     }
     public function chart2_pdf(Request $request)
     {

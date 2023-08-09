@@ -14,7 +14,7 @@ class MapController extends Controller
         //dev url aHR0cDovLzExNS4xMjQuMTIwLjI1MTo1MjUwL2FwaS9tYXN0ZXIvdmlld3MvcG93ZXJzdGF0aW9ucy9wbXA=
         $url=$id==''?'http://115.124.120.251:5250/api/master/views/powerstations/pmp': base64_decode($id);
 
-         dd($url);
+        // dd($url);
         $headers = [ "Accept" => "application/json",];
         $res = Http::withHeaders($headers)->get($url)->json();
         // dd($res);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\ApiController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -101,7 +102,7 @@ class LoginController extends Controller
             $data = $request->all();
             // dd($data['otp']);
             if ($data['otp'] == null) {
-                $res = ApiController::SignInWithMobile($data);
+                $res = User::SignInWithMobile($data);
                 // dd($res);
                 if ($res['status']) {
 
@@ -341,7 +342,7 @@ class LoginController extends Controller
         if ($resultJson->score >= 0.3) {
             $data = $request->all();
 
-            $res = ApiController::SignIn($data);
+            $res = User::SignIn($data);
 
             if (!empty($res['jwtToken'])) {
                 $token = $res['jwtToken'];
@@ -414,82 +415,82 @@ class LoginController extends Controller
             session()->put('roleName', $userData->roleName);
 
             $isAdmin = 1;
-            $data['admin_dashboard_data'] = ApiController::AdminDashboradData($userData->officeId, $isAdmin);
+        //     $data['admin_dashboard_data'] = ApiController::AdminDashboradData($userData->officeId, $isAdmin);
 
-            //  dd($data['admin_dashboard_data']);
-            $data['productTypeList'] = ApiController::GetProductTypeWithRate($userData->officeId);
+        //     //  dd($data['admin_dashboard_data']);
+        //     $data['productTypeList'] = ApiController::GetProductTypeWithRate($userData->officeId);
 
-            $data['officeList'] = ApiController::GetOfficeByMasterOfficeId($userData->officeId);
-            // dd($data['officeList']);
-            $fromDate = date('Y-m-d', strtotime('-6 days'));
-            $toDate = date('Y-m-d');
-            $officeId = $userData->officeId;
-            $isAdmin = 6;
-            $param_str = $fromDate . '/' . $toDate . '/' . $officeId . '/' . $isAdmin;
+        //     $data['officeList'] = ApiController::GetOfficeByMasterOfficeId($userData->officeId);
+        //     // dd($data['officeList']);
+        //     $fromDate = date('Y-m-d', strtotime('-6 days'));
+        //     $toDate = date('Y-m-d');
+        //     $officeId = $userData->officeId;
+        //     $isAdmin = 6;
+        //     $param_str = $fromDate . '/' . $toDate . '/' . $officeId . '/' . $isAdmin;
 
-            $DEFDashBoardGraphData = ApiController::DEFDashBoardGraphData($param_str);
-            // dd($DEFDashBoardGraphData);
-            $data['DEFDashBoardGraphData'] = $DEFDashBoardGraphData;
-            $data['months'] = $this->months;
-            $data['years'] = $this->years;
+        //     $DEFDashBoardGraphData = ApiController::DEFDashBoardGraphData($param_str);
+        //     // dd($DEFDashBoardGraphData);
+        //     $data['DEFDashBoardGraphData'] = $DEFDashBoardGraphData;
+        //     $data['months'] = $this->months;
+        //     $data['years'] = $this->years;
 
-            session()->put('productTypeList', $data['productTypeList']);
-            $sales = [];
-            $expense = [];
-            $data['labels'] = [];
-            $data['data_sales'] = [];
-            $data['data_expense'] = [];
+        //     session()->put('productTypeList', $data['productTypeList']);
+        //     $sales = [];
+        //     $expense = [];
+        //     $data['labels'] = [];
+        //     $data['data_sales'] = [];
+        //     $data['data_expense'] = [];
 
-            $data['graph2'] = [];
+        //     $data['graph2'] = [];
 
-            $data['product_sales'] = [];
+        //     $data['product_sales'] = [];
 
-            $data['product_sales_labels'] = [];
-            $data['average'] = [];
-            if ($DEFDashBoardGraphData == null) {
-                return view('companyadmin.dashboard', $data);
-            }
-            foreach ($DEFDashBoardGraphData['graph1'] as $key => $graph_data) {
-                $sales[$graph_data['requestedDate']] = $graph_data['totalIncome'];
-                $expense[$graph_data['requestedDate']] = $graph_data['totalExpense'];
-            }
-            //dd($DEFDashBoardGraphData['graph2']);
-            $product_sales = [];
-            $product_sales_with_qty= [];
-            foreach ($DEFDashBoardGraphData['graph2'] as $key => $graph_data) {
-                foreach ($graph_data['lstproduct'] as $key1 => $graph_data1) {
+        //     $data['product_sales_labels'] = [];
+        //     $data['average'] = [];
+        //     if ($DEFDashBoardGraphData == null) {
+        //         return view('companyadmin.dashboard', $data);
+        //     }
+        //     foreach ($DEFDashBoardGraphData['graph1'] as $key => $graph_data) {
+        //         $sales[$graph_data['requestedDate']] = $graph_data['totalIncome'];
+        //         $expense[$graph_data['requestedDate']] = $graph_data['totalExpense'];
+        //     }
+        //     //dd($DEFDashBoardGraphData['graph2']);
+        //     $product_sales = [];
+        //     $product_sales_with_qty= [];
+        //     foreach ($DEFDashBoardGraphData['graph2'] as $key => $graph_data) {
+        //         foreach ($graph_data['lstproduct'] as $key1 => $graph_data1) {
 
-                    if (!isset($product_sales[$graph_data1['productName']])) {
-                        $product_sales[$graph_data1['productName']]= $graph_data1['totalSale'];
-                        $product_sales_with_qty[$graph_data1['productName']]['sale'] = $graph_data1['totalSale'];
-                        $product_sales_with_qty[$graph_data1['productName']]['qty'] = $graph_data1['qty'];
-                        $product_sales_with_qty[$graph_data1['productName']]['PrimaryUnit'] = $graph_data1['primaryUnit'];
-                    } else {
-                        $product_sales[$graph_data1['productName']] += (double) $graph_data1['totalSale'];
-                        $product_sales_with_qty[$graph_data1['productName']]['sale']+= (double) $graph_data1['totalSale'];
-                        $product_sales_with_qty[$graph_data1['productName']]['qty'] += (double)$graph_data1['qty'];
-                    }
+        //             if (!isset($product_sales[$graph_data1['productName']])) {
+        //                 $product_sales[$graph_data1['productName']]= $graph_data1['totalSale'];
+        //                 $product_sales_with_qty[$graph_data1['productName']]['sale'] = $graph_data1['totalSale'];
+        //                 $product_sales_with_qty[$graph_data1['productName']]['qty'] = $graph_data1['qty'];
+        //                 $product_sales_with_qty[$graph_data1['productName']]['PrimaryUnit'] = $graph_data1['primaryUnit'];
+        //             } else {
+        //                 $product_sales[$graph_data1['productName']] += (double) $graph_data1['totalSale'];
+        //                 $product_sales_with_qty[$graph_data1['productName']]['sale']+= (double) $graph_data1['totalSale'];
+        //                 $product_sales_with_qty[$graph_data1['productName']]['qty'] += (double)$graph_data1['qty'];
+        //             }
 
-                }
+        //         }
 
-            }
+        //     }
 
-            $data['sales'] = collect($sales);
-            $data['expense'] = collect($expense);
-            // $data['average']=(collect($sales)->max()>=collect($expense)->max())?collect($sales)->max()/2:collect($expense)->max()/2;
-            // dd($sales);
-            $data['labels'] = collect($sales)->keys();
-            $data['data_sales'] = collect($sales)->values();
-            $data['data_expense'] = collect($expense)->values();
-            $average = collect($sales)->sum() / count($data['labels']);
-            for ($i = 0; $i < count($data['labels']); $i++) {
-                $data['average'][$i] = $average;
-            }
-            $data['graph2'] = collect($product_sales_with_qty);
-           // dd($data['graph2'] );
-            $data['product_sales'] = collect($product_sales) ->values();
+        //     $data['sales'] = collect($sales);
+        //     $data['expense'] = collect($expense);
+        //     // $data['average']=(collect($sales)->max()>=collect($expense)->max())?collect($sales)->max()/2:collect($expense)->max()/2;
+        //     // dd($sales);
+        //     $data['labels'] = collect($sales)->keys();
+        //     $data['data_sales'] = collect($sales)->values();
+        //     $data['data_expense'] = collect($expense)->values();
+        //     $average = collect($sales)->sum() / count($data['labels']);
+        //     for ($i = 0; $i < count($data['labels']); $i++) {
+        //         $data['average'][$i] = $average;
+        //     }
+        //     $data['graph2'] = collect($product_sales_with_qty);
+        //    // dd($data['graph2'] );
+        //     $data['product_sales'] = collect($product_sales) ->values();
 
-            $data['product_sales_labels'] = collect($product_sales)->keys();
+        //     $data['product_sales_labels'] = collect($product_sales)->keys();
 
             //   dd($data['productTypeList']);
             return view('companyadmin.dashboard', $data);

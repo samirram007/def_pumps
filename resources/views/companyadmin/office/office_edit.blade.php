@@ -6,6 +6,7 @@
                 <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
             </button>
         </div>
+
         @include('module.office.office_edit')
     </div>
 

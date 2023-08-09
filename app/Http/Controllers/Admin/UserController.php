@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -17,11 +18,15 @@ class UserController extends Controller
     protected $users = null;
     public function __construct()
     {
-        $roles = ApiController::GetRoles();
+        // $roles = ApiController::GetRoles();
+        $roles = session()->has('roles')? json_decode(json_encode(session()->get('roles')), true): session()->put('roles',ApiController::GetRoles());
+
         $del_val = ['SuperAdmin'];
-        foreach ($roles as $key => $value) {
-            if (!in_array($value['name'], $del_val)) {
-                $this->roles[$value['name']] = $value['name'];
+        if($roles){
+            foreach ($roles as $key => $value) {
+                if (!in_array($value['name'], $del_val)) {
+                    $this->roles[$value['name']] = $value['name'];
+                }
             }
         }
         $user = session()->has('userData') ? json_decode(json_encode(session()->get('userData')), true) : ApiController::user(session()->get('loginid'));
@@ -60,7 +65,7 @@ class UserController extends Controller
 
         $users = $this->users;
         //  dd($users);
-        // $users=ApiController::getUsers();
+        // $users=User::getUsers();
 
         $loginId = session()->get('loginId');
         $del_val = ["SuperAdmin"];
@@ -306,7 +311,7 @@ class UserController extends Controller
 
         // ContactNoExistCheck
 
-        if (ApiController::ContactNoExistCheck($request->phoneNumber)) {
+        if (User::ContactNoExistCheck($request->phoneNumber)) {
             // dd("Contact Number Already Exist");
             return response()->json([
                 "status" => false,
@@ -314,7 +319,7 @@ class UserController extends Controller
             ]);
             // return redirect('/user/create')->with('error', 'Contact Number already exist');
         }
-        if (ApiController::EmailExistCheck($request->email)) {
+        if (User::EmailExistCheck($request->email)) {
             return response()->json([
                 "status" => false,
                 "errors" => ["Email Already Exist"],
@@ -333,7 +338,7 @@ class UserController extends Controller
         $data['createdBy'] = Session::get('loginid');
 
         // create a new user
-        $user = ApiController::createUser($data);
+        $user = User::createUser($data);
         // dd(json_encode($user));
         if ($user['status']) {
             $param_data = [
@@ -341,7 +346,7 @@ class UserController extends Controller
                 'roleName' => '',
                 'officeId' => $this->user['officeId'],
             ];
-            $this->users = ApiController::UserListByEmployeeId($param_data);
+            $this->users = User::UserListByEmployeeId($param_data);
 
             session()->put('users', $this->users);
             return response()->json([
@@ -459,7 +464,7 @@ class UserController extends Controller
 
             $data['updatedBy'] = Session::get('loginid');
             //dd(json_encode($data));
-            $response = ApiController::updateUser($data);
+            $response = User::updateUser($data);
 
             if ($response['status']) {
                 $param_data = [
@@ -467,7 +472,7 @@ class UserController extends Controller
                     'roleName' => '',
                     'officeId' => $this->user['officeId'],
                 ];
-                $this->users = ApiController::UserListByEmployeeId($param_data);
+                $this->users = User::UserListByEmployeeId($param_data);
 
                 session()->put('users', $this->users);
                 return response()->json([

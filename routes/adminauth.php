@@ -101,7 +101,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
         Route::get('/office/create', [AdminOfficeController::class, 'create'])->name('companyadmin.office.create');
         Route::post('/office/store', [AdminOfficeController::class, 'store'])->name('companyadmin.office.store');
-        Route::get('/office/edit/{id}', [AdminOfficeController::class, 'edit'])->name('companyadmin.office.edit');
+        Route::post('/office/edit/{id}', [AdminOfficeController::class, 'edit'])->name('companyadmin.office.edit');
         Route::get('/office/show/{id}', [AdminOfficeController::class, 'show'])->name('companyadmin.office.show');
         Route::post('/office/update/{id}', [AdminOfficeController::class, 'update'])->name('companyadmin.office.update');
         Route::get('/office/delete/{id}', [AdminOfficeController::class, 'destroy'])->name('companyadmin.office.delete');

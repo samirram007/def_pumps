@@ -6,57 +6,11 @@
                 <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
             </button>
         </div>
-        <style scoped>
-            .btn-active{
-                border-bottom: 2px solid #09f;
-                background: transparent!important;
-
-            }
-            .units:hover,.colors:hover,.rates:hover{
-                text-decoration: none;
-            }
-
-        </style>
-        <div class="bg-light d-flex">
-            <div class="units  btn-active btn btn-link d-flex align-items-center"> <i class="fa fa-plus-circle mr-2" style="font-size:24px;"></i> UNITS</div>
-            <div class="colors btn btn-link d-flex align-items-center"> <i class="fa fa-paint-brush mr-2" style="font-size:24px;"></i> COLOUR</div>
-            <div class="rates btn btn-link d-flex align-items-center"> <i class="fa fa-at mr-2" style="font-size:24px;"></i> RATE</div>
-
-        </div>
-        <div id="unitPanel">
-
-            <form id="unitCreate" class="sr-only">
-                @csrf
-                <div class="modal-body bg-light p-0" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="1000">
-                    <div class=" w-100  ">
-
-
-                        <section class="content">
-                            <div class="rounded card p-3 bg-white shadow min-h-100">
-
-                                <div class="row">
-                                    <div class="col-md-12">
-
-                                        <div class="card card-primary">
-
-
-                                            <div class="card-body">
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                        </section>
-                    </div>
-                </div>
-            </form>
-        </div>
-
         <form id="formCreate">
             @csrf
             <div class="modal-body bg-light p-0" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="1000">
                 <div class=" w-100  ">
-
+                    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> --}}
 
                     <section class="content">
                         <div class="rounded card p-3 bg-white shadow min-h-100">
@@ -104,7 +58,7 @@
                                             </div>
 
                                             <fieldset class="row">
-                                                <legend>{{ __('Units of Measurement') }}</legend>
+                                                <legend>{{__('Units of Measurement')}}</legend>
 
                                                 <div class="col-md-3 col-6 mb-4">
                                                     <div class="form-group">
@@ -188,8 +142,7 @@
                                                         <label for="color">{{ __('Colour') }} <span
                                                                 class="text-danger">*</span></label>
                                                         <input type="color" class="form-control" id="color"
-                                                            name="color" placeholder="Colour"
-                                                            value="{{ old('color') }}">
+                                                            name="color" placeholder="Colour"   value="{{ old('color') }}">
                                                         <span class="text-danger" id="color"></span>
                                                     </div>
                                                 </div>
@@ -248,6 +201,7 @@
             padding-bottom: 0;
             position: relative;
         }
+
     </style>
     <script>
         $('#isContainer').change(function() {
@@ -440,7 +394,7 @@
                 $('#quantity').val(product.quantity);
                 ToggleSecondaryUnit();
                 $('#secondaryUnitRatio').val(product.secondaryUnitRatio);
-                $('#title').html(product.productTypeName + ' :: ' + "{!! __('edit-mode') !!}");
+                $('#title').html(product.productTypeName + ' :: '+"{!!__('edit-mode')!!}");
 
             } else {
                 $('#title').html("{{ __('New Product') }}");

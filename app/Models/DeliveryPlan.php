@@ -34,10 +34,10 @@ class DeliveryPlan extends Model
         return $res;
     }
     public static function GetDeliveryRequest($data){
-        //dd(json_encode($data));
+        //dd(json_encode($data),env('API_ROUTE_URL').'api/v1/route_plan');
         $headers = ["Accept" => "application/json", "Content-Type"=>"application/json"];
-        $res = Http::withHeaders($headers)->post('http://115.124.120.251:5060/api/v1/route_plan',$data)->json();
-       // dd($res);
+        $res = Http::withHeaders($headers)->post(env('API_ROUTE_URL').'v1/route_plan',$data)->json();
+       //dd($res);
         return $res;
     }
     public static function SaveDeliveryPlan($data){

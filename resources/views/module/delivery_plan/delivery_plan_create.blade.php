@@ -38,7 +38,7 @@
                         </ol>
                     </div><!-- /.col -->
                     <div class="col-sm-6 sr-only">
-                        <a href="javascript:" onclick="toggleMapPanel();" title="{{ __('Map View') }}"
+                        <a href="javascript:" onclick="toggleMapPanel(this);" title="{{ __('Map View') }}"
                             class="  float-right btn btn-rounded animated-shine px-2 mb-2 ">
                             <i class="fas fa-map"></i></a>
 
@@ -242,7 +242,7 @@
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> '
             );
             var url = "{{ route($routeRole . '.delivery_plan.new_request') }}";
-            console.log(url);
+            console.log('This Url: '+ url);
             var formData = new FormData($(this)[0]);
 
             formData.append('product', $('#productId option:selected').text());
@@ -267,7 +267,7 @@
                     });
 
                 } else {
-                    // console.log(data.data);
+                    console.log(data.html);
                     $('#reportPanel').html(data.html);
                     setTimeout(() => {
 
@@ -388,14 +388,51 @@
 
         }
 
-        function toggleMapPanel() {
+        function toggleMapPanel(element) {
+
+            let i_element = '';
+            let div_element = '';
+            element.setAttribute('disabled',true);
+            Object.values(element.childNodes).forEach(val => {
+                var tag = val.tagName;
+
+                if (tag == 'I') {
+                      if (val.classList.contains('fa-map')) {
+
+                        val.classList.remove('fa-map');
+                        val.classList.add('spinner-border');
+                        val.classList.add('spinner-border-sm');
+                        i_element = val;
+
+                    }
+                }
+                if (tag == 'DIV') {
+                    div_element=val;
+                }
+
+            });
+
             if ($('#listWrapperPanel').hasClass("d-flex")) {
                 $('#listWrapperPanel').addClass("d-none");
                 $('#listWrapperPanel').removeClass("d-flex");
                 $('#mapWrapperPanel').addClass("d-flex");
                 $('#mapWrapperPanel').removeClass("d-none");
                 initMap();
+                setTimeout(() => {
+                    if (i_element.classList.contains('spinner-border')) {
+                        i_element.classList.add('fa-map');
+                        i_element.classList.remove('spinner-border');
+                        i_element.classList.remove('spinner-border-sm');
+                    }
+                    if(div_element.innerHTML.localeCompare('Map View')==0){
+                        //console.log(val.innerHTML+': abc');
 
+                        div_element.innerHTML=`Map Data`;
+                      }
+                      else{
+                        div_element.innerHTML=`Map View` ;
+                      }
+                }, 2000);
                 return;
             }
             if ($('#mapWrapperPanel').hasClass("d-flex")) {
@@ -405,12 +442,27 @@
                 $('#listWrapperPanel').removeClass("d-none");
 
                 // return;
+                setTimeout(() => {
+                    if (i_element.classList.contains('spinner-border')) {
+                        i_element.classList.add('fa-map');
+                        i_element.classList.remove('spinner-border');
+                        i_element.classList.remove('spinner-border-sm');
+                    }
+                    if(div_element.innerHTML.localeCompare('Map View')==0){
+                        //console.log(val.innerHTML+': abc');
+
+                        div_element.innerHTML=`Map Data`;
+                      }
+                      else{
+                        div_element.innerHTML=`Map View` ;
+                      }
+                }, 500);
             }
 
         }
 
         function init_loading() {
-           // console.log('Countr');
+            // console.log('Countr');
             if (!$('#manufactureingHub').val() == '' || !$('#manufactureingHub').val() == 0) {
                 $("#RequestPlan").click();
                 toggleRequestPanel();
@@ -426,7 +478,7 @@
 
         }
         $(document).ready(() => {
-           LoadManufactureingHub();
+            LoadManufactureingHub();
             if (deliveryPlanId > 0) {
                 init_loading()
 

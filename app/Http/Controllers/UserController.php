@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use App\Models\User;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -17,7 +18,9 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $roles=ApiController::GetRoles();
+        // $roles=ApiController::GetRoles();
+        $roles = session()->has('roles')? json_decode(json_encode(session()->get('roles')), true): session()->put('roles',ApiController::GetRoles());
+
         $del_val=["SuperAdmin" ];
         foreach ($roles as $key => $value){
                if (!in_array($value['name'],$del_val)){
@@ -60,7 +63,7 @@ class UserController extends Controller
         'officeId'=>$id,
         ];
         //$admin=ApiController::UserByRole($param_data['roleName']);
-        $admin=ApiController::getUsers();
+        $admin=User::getUsers();
         foreach ($admin as $key => $value){
             if (!in_array($value['officeId'],[$id])){
                 unset($admin[$key]);
@@ -211,7 +214,7 @@ class UserController extends Controller
 
         // ContactNoExistCheck
 
-        if(ApiController::ContactNoExistCheck($request->phoneNumber))
+        if(User::ContactNoExistCheck($request->phoneNumber))
         {
             return response()->json([
                 "status" => false,
@@ -219,7 +222,7 @@ class UserController extends Controller
             ]);
             // return redirect('/user/create')->with('error', 'Contact Number already exist');
         }
-        if(ApiController::EmailExistCheck($request->email))
+        if(User::EmailExistCheck($request->email))
         {
             return response()->json([
                 "status" => false,
@@ -249,7 +252,7 @@ class UserController extends Controller
 
         //dd(json_encode($data));
         // create a new user
-        $response =  ApiController::createUser($data);
+        $response =  User::createUser($data);
        // dd($response);
         if($response['status'])
         {
@@ -310,7 +313,7 @@ class UserController extends Controller
             $data['updatedBy'] = Session::get('loginid');
             // dd("update");
             //dd(json_encode($data,true));
-            $response =  ApiController::updateUser($data);
+            $response =  User::updateUser($data);
             if($response['status'])
             {
                 return response()->json([
@@ -344,7 +347,7 @@ class UserController extends Controller
         $data['routeRole']= $this->routeRole;
        // dd($data);
         // get all the users from Api
-        $users =  ApiController::getUsers();
+        $users =  User::getUsers();
        // dd($users);
         $loginId = Session::get('loginId');
 
@@ -472,7 +475,7 @@ class UserController extends Controller
             'officeId'=>$masterOfficeId,
             ];
             //$admin=ApiController::UserByRole($param_data['roleName']);
-            $admin=ApiController::getUsers();
+            $admin=User::getUsers();
             foreach ($admin as $key => $value){
                 if (!in_array($value['officeId'],[$masterOfficeId])){
                     unset($admin[$key]);

@@ -3,9 +3,9 @@
     <div class="row justify-content-center align-items-center mb-4">
 
         @csrf
-        <div class="col-3 col-md-2 text-right">Plan Name : </div>
-        <div class="col-9 col-md-6 ">
-            <input id="planTitle" name="planTitle" class=" w-100 border-bottom border-primary p-2 rounded "
+        <div class="col-12 col-md-2 text-md-right">{{ __('Plan Name') }} : </div>
+        <div class="col-12 col-md-6 ">
+            <input id="planTitle" name="planTitle" class=" w-100 border-bottom border-primary p-2 rounded-pill "
                 class="form-control" value="{{ $planTitle }}" />
 
         </div>
@@ -17,7 +17,8 @@
             <input type="text" name="productId" class="sr-only" value="{{ $requestData['ProductTypeId'] }}">
             <input type="text" name="productTypeId" class="sr-only" value="{{ $requestData['ProductTypeId'] }}">
             <input type="text" name="StartingPointId" class="sr-only" value="{{ $requestData['StartingPointId'] }}">
-            <input type="text" name="manufactureingHub" class="sr-only" value="{{ $requestData['StartingPointId'] }}">
+            <input type="text" name="manufactureingHub" class="sr-only"
+                value="{{ $requestData['StartingPointId'] }}">
             <input type="text" name="MinimumMultiple" class="sr-only" value="{{ $requestData['MinimumMultiple'] }}">
             <input type="text" name="TankCapacity" class="sr-only" value="{{ $requestData['TankCapacity'] }}">
             <input type="text" name="No_of_days_for_delivery" class="sr-only"
@@ -31,25 +32,97 @@
 
             @if (isset($requestData) && $requestData['DeliveryPlanId'] > 0)
                 <button id="save_plan" type="submit"
-                    class="save_plan btn btn-rounded animated-shine px-2 mx-4 w-100">{{ __('Update Plan') }}</button>
+                    class="save_plan btn btn-rounded animated-shine px-2 mx-4 ">{{ __('Update Plan') }}</button>
             @else
                 <button id="save_plan" type="submit"
                     class="save_plan btn btn-rounded animated-shine px-2 mx-4 ">{{ __('Save Plan') }}</button>
             @endif
-            <a href="javascript:" onclick="updateRoute();" title="{{ __('Update route') }}"
-                class="update-route   btn btn-rounded animated-shine px-2  ">
-                <i class="fa fa-bullseye"></i></a>
-            <a href="javascript:" onclick="toggleMapPanel();" title="{{ __('Map View') }}"
-                class="   btn btn-rounded animated-shine px-2  ">
-                <i class="fas fa-map"></i></a>
 
-
-            <a href="javascript:" onclick="toggleRequestPanel();" title="{{ __('New Request') }}"
-                class="   btn btn-rounded animated-shine px-2   ">
-                <i class="fa fa-paper-plane"></i></a>
 
 
         </div>
+        <style>
+            .btn-box {
+                display: inline-block;
+                white-space: nowrap;
+                position: relative;
+                padding: 1rem.75rem;
+                font-size: 16px;
+                line-height: 1.5;
+                color: #fff;
+                background-color: var(--info);
+                border-radius: .3rem;
+                cursor: pointer;
+                transition: all ease-in-out.3s;
+                width: 100%;
+                min-width: fit-content;
+
+            }
+
+            .gap-10 {
+                gap: 10px;
+            }
+
+            .btn-box>div {}
+
+            .animated-shine {
+                animation: shine 8s infinite linear alternate forwards running;
+                transform-origin: center bottom !important;
+
+            }
+
+            /* Animation */
+            /* @keyframes shine {
+                        0%   {transform: rotate(0deg);}
+                        100% {transform: rotate(-360deg);}
+                        } */
+        </style>
+        <div class="col-12  gap-10  d-flex flex-row align-items-center justify-content-end mt-2 ">
+            <div class="btn-box animated-shine " onclick="toggleRequestPanel(this);" title="{{ __('Request') }}">
+
+                <i class="fa fa-paper-plane"></i>
+                <div>{{ __('Request') }}</div>
+            </div>
+
+            <div class="btn-box btn-block animated-shine update-route  " onclick="updateRoute(this);"
+                title="{{ __('Update route') }}">
+
+                <i class="fa fa-bullseye"></i>
+                <div>{{ __('Update Route') }}</div>
+            </div>
+            <div class="btn-box animated-shine " onclick="toggleMapPanel(this);" title="{{ __('Map View') }}">
+
+                <i class="fas fa-map"></i>
+                <div>{{ __('Map View') }}</div>
+
+
+            </div>
+
+
+        </div>
+        {{-- <div class="col-12 col-md-4 d-flex flex-row align-items-center justify-content-center  ">
+            <div class="btn-box">
+                <a href="javascript:" onclick="updateRoute();" title="{{ __('Update route') }}"
+                    class="update-route   btn btn-rounded animated-shine px-2  ">
+                    <i class="fa fa-bullseye"></i></a>
+                <div>{{ __('Update Route') }}</div>
+            </div>
+            <div class="btn-block">
+                <a href="javascript:" onclick="toggleMapPanel();" title="{{ __('Map View') }}"
+                    class="   btn btn-rounded animated-shine px-2  ">
+                    <i class="fas fa-map"></i></a>
+                <div>{{ __('Map View') }}</div>
+            </div>
+            <div class="btn-box">
+                <a href="javascript:" onclick="toggleRequestPanel();" title="{{ __('Request') }}"
+                    class="   btn btn-rounded animated-shine px-2   ">
+                    <i class="fa fa-paper-plane"></i></a>
+                <div>{{ __('Request') }}</div>
+            </div>
+
+
+        </div> --}}
+
 
     </div>
 </form>
@@ -87,9 +160,25 @@
                     <tr>
                         <td class="">{{ __('Sl') }}</td>
                         <td class="">{{ __('Pumps') }}</td>
-                        <td class="">{{ __('Current(in ltr)') }}</td>
-                        <td class="">{{ __('Availability(in ltr)') }}</td>
-                        <td class="">{{ __('Suggested(in ltr)') }}</td>
+                    <td class="">{{ __('Current') }}({{ __('in ltr') }})</td>
+                    <td class="">{{ __('Availability') }}({{ __('in ltr') }})</td>
+                    <td class="editable-column">{{ __('Suggested') }}({{ __('in ltr') }})</td>
+
+                        <td class=""
+                            data-visible="{{ (isset($requestData) && $requestData['DeliveryPlanId']) != 0 ? true : false }}">
+                            {{ __('Order') }}</td>
+                        <td class=""
+                            data-visible="{{ (isset($requestData) && $requestData['DeliveryPlanId']) != 0 ? true : false }}">
+                            {{ __('Receive') }}</td>
+                        <td class=""
+                            data-visible="{{ (isset($requestData) && $requestData['DeliveryPlanId']) != 0 ? true : false }}">
+                            {{ __('Status') }}</td>
+                        {{-- @if (isset($requestData))
+                            @if ($requestData['DeliveryPlanId'] != 0)
+                                <td class="">{{ __('Status') }}</td>
+                            @endif
+                        @endif --}}
+
                     </tr>
                 </thead>
 
@@ -128,9 +217,9 @@
                 <tr>
                     <td class="">{{ __('Sl') }}</td>
                     <td class="">{{ __('Pumps') }}</td>
-                    <td class="">{{ __('Current(in ltr)') }}</td>
-                    <td class="">{{ __('Availability(in ltr)') }}</td>
-                    <td class="">{{ __('Suggested(in ltr)') }}</td>
+                    <td class="">{{ __('Current') }}({{ __('in ltr') }})</td>
+                    <td class="">{{ __('Availability') }}({{ __('in ltr') }})</td>
+                    <td class="">{{ __('Suggested') }}({{ __('in ltr') }})</td>
                 </tr>
             </thead>
             {{-- <tbody id="wrapperTwo">
@@ -214,6 +303,7 @@
         0% {
             opacity: 1
         }
+
         80% {
             0
         }
@@ -225,9 +315,7 @@
         flex-flow: column nowrap;
     }
 
-    .modified {
-        background-color: #ffd9dd !important;
-    }
+
 
     .draggable {
         cursor: grabbing !important;
@@ -322,6 +410,34 @@
         border-radius: 10px;
         padding: 10px;
         box-shadow: 0 0 10px 0 #0000001a;
+    }
+
+    /* Add CSS styles to highlight the cell in edit mode */
+    .edit-mode {
+        background-color: rgba(46, 186, 241, 0.185);
+        color: #2c2d35;
+        width: 100%;
+        height: 30px;
+        padding: 5px;
+        text-align: right;
+        outline: transparent;
+        transition: all 0.7s ease-in-out;
+        font-weight: bolder;
+
+    }
+
+    .editable {
+        height: 24px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .modified-cell {
+        font-weight: bolder;
+        background: #49dfc6d7;
+    }
+
+    .modified {
+        background-color: #ffd9dd !important;
     }
 </style>
 
@@ -480,6 +596,9 @@
 
         //  console.log(response.Routes.Algorithm_1.Route);
         var routeList = response.Routes.Algorithm_1.Route;
+        //console.log(response.hasOwnProperty('DeliveryPlan_statusId'));
+        var DeliveryPlanStatusId = response.hasOwnProperty('DeliveryPlan_statusId') ? response.DeliveryPlan_statusId : 0;
+        //console.log("Plan Status: "+DeliveryPlanStatusId);
         newList = routeList;
         var extra_list = response.Not_selected;
 
@@ -533,19 +652,36 @@
             calculateSummary();
         }
 
-        function updateRoute() {
-            //    let start = Date.now();
-            //       var officeIds1 = _.map(newList.slice(1,-1),'officeId');
-            //       let timeTaken = Date.now() - start;
-            //     console.log("Total time taken : " + timeTaken + " milliseconds");
-            // var officeIds = newList.slice(1, -1).map(function(a) {
-            //     return a.officeId
-            // });
+        function updateRoute(element) {
 
-            // let requestData = @JSON($requestData);
-            // // // let strOfficeIds=JSON.stringify(officeIds);
-            // requestData.OfficeIdList = officeIds;
+            let i_element = '';
+            Object.values(element.childNodes).forEach(val => {
+                var tag = val.tagName;
+
+                if (tag == 'I') {
+
+                    //     // val.className='fas fa-check text-success mr-3 ';
+
+                    if (val.classList.contains('fa-bullseye')) {
+
+                        val.classList.remove('fa-bullseye');
+                        val.classList.add('spinner-border');
+                        val.classList.add('spinner-border-sm');
+                        i_element = val;
+
+                    }
+                }
+
+            });
             $('#formRequestModifiedPlan').submit();
+            setTimeout(() => {
+                if (i_element.classList.contains('spinner-border')) {
+                    i_element.classList.add('fa-bullseye');
+                    i_element.classList.remove('spinner-border');
+                    i_element.classList.remove('spinner-border-sm');
+                }
+            }, 3000);
+
             return;
 
         }
@@ -653,7 +789,8 @@
             var addOne = newList.reduce(function(previousValue, currentValue) {
                 return {
                     officeId: previousValue.officeId + currentValue.officeId,
-                    atDeliveryRequirement: previousValue.atDeliveryRequirement + currentValue.atDeliveryRequirement,
+                    atDeliveryRequirement: previousValue.atDeliveryRequirement + parseFloat(currentValue
+                        .atDeliveryRequirement),
 
                 }
             });
@@ -715,6 +852,9 @@
         }
     </script>
     <script>
+        var approval_url = `{{ route($routeRole . '.delivery_plan_details.approve_requirement', ':id') }}`;
+        var receive_url = `{{ route($routeRole . '.delivery_plan_details.receive_delivery', ':id') }}`;
+
         var idx = 1;
         var modifiedOffice = []
         var dt_table1 = $('#table1').DataTable({
@@ -786,10 +926,284 @@
                 {
                     data: null,
                     "render": function(data, type, full, meta) {
-                        return parseFloat(data.atDeliveryRequirement).toFixed(0);
+                        return `<div class="editable" data-rowindex="${(meta.row + 1)}" data-key="atDeliveryRequirement">${parseFloat(data.atDeliveryRequirement).toFixed(0)}</div>`;
+                    }
+                },
+                {
+                    data: null,
+                    "render": function(data, type, full, meta) {
+                        //console.log(data);
+                        if (data.hasOwnProperty('DeliveryPlanId')) {
+                            if (data.hasOwnProperty('ApprovedQuantity')) {
+                                //return data.ApprovedQuantity.toFixed(0);
+                                if (data.ApproveStatus == -1) {
+                                    return ` <div class="d-flex align-items-center justify-content-center">` +
+                                        `<label style="color:red;">X</label>`;
+                                    `</div>`;
+                                }
+                                if (data.ApprovedQuantity == 0 || data.ApprovedQuantity == null) {
+                                    return ``;
+                                }
+                                return ` <div class="d-flex align-items-center justify-content-center">` +
+                                    `<div>${ data.ApprovedQuantity } </div>` +
+                                    `</div>`;
+                            }
+                            return '';
+
+                        }
+                        return null;
+                    }
+                },
+                {
+                    data: null,
+                    "render": function(data, type, full, meta) {
+                        if (data.hasOwnProperty('DeliveryPlanId')) {
+                            if (data.hasOwnProperty('ReceivedQuantity')) {
+                                // return data.ReceivedQuantity.toFixed(0);
+                                if (data.ApproveStatus == -1) {
+                                    return ` <div class="d-flex align-items-center justify-content-center">` +
+                                        `<label style="color:red;">X</label>`;
+                                    `</div>`;
+                                }
+                                if (data.RreceivedQuantity == 0 || data.RreceivedQuantity == null) {
+                                    return ` <div class="d-flex align-items-center justify-content-center">` +
+                                        `<label style="color:green;">-</label>`;
+                                    `</div>`;
+                                }
+                                return ` <div class="d-flex align-items-center justify-content-center">` +
+                                    `<div>${ data.RreceivedQuantity }</div>` +
+                                    `</div>`;
+                            }
+                            return '';
+
+                        }
+                        return null;
+                    }
+                },
+                {
+                    data: null,
+                    "render": function(data, type, full, meta) {
+
+                        if (data.hasOwnProperty('DeliveryPlanId')) {
+
+                            if (data.hasOwnProperty('ApproveStatus')) {
+
+
+                                //   return data.ApproveStatus;
+                                let this_id = data.DeliveryPlanDetailsId;
+                                var DeliveryPlanStatusId = response.hasOwnProperty(
+                                    'DeliveryPlan_statusId') ? response.DeliveryPlan_statusId : 0;
+
+                                let this_approval_url = approval_url.replace(':id', this_id);
+                                let this_receive_url = receive_url.replace(':id', this_id);
+                                var this_status =
+                                    ` <div class="d-flex align-items-center justify-content-center">` +
+                                    `<a href="javascript:" ` +
+                                    `class="load-popup edit-quantity    text-secondary p-2 font-weight-bolder " ` +
+                                    `style="color:gray;" data-param="${this_id}" data-url="${this_approval_url}">` +
+                                    `<label >Waiting for approval</label>` +
+                                    `</a>` +
+                                    `<a href="javascript:" data-param="${this_id}" data-url="${this_approval_url}"` +
+                                    `title="Approve Requirement"` +
+                                    `class="load-popup edit-quantity    text-info p-2 ">` +
+                                    `<i class="fas fa-pencil-alt m-0 "></i></a>` +
+                                    `</div>`;
+
+                                if (data.ApproveStatus == -1) {
+                                    this_status =
+                                        ` <div class="d-flex align-items-center justify-content-center">` +
+                                        `<label style="color:red;">Rejected</label>`;
+                                    `</div>`;
+                                }
+                                if (DeliveryPlanStatusId == 1) {
+                                    if (data.ApproveStatus == -1) {
+                                        this_status =
+                                            ` <div class="d-flex align-items-center justify-content-center">` +
+                                            `<a href="javascript:" ` +
+                                            `class="load-popup edit-quantity    text-success p-2 font-weight-bolder " ` +
+                                            `data-param="${this_id}" data-url="${this_approval_url}">` +
+                                            `<label style="color:red;">Rejected</label>` +
+                                            `</a>` + `</div>`;
+                                    } else if (data.ApproveStatus == 2) {
+                                        this_status =
+                                            ` <div class="d-flex align-items-center justify-content-center">` +
+                                            `<a href="javascript:" ` +
+                                            `class="load-popup edit-quantity    text-success p-2 font-weight-bolder " ` +
+                                            `style="color:green;" data-param="${this_id}" data-url="${this_approval_url}">` +
+                                            `<label >${data.ApprovedQuantity}  Order Placed</label>` +
+                                            `</a>` +
+                                            `<a href="javascript:" data-param="${this_id}" data-url="${this_approval_url}"` +
+                                            `title="Approve Requirement"` +
+                                            `class="load-popup edit-quantity    text-info p-2 ">` +
+                                            `<i class="fas fa-pencil-alt m-0 "></i></a>` +
+                                            `</div>`;
+                                    } else if (data.ApproveStatus == 3) {
+                                        this_status =
+                                            ` <div class="d-flex align-items-center justify-content-center">` +
+                                            `<a href="javascript:" ` +
+                                            `class="load-popup receive-quantity    text-success p-2 font-weight-bolder " ` +
+                                            `style="color:green;" data-param="${this_id}" data-url="${this_receive_url}">` +
+                                            `<label >${data.ReceivedQuantity}  Received</label>` +
+                                            `</a>` + `</div>`;
+                                    }
+                                }
+                                if (DeliveryPlanStatusId == 2) {
+                                    if (data.ApproveStatus == 2) {
+                                        this_status =
+                                            ` <div class="d-flex align-items-center justify-content-center text-break text-success p-2 font-weight-bolder">` +
+                                            `<lavel>${ data.ApprovedQuantity }  Order Under Processing</lavel>` +
+                                            `</div>`;
+                                    } else if (data.ApproveStatus == 3) {
+                                        this_status =
+                                            ` <div class="d-flex align-items-center justify-content-center">` +
+                                            `<a href="javascript:" ` +
+                                            `class="load-popup receive-quantity    text-success p-2 font-weight-bolder " ` +
+                                            `style="color:green;" data-param="${this_id}" data-url="${this_receive_url}">` +
+                                            `<label >${data.ReceivedQuantity}  Received</label>` +
+                                            `</a>` +
+                                            `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
+                                            `title="Approve Requirement"` +
+                                            `class="load-popup receive-quantity   text-info p-2 ">` +
+                                            `<i class="fas fa-pencil-alt m-0 "></i></a>` +
+                                            `</div>`;
+                                    }
+                                } else if (DeliveryPlanStatusId == 3) {
+                                    if (data.ApproveStatus == 2) {
+                                        this_status =
+                                            ` <div class="d-flex align-items-center justify-content-center">` +
+                                            `<a href="javascript:" ` +
+                                            `class="load-popup receive-quantity    text-success p-2 font-weight-bolder " ` +
+                                            `style="color:green;" data-param="${this_id}" data-url="${this_receive_url}">` +
+                                            `<label >${data.ApprovedQuantity}  Delivery on the way</label>` +
+                                            `</a>` +
+                                            `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
+                                            `title="Approve Requirement"` +
+                                            `class="load-popup receive-quantity   text-info p-2 ">` +
+                                            `<i class="fas fa-pencil-alt m-0 "></i></a>` +
+                                            `</div>`;
+                                    } else if (data.ApproveStatus == 3) {
+                                        this_status =
+                                            ` <div class="d-flex align-items-center justify-content-center">` +
+                                            `<a href="javascript:" ` +
+                                            `class="load-popup receive-quantity    text-success p-2 font-weight-bolder " ` +
+                                            `style="color:green;" data-param="${this_id}" data-url="${this_receive_url}">` +
+                                            `<label >${data.ReceivedQuantity}  Received</label>` +
+                                            `</a>` +
+                                            `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
+                                            `title="Approve Requirement"` +
+                                            `class="load-popup receive-quantity  text-break  text-info p-2 ">` +
+                                            `<i class="fas fa-pencil-alt m-0 "></i></a>` +
+                                            `</div>`;
+                                    }
+                                } else if (DeliveryPlanStatusId == 4) {
+                                    if (data.ApproveStatus == 2) {
+                                        this_status =
+                                            ` <div class="d-flex align-items-center justify-content-center">` +
+                                            `<a href="javascript:" ` +
+                                            `class="load-popup receive-quantity  text-break  text-info p-2 font-weight-bolder " ` +
+                                            `style="color:orange;" data-param="${this_id}" data-url="${this_receive_url}">` +
+                                            `<label >${data.ApprovedQuantity}  Receiving Confirmation Pending</label>` +
+                                            `</a>` +
+                                            `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
+                                            `title="Approve Requirement"` +
+                                            `class="load-popup receive-quantity  text-break  text-info p-2 ">` +
+                                            `<i class="fas fa-pencil-alt m-0 "></i></a>` +
+
+                                            `</div>`;
+                                    } else if (data.ApproveStatus == 3) {
+                                        this_status =
+                                            ` <div class="d-flex align-items-center justify-content-center text-break">` +
+                                            `<label >${data.ReceivedQuantity}  Received</label>` +
+                                            `</div>`;
+                                    }
+
+                                } else if (DeliveryPlanStatusId == 5) {
+                                    this_status =
+                                        `<label class="text-danger text-break">Order Cancelled By Admin</label> `;
+
+                                }
+
+
+
+                                  return `${ this_status  }`;
+                            }
+                            return 'Not Found';
+                        }
+                        return null;
                     }
                 }
             ]
+
+        });
+
+        function setCaretPositionToEnd(el) {
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.selectNodeContents(el);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            el.focus();
+        }
+        $('#table1').on('focus', 'td .editable', function() {
+            // Set the caret position to the end of the editable div
+            setCaretPositionToEnd(this);
+        });
+        $('#table1').on('click', 'td .editable', function() {
+            // Toggle the contenteditable attribute for the clicked cell
+            $(this).prop('contenteditable', true);
+
+            // Highlight the cell to indicate it is in edit mode
+
+            $(this).addClass('edit-mode');
+
+            $(this).focus();
+            // window.getSelection().collapseToEnd()
+            //  console.log($(this).prop('data-key'));
+        });
+        $('#table1').on('keypress', 'td .editable', function(e) {
+            //
+
+            // Toggle the contenteditable attribute for the clicked cell
+            // console.log($(this).parent().index());
+            // console.log($(this).attr('data-key'));
+            if (e.which == 13 && $(this).prop('contenteditable')) {
+                e.preventDefault();
+                //  console.log($(this).attr('data-key'));
+
+                // const rowIndex = $(this).attr('data-rowindex')
+                // const columnIndex = $(this).attr('data-key')
+                // const newValue = $(this).text();
+                // // console.log('rowindex '+ rowIndex + ' Happy\n');
+                // newList[rowIndex][columnIndex] = newValue
+                // dt_table1.clear().rows.add(newList.slice(1, -1)).draw();
+                $(this).prop('contenteditable', false);
+                $(this).removeClass('edit-mode');
+                //  console.log('remove');
+                // calculateSummary();
+                // console.log('calculated');
+            }
+
+        });
+
+        // Add blur event handler to the cells to save the edited content
+        $('#table1').on('blur', 'td .editable', function() {
+            // Remove the edit mode class and toggle the contenteditable attribute
+            setTimeout(() => {
+                if ($(this).prop('contenteditable')) {
+                    const rowIndex = $(this).attr('data-rowindex')
+                    const columnIndex = $(this).attr('data-key')
+                    const newValue = $(this).text();
+                    // console.log('rowindex '+ rowIndex + ' Happy\n');
+                    newList[rowIndex][columnIndex] = newValue
+                    dt_table1.clear().rows.add(newList.slice(1, -1)).draw();
+                    $(this).prop('contenteditable', false);
+                    $(this).removeClass('edit-mode');
+                    $(this).addClass('modified-cell');
+                    // console.log('remove');
+                    calculateSummary();
+                }
+            }, 200);
 
         });
 
@@ -949,7 +1363,6 @@
         $(document).ready(() => {
             calculateSummary();
         });
-
     </script>
 @endif
 

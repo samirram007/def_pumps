@@ -1,54 +1,64 @@
 @extends('layouts.main')
 
 @section('content')
-@php
-    $token=session()->get('_token') ;
-    $userid=session()->get('loginid') ;
-    $theme="<script>localStorage.getItem('lights')</script>";
+    @php
+        $token = session()->get('_token');
+        $userid = session()->get('loginid');
+        $lang = str_replace('_', '-', app()->getLocale());
+        // $theme = '<script>
+        //     localStorage.getItem('lights')
+        // </script>';
 
-@endphp
+    @endphp
 
-<style>
-    .object{
-width: 100%;
-height:calc(100vh - 4rem);
-    }
-    ::-webkit-scrollbar{
-        width:.5em;
-    }
-</style>
-<object id="object" data=""
-type=""  class="object "></object>
-{{-- <object id="object" data="http://115.124.120.251:5063/?theme=light&userId=8379AC15-C52A-4F2E-D69C-08DAF9596B0B&jwtToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZTk4OGU3ZS1lODVhLTRjOTQtMGY1Zi0wOGQ4ZjFmMWI3OTkiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiU0FkbWluIiwianRpIjoiYjUwODU3OWEtMzg1OS00ZTlhLTg0MTgtM2Q3ZDZkNTMxYzYxIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiI1ZTk4OGU3ZS1lODVhLTRjOTQtMGY1Zi0wOGQ4ZjFmMWI3OTkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJTdXBlckFkbWluIiwiZXhwIjoxNzE5NTc4MTEzLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjMxODcxIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMTg3MSJ9.v3VG1otpCu71imrgb_mVrGkQmVduWNHu28HuikQcp2A"
+    <style>
+        .object {
+            width: 100%;
+            height: calc(100vh - 4rem);
+        }
+
+        ::-webkit-scrollbar {
+            width: .5em;
+        }
+
+        .theme-container {
+            background: rgb(26, 28, 45) !important;
+            border-radius: 20px;
+            padding: 1.2rem;
+        }
+    </style>
+    <object id="object" data="" type="" class="object "></object>
+    {{-- <object id="object" data="http://115.124.120.251:5063/?theme=light&userId=8379AC15-C52A-4F2E-D69C-08DAF9596B0B&jwtToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZTk4OGU3ZS1lODVhLTRjOTQtMGY1Zi0wOGQ4ZjFmMWI3OTkiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiU0FkbWluIiwianRpIjoiYjUwODU3OWEtMzg1OS00ZTlhLTg0MTgtM2Q3ZDZkNTMxYzYxIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiI1ZTk4OGU3ZS1lODVhLTRjOTQtMGY1Zi0wOGQ4ZjFmMWI3OTkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJTdXBlckFkbWluIiwiZXhwIjoxNzE5NTc4MTEzLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjMxODcxIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMTg3MSJ9.v3VG1otpCu71imrgb_mVrGkQmVduWNHu28HuikQcp2A"
 type=""  class="object"></object> --}}
-<script>
+    <script>
+        function newDashboard() {
+            var token = '{{ $token }}';
+            var userid = '{{ $userid }}';
+            var lang='{{ $lang  }}';
+            var theme = localStorage.getItem('lights') == 'on' ? 'light' : 'dark';
+            var DASHBOARD_URL="{{ env('DASHBOARD_URL') }}";
+            // var str = `http://115.124.120.251:5063/?theme=${theme}&lang=${lang}&userId=${ userid }&jwtToken=${ token }`;
+            var str = `${DASHBOARD_URL}?theme=${theme}&lang=${lang}&userId=${ userid }&jwtToken=${ token }`;
+            document.getElementById('object').data = str;
+        }
 
+        function switchDashboard() {
+            if (document.getElementById('object').classList.contains('sr-only')) {
+                document.getElementById('object').classList.remove('sr-only')
+                document.getElementById('old').classList.add('sr-only')
+                newDashboard()
+            } else {
+                document.getElementById('object').classList.add('sr-only')
+                document.getElementById('old').classList.remove('sr-only')
+                filter()
+            }
 
-function newDashboard(){
-    var token='{{ $token }}';
-    var userid='{{ $userid }}';
-    var theme=localStorage.getItem('lights')=='on'?'light':'dark';
-    var str=`http://115.124.120.251:5063/?theme=${theme}&userId=${ userid }&jwtToken=${ token }`;
-    document.getElementById('object').data=str;
-}
-    function switchDashboard(){
-        if(document.getElementById('object').classList.contains('sr-only')){
-            document.getElementById('object').classList.remove('sr-only')
-            document.getElementById('old').classList.add('sr-only')
+        }
+        $(document).ready(() => {
             newDashboard()
-        }
-        else{
-            document.getElementById('object').classList.add('sr-only')
-            document.getElementById('old').classList.remove('sr-only')
-            filter()
-        }
-
-    }
-    $(document).ready(() => {
-        newDashboard()
-    });
-</script>
-<div id="old" class="container-fluid sr-only">
+        });
+    </script>
+    {{-- <div id="old" class="container-fluid sr-only">
     <div class="row justify-content-center p-3">
         <div class="col-md-12 ">
             <div class="row mx-auto">
@@ -222,5 +232,5 @@ function newDashboard(){
         border: 1px solid #cbd3db;
         overflow: hidden;
     }
-</style>
+</style> --}}
 @endsection
