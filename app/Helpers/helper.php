@@ -25,6 +25,10 @@ class Helper
             'zip' => '',
         ];
     }
+    public static function jsonDE($object)
+    {
+        return json_decode(json_encode($object),true);
+    }
     public static function GetResource($url){
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*"];
         $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . $url)->json();

@@ -22,5 +22,11 @@ class Office extends Model
         $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'Office/getCompanyWisePump/'.$officeId.'/-1?OfficeTypeIds=1')->json();
         return $res;
     }
+    public static function GetOfficeById($officeId){
+        //dd(env('API_RESOURCE_URL') . 'Office/getCompanyWisePump/'.$officeId.'/1?OfficeTypeIds=1');
+        $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];
+        $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'Office/GetOfficeById/'.$officeId)->json();
+        return $res;
+    }
 
 }

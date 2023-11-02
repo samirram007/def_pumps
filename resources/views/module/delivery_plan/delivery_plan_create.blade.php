@@ -1,29 +1,21 @@
 @extends('layouts.main')
 @section('content')
-    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> --}}
-    {{-- <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
-    <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDN32TA762x19KhBZX91X4uNcmdGAhAlrQ&callback=initMap"
-    async defer></script> --}}
-
-    {{-- <script
-    src="https://roads.googleapis.com/v1/snapToRoads?parameters&key=AIzaSyDN32TA762x19KhBZX91X4uNcmdGAhAlrQ&callback=initMap&v=weekly"
-    async defer></script> --}}
-
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('MAP_KEY') }}&callback=initMap" async defer></script>
     <script>
-        // let map;
-        // // let Latitude = '25.3261953';
-        // // let Longitude = '82.9852567';
-        // let Latitude = '-28.024';
-        // let Longitude = '140.887';
-        // let newList=[];
+        async function initMap() {
+            return
+        }
     </script>
     <div class="content-wrapper" id="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2 justify-content-between align-items-center">
-                    <div class="col-sm-6">
-                        <h4 class="m-0 text-dark">{{ __('Delivery plan') }}</h4>
+                    <div class="col-md-8">
+                        <h4 class="m-0   text-dark d-flex justify-content-start align-items-center gap-10">
+                            {{ __('Delivery plan') }}<a href="javascript:" id="requestFilter"
+                                onclick="toggleRequestPanel(this);" title="{{ __('Toggle Panel') }}"
+                                class=" toggle-1 d-none float-right btn btn-rounded animated-shine px-2    ">
+                                <i class="fa fa-eye"></i></a></h4>
                         <ol class="breadcrumb float-sm-left border-0 p-0 m-0">
                             <li class="breadcrumb-item "><a href="{{ route($routeRole . '.dashboard') }}"
                                     class="text-active">{{ __('Dashboard') }}</a></li>
@@ -37,14 +29,15 @@
 
                         </ol>
                     </div><!-- /.col -->
-                    <div class="col-sm-6 sr-only">
-                        <a href="javascript:" onclick="toggleMapPanel(this);" title="{{ __('Map View') }}"
+                    <div class="col-4 ">
+                        {{-- <a href="javascript:" onclick="toggleMapPanel(this);" title="{{ __('Map View') }}"
                             class="  float-right btn btn-rounded animated-shine px-2 mb-2 ">
-                            <i class="fas fa-map"></i></a>
+                            <i class="fas fa-map"></i></a> --}}
 
-                        <a href="javascript:" onclick="toggleRequestPanel();" title="{{ __('New Request') }}"
-                            class=" float-right btn btn-rounded animated-shine px-2 mb-2 ">
-                            <i class="fa fa-paper-plane"></i></a>
+                        {{-- <a href="javascript:" id="requestFilter" onclick="toggleRequestPanel(this);"
+                            title="{{ __('Toggle Panel') }}"
+                            class=" float-right btn btn-rounded animated-shine px-2 mb-2 sr-only d-none   ">
+                            <i class="fa fa-eye"></i> Toggle Panel</a> --}}
                     </div><!-- /.col -->
                 </div><!-- /.row -->
 
@@ -63,6 +56,12 @@
                                     <label class="label text-primary">
                                         <span>{{ $MasterOffice[0]['officeName'] }} : {{ __('Delivery Plan') }} </span>
                                     </label>
+                                </div>
+                                <div class="col-12">
+                                    <label class="label text-info text-small">
+                                        <span>{{ __('Plan Date') }} : {{ date('d-m-Y', strtotime($planDate)) }} </span>
+                                    </label>
+
                                 </div>
 
                             </div>
@@ -115,31 +114,34 @@
                                 </div> --}}
                                 </div>
                                 <div class="row">
-                                    <div class=" col-6 pt-3">
+                                    <div class=" col-6 pt-3 sr-only">
                                         <div class="text-center-lg text-left-md label-text">{{ __('Plan Date') }}</div>
                                         <div class="d-flex " style="gap:10px;">
                                             <div class="w-100  ">
-                                                <input type="date" class="form-control" name="planDate" id="planDate"
-                                                    value="{{ $planDate }}">
+                                                <input type="datetime-local" class="form-control" name="planDate"
+                                                    id="planDate" value="{{ $planDate }}">
                                             </div>
 
                                         </div>
 
                                     </div>
-                                    <div class=" col-6 pt-3">
+                                    <div class=" col-12 pt-3">
                                         <div class="text-center-lg text-left-md">
                                             <div class="text-center-lg text-left-md label-text">
-                                                {{ __('Delivery Date') }}</div>
+                                                {{ __('Delivery Date') }}( 24HRS FORMAT)</div>
                                             <div class="d-flex " style="gap:10px;">
 
                                                 <div class="w-100  ">
-                                                    <input type="date" class="form-control" name="expectedDeliveryDate"
-                                                        id="expectedDeliveryDate" value="{{ $expectedDeliveryDate }}">
+                                                    <input type="datetime-local" class="form-control"
+                                                        name="expectedDeliveryDate" id="expectedDeliveryDate"
+                                                        value="{{ $expectedDeliveryDate }}">
+
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="row">
                                     <div class="col-6 pt-3">
                                         <div class="label-text">{{ __('Tanker Capacity') }}</div>
@@ -163,14 +165,18 @@
                                             @endforeach
                                         </select> --}}
                                     </div>
-                                    <div class="col-12 pt-3 d-flex justify-content-center ">
+                                    <div class="col-12 pt-3 d-flex justify-content-center gap-4 ">
                                         <button id="RequestPlan" type="submit" title="{{ __('New Delivery Plan') }}"
-                                            class="submit   btn btn-rounded animated-shine px-2 ">
+                                            class="submit   btn btn-rounded animated-shine px-2 mb-2 ">
                                             {{ __('Request a plan') }}</button>
                                         {{-- <button type="button" title="{{ __('load') }}"
                                         onclick="LoadManufactureingHub()"
                                             class="  btn btn-rounded animated-shine px-2 ">
                                             {{ __('load') }}</button> --}}
+                                        <a href="javascript:" id="requestFilter" onclick="toggleRequestPanel(this);"
+                                            title="{{ __('Toggle Panel') }}"
+                                            class="toggle-2 float-right btn btn-rounded animated-shine px-2 mb-2   ">
+                                            <i class="fa fa-eye"></i> Toggle Panel</a>
                                     </div>
 
 
@@ -224,7 +230,83 @@
 
         }
     </style>
+    <style>
+        #table1 {
+            width: 100%;
+        }
 
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        @media screen and min-width(768px) {
+
+            #table1 td:nth-child(3),
+            #table1 td:nth-child(4),
+            #table1 td:nth-child(5),
+            #table1 td:nth-child(6) {
+                width: 50px !important;
+            }
+
+        }
+
+        #table1 td:nth-child(2) {
+            text-align: left;
+            width: 250px !important;
+            padding-left: 10px;
+        }
+
+        #table1>tbody td:nth-child(8) {
+            text-align: left;
+            width: 250px !important;
+            padding-left: 10px;
+            align-items: center;
+            position: relative;
+        }
+
+        #table1>tbody td:nth-child(8) div {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: #f3f2f200;
+        }
+
+        table.dataTable>tbody>tr.child ul.dtr-details>li {
+            padding-top: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        table.dataTable>tbody>tr.child ul.dtr-details>li .dtr-data {
+            min-width: 150px;
+            padding-inline-start: 10px;
+        }
+
+        table.dataTable>tbody>tr.child ul.dtr-details>li .editable {
+            width: 150px;
+        }
+
+        table.dataTable>tbody>tr.child ul.dtr-details>li .editable {
+            width: 150px;
+        }
+
+        table.dataTable tbody tr.dt-hasChild {
+            height: 70px;
+            align-items: center;
+
+        }
+
+        @media screen and max-width(768px) {
+            #table1 .dtr-details>li {
+                display: flex;
+                align-items: center;
+
+            }
+        }
+    </style>
+@endsection
+@push('script')
     <script>
         const deliveryPlanId = {{ $deliveryPlanId }};
 
@@ -232,6 +314,7 @@
 
         $("#requestForm").on("submit", function(event) {
             event.preventDefault();
+
             if ($('#reportPanel').hasClass('sr-only')) {
                 $('#reportPanel').removeClass('sr-only')
             }
@@ -242,7 +325,7 @@
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> '
             );
             var url = "{{ route($routeRole . '.delivery_plan.new_request') }}";
-            console.log('This Url: '+ url);
+
             var formData = new FormData($(this)[0]);
 
             formData.append('product', $('#productId option:selected').text());
@@ -267,7 +350,7 @@
                     });
 
                 } else {
-                    console.log(data.html);
+
                     $('#reportPanel').html(data.html);
                     setTimeout(() => {
 
@@ -285,6 +368,8 @@
 
                 // console.log(data);
             });
+
+
         });
 
 
@@ -303,16 +388,16 @@
                 return resp.data;
 
             });
-            console.log(officeData);
+
 
         }
 
-        function LoadManufactureingHub() {
+        async function LoadManufactureingHub() {
 
             if ($('#manufactureingHub').hasClass('bg-loaded')) {
                 $('#manufactureingHub').removeClass('bg-loaded')
             }
-            let url = "{{ route($routeRole . '.hub.list', ':id') }}";
+            let url = "{{ route($routeRole . '.hub.list') }}";
 
             $.ajax({
                 url: url,
@@ -366,12 +451,14 @@
                 if ($('#requestProcessPanel').hasClass("col-md-8")) {
                     $('#requestProcessPanel').removeClass("col-md-8");
                     $('#requestProcessPanel').addClass("col-md-12");
+                    $('.toggle-1').removeClass('d-none')
                 } else {
                     $('#requestPanel').removeClass("offset-md-4");
                     $('#requestProcessPanel').addClass("col-md-12");
                     $('#requestProcessPanel').css({
                         opacity: 1
                     })
+                    $('.toggle-1').removeClass('d-none')
                 }
 
                 return;
@@ -382,22 +469,28 @@
                 if ($('#requestProcessPanel').hasClass("col-md-12")) {
                     $('#requestProcessPanel').removeClass("col-md-12");
                     $('#requestProcessPanel').addClass("col-md-8");
+                    $('.toggle-1').removeClass('d-none')
+                } else {
+                    $('.toggle-1').removeClass('d-none')
                 }
             }
 
 
         }
+        var inProgress = false;
 
         function toggleMapPanel(element) {
+            if (inProgress) return;
+            inProgress = true
 
             let i_element = '';
             let div_element = '';
-            element.setAttribute('disabled',true);
+            element.setAttribute('disabled', true);
             Object.values(element.childNodes).forEach(val => {
                 var tag = val.tagName;
 
                 if (tag == 'I') {
-                      if (val.classList.contains('fa-map')) {
+                    if (val.classList.contains('fa-map')) {
 
                         val.classList.remove('fa-map');
                         val.classList.add('spinner-border');
@@ -407,8 +500,9 @@
                     }
                 }
                 if (tag == 'DIV') {
-                    div_element=val;
+                    div_element = val;
                 }
+
 
             });
 
@@ -424,14 +518,14 @@
                         i_element.classList.remove('spinner-border');
                         i_element.classList.remove('spinner-border-sm');
                     }
-                    if(div_element.innerHTML.localeCompare('Map View')==0){
+                    if (div_element.innerHTML.localeCompare('Map View') == 0) {
                         //console.log(val.innerHTML+': abc');
 
-                        div_element.innerHTML=`Map Data`;
-                      }
-                      else{
-                        div_element.innerHTML=`Map View` ;
-                      }
+                        div_element.innerHTML = `Map Data`;
+                    } else {
+                        div_element.innerHTML = `Map View`;
+                    }
+                    inProgress = false;
                 }, 2000);
                 return;
             }
@@ -448,20 +542,20 @@
                         i_element.classList.remove('spinner-border');
                         i_element.classList.remove('spinner-border-sm');
                     }
-                    if(div_element.innerHTML.localeCompare('Map View')==0){
+                    if (div_element.innerHTML.localeCompare('Map View') == 0) {
                         //console.log(val.innerHTML+': abc');
 
-                        div_element.innerHTML=`Map Data`;
-                      }
-                      else{
-                        div_element.innerHTML=`Map View` ;
-                      }
+                        div_element.innerHTML = `Map Data`;
+                    } else {
+                        div_element.innerHTML = `Map View`;
+                    }
+                    inProgress = false;
                 }, 500);
             }
 
         }
 
-        function init_loading() {
+        async function init_loading() {
             // console.log('Countr');
             if (!$('#manufactureingHub').val() == '' || !$('#manufactureingHub').val() == 0) {
                 $("#RequestPlan").click();
@@ -478,6 +572,7 @@
 
         }
         $(document).ready(() => {
+
             LoadManufactureingHub();
             if (deliveryPlanId > 0) {
                 init_loading()
@@ -485,8 +580,7 @@
             }
         });
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('MAP_KEY') }}&callback=initMap" async defer></script>
     <script>
         console.clear();
     </script>
-@endsection
+@endpush

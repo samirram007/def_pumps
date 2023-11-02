@@ -49,22 +49,23 @@ class OfficeController extends Controller
         $this->roleName = session()->get('roleName');
         $this->routeRole = str_replace(' ', '_', strtolower($this->roleName));
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
+        $data['title']='';
+
+        // load the view and pass the users
+        return view('companyadmin.office.office_index', $data);
+
+    }
+    public function populateOffice(){
         $user = (object) $this->user;
         $fiscalYearId = session()->has('fiscalYearId') ? session()->get('fiscalYearId') : $user->fiscalYear['fiscalYearId'];
 
         $offices = ApiController::GetOfficeListWithInvoiceNo($user->officeId, $fiscalYearId);
-        // dd($offices);
         $hierarchy = [];
         foreach ($offices as $office) {
-            // dd($office->lastInvoiceNo);
-            // if ($office['masterOfficeId'] === $user->officeId) {
+
             if ($office['level'] === 0) {
                 $hierarchy = $office;
 
@@ -80,9 +81,13 @@ class OfficeController extends Controller
         $data['MasterOffice'] = [$data['MasterOffice']];
 
         $data['collections'] = $offices;
-        // load the view and pass the users
-        return view('companyadmin.office.office_index', $data);
 
+        $GetView = view('module.office._partial.index_body', $data)->render();
+        //dd($GetView);
+        return response()->json([
+            "status" => true,
+            "html" => $GetView,
+        ]);
     }
 
     private function getChildren($parent, $offices, &$hierarchy)
@@ -127,6 +132,29 @@ class OfficeController extends Controller
             "html" => $GetView,
         ]);
     }
+    public function create_wizard()
+    {
+
+        $data['roleName']=$this->roleName;
+        $data['routeRole']=$this->routeRole;
+
+        $user = (object) $this->user;
+
+        $data['masterOfficeId'] = $user->officeId;
+        //dd($data['masterOfficeId']);
+        $data['officeTypes'] = ApiController::GetOfficeTypeList();
+        $data['gstTypes'] = ApiController::GetGstTypeList();
+        // $data['masterOfficeList']=Office::GetMasterOfficeList($user->officeId);
+        $data['masterOfficeList']=Office::GetOfficeById($user->officeId);
+        //dd($data['masterOfficeList']);
+        $info['title'] = "Create Office";
+        $info['size'] = "modal-lg";
+        $GetView = view('companyadmin.office.office_new_wizard', $data)->render();
+        return response()->json([
+            "status" => true,
+            "html" => $GetView,
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -144,7 +172,12 @@ class OfficeController extends Controller
             'masterOfficeId' => 'required',
             'officeContactNo' => 'nullable|numeric|digits:10',
             'officeEmail' => 'nullable|max:255|email',
-        ]);
+        ],[
+            'officeName.required' => 'Office Name is required',
+            'officeName.max' => 'Office Name is too long',
+          'masterOfficeId.required' => 'Master Office is required',
+        ])
+         ;
         // process the data
         if ($validator->fails()) {
             return response()->json([
@@ -187,9 +220,11 @@ class OfficeController extends Controller
             ];
             //dd(json_encode($data));
             $response = ApiController::CreateOffice($data);
+
             return response()->json([
                 "status" => true,
                 "message" => "Office created successfully",
+                "officeId"=>$response['id']
             ]);
 
             //return redirect()->route('companyadmin.office.index')->with('success', 'Office created successfully');

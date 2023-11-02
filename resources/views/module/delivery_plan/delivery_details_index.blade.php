@@ -6,6 +6,7 @@
             <div class="container-fluid">
                 <div class="row mb-2 justify-content-between align-items-center">
                     <div class="col-sm-6">
+                    {{-- individual company admin --}}
                         <h4 class="m-0 text-dark"> {{ __('Order Processing') }} </h4>
                         <ol class="breadcrumb float-sm-left border-0 p-0 m-0">
                             <li class="breadcrumb-item "><a href="{{ route($routeRole . '.dashboard') }}"
@@ -41,14 +42,15 @@
                 <table id="tableDetails" class="table   table-striped table-bordered   ">
                     <thead>
                         <tr>
-                            <th>Plan Name</th>
-                            <th>Plan Date</th>
-                            <th>Pump</th>
-                            <th>Product</th>
-                            <th class="text-center qty"> Suggested Qty.</th>
-                            <th class="text-center qty"> Ordered Qty.</th>
-                            <th class="text-center qty"> Received Qty.</th>
-                            <th class="text-center">Status</th>
+                            <th>{{ __('Plan') }}</th>
+                            <th>{{ __('Plan Date') }}</th>
+                            <th>{{ __('Pump') }}</th>
+                            {{-- <th>{{ __('Product') }}</th> --}}
+                            <th class="text-center qty"> {{ __('Suggested Qty.') }}</th>
+                            <th class="text-center qty"> {{ __('Ordered Qty.') }}</th>
+                            <th class="text-center qty"> {{ __('Delivered Qty.') }}</th>
+                            <th class="text-center qty"> {{ __('Received Qty.') }}</th>
+                            <th class="text-center">{{ __('Status') }}</th>
                         </tr>
 
                     </thead>
@@ -113,6 +115,7 @@
         }
         }
     </style>
+    <script type="text/javascript" src="{{ asset('datetime/moment.min.js') }}"></script>
     <script>
         let delivery_details = @json($delivery_details);
         // console.log(delivery_details);
@@ -136,7 +139,8 @@
                 columns: [{
                         "data": null,
                         "render": function(data, type, full, meta) {
-                            return `${data['deliveryPlan']['planTitle']}`;
+
+                            return `${data['deliveryPlan']['planTitle'].split("_").slice(-2).join('_')}`;
                         }
                     },
                     {
@@ -150,15 +154,15 @@
                     {
                         "data": null,
                         "render": function(data, type, full, meta) {
-                            return `<span class="">${ data['office']['officeName']}</span>`;
+                            return `<span class="">${ trimToMaxLength(data['office']['officeName'],20)}</span>`;
                         }
                     },
-                    {
-                        "data": null,
-                        "render": function(data, type, full, meta) {
-                            return `<span class="">${ data['product']['productTypeName']}</span>`;
-                        }
-                    },
+                    // {
+                    //     "data": null,
+                    //     "render": function(data, type, full, meta) {
+                    //         return `<span class="">${ data['product']['productTypeName']}</span>`;
+                    //     }
+                    // },
                     {
                         "data": null,
                         "render": function(data, type, full, meta) {
@@ -181,6 +185,22 @@
                             }
                             return ` <div class="d-flex align-items-center justify-content-center">` +
                                 `<div>${ data['approvedQuantity'] } ${ data['productUnit']['unitShortName'] }</div>` +
+                                `</div>`;
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function(data, type, full, meta) {
+                            if (data['approveStatus'] == -1) {
+                                return ` <div class="d-flex align-items-center justify-content-center">` +
+                                    `<label style="color:red;">X</label>`;
+                                `</div>`;
+                            }
+                            if (data['deliveredQuantity'] == 0 || data['deliveredQuantity'] == null) {
+                                return ``;
+                            }
+                            return ` <div class="d-flex align-items-center justify-content-center">` +
+                                `<div>${ data['deliveredQuantity'] } ${ data['productUnit']['unitShortName'] }</div>` +
                                 `</div>`;
                         }
                     },

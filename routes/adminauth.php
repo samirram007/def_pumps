@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HubController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\DriverController;
+use App\Http\Controllers\WizardController;
 use App\Http\Controllers\Admin\MapController;
 use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\MasterOfficeController;
@@ -42,6 +44,13 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
             Route::get('/user/view/{id}', [AdminUserController::class, 'view'])->name('companyadmin.user.view');
 
 
+            Route::get('/driver', [DriverController::class, 'index'])->name('companyadmin.driver.index');
+            Route::get('/driver/create', [DriverController::class, 'create'])->name('companyadmin.driver.create');
+            Route::post('/driver/store', [DriverController::class, 'store'])->name('companyadmin.driver.store');
+            Route::get('/driver/edit/{id}', [DriverController::class, 'edit'])->name('companyadmin.driver.edit');
+            Route::post('/driver/update', [DriverController::class, 'update'])->name('companyadmin.driver.update');
+            Route::get('/driver/delete/{id}', [DriverController::class, 'destroy'])->name('companyadmin.driver.delete');
+
         Route::get('/map', [MapController::class, 'map'])->name('companyadmin.map');
         Route::get('/map_filter', [MapController::class, 'map_filter'])->name('companyadmin.map.filter');
 
@@ -66,11 +75,15 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
         Route::get('/delivery_plan/edit/{id}', [DeliveryPlanController::class, 'edit'])->name('companyadmin.delivery_plan.edit');
         Route::get('/delivery_plan/view/{id}', [DeliveryPlanController::class, 'show'])->name('companyadmin.delivery_plan.view');
         Route::get('/delivery_plan/delete/{id}', [DeliveryPlanController::class, 'delete'])->name('companyadmin.delivery_plan.delete');
+        Route::get('/delivery_plan/approve/{id}', [DeliveryPlanController::class, 'approve'])->name('companyadmin.delivery_plan.approve');
+        Route::get('/delivery_plan/receive/{id}', [DeliveryPlanController::class, 'receive'])->name('companyadmin.delivery_plan.receive');
         Route::get('/delivery_plan/request', [DeliveryPlanController::class, 'requestModal'])->name('companyadmin.delivery_plan.request');
         Route::post('/delivery_plan/new_request', [DeliveryPlanController::class, 'new_request'])->name('companyadmin.delivery_plan.new_request');
         Route::post('/delivery_plan/modified_request', [DeliveryPlanController::class, 'modified_request'])->name('companyadmin.delivery_plan.modified_request');
         Route::get('/delivery_plan/status_change/{id}', [DeliveryPlanController::class, 'status_change'])->name('companyadmin.delivery_plan.status_change');
         Route::post('/delivery_plan/update_status/{id}', [DeliveryPlanController::class, 'update_status'])->name('companyadmin.delivery_plan.update_status');
+        Route::get('/delivery_plan/driver/{id}', [DeliveryPlanController::class, 'driver'])->name('companyadmin.delivery_plan.driver');
+        Route::post('/delivery_plan/assign_driver/{id}', [DeliveryPlanController::class, 'assign_driver'])->name('companyadmin.delivery_plan.assign_driver');
 
 
         Route::post('/delivery_plan/delivery_filter', [DeliveryPlanController::class, 'delivery_filter'])->name('companyadmin.delivery_plan.delivery_filter');
@@ -78,9 +91,11 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
         Route::post('/delivery_plan_details/delivery_details_filter', [DeliveryPlanController::class, 'delivery_details_filter'])->name('companyadmin.delivery_plan_details.delivery_details_filter');
         Route::get('/delivery_plan_details/approve_requirement/{id}', [DeliveryPlanController::class, 'approve_requirement'])->name('companyadmin.delivery_plan_details.approve_requirement');
         Route::post('/delivery_plan_details/confirm_requirement/{id}', [DeliveryPlanController::class, 'confirm_requirement'])->name('companyadmin.delivery_plan_details.confirm_requirement');
+        Route::post('/delivery_plan_details/confirm_requirement_multi/{id}', [DeliveryPlanController::class, 'confirm_requirement_multi'])->name('companyadmin.delivery_plan_details.confirm_requirement_multi');
         Route::get('/delivery_plan_details/reject/{id}', [DeliveryPlanController::class, 'reject'])->name('companyadmin.delivery_plan_details.reject');
         Route::get('/delivery_plan_details/receive_delivery/{id}', [DeliveryPlanController::class, 'receive_delivery'])->name('companyadmin.delivery_plan_details.receive_delivery');
         Route::post('/delivery_plan_details/confirm_delivery/{id}', [DeliveryPlanController::class, 'confirm_delivery'])->name('companyadmin.delivery_plan_details.confirm_delivery');
+        Route::post('/delivery_plan_details/receive_delivery_from_multi', [DeliveryPlanController::class, 'receive_delivery_from_multi'])->name('companyadmin.receive_delivery_from_multi');
 
         //============= User ===============
 
@@ -93,11 +108,31 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
         //============= Office ===============
         Route::get('/office', [AdminOfficeController::class, 'index'])->name('companyadmin.office.index');
+        Route::get('/office/render', [AdminOfficeController::class, 'populateOffice'])->name('companyadmin.office.populate_list');
         Route::get('/office/users/{id}', [AdminUserController::class, 'office_users_index'])->name('companyadmin.office.users');
         Route::get('/office/user/create/{id}', [AdminUserController::class, 'office_user_create'])->name('companyadmin.office_user.create');
         Route::get('/office/user/filter/{id}', [AdminUserController::class, 'show_officeuser_filter'])->name('companyadmin.office_user.filter');
 
         Route::get('/user/edit/{id}/{office_id}', [AdminUserController::class, 'office_user_edit'])->name('companyadmin.office_user.edit');
+
+//Wizard
+ Route::get('/wizard/modal/{step}/{id?}', [WizardController::class, 'modal_index'])->name('companyadmin.wizard.modal');
+ Route::get('/wizard', [WizardController::class, 'index'])->name('companyadmin.wizard.index');
+
+
+
+        Route::get('/wizard/create_office', [WizardController::class, 'create_office'])->name('companyadmin.wizard.office.create');
+        Route::post('/wizard/store_office', [WizardController::class, 'store_office'])->name('companyadmin.wizard.office.store');
+        Route::get('/wizard/edit_office/{office_id}', [WizardController::class, 'edit_office'])->name('companyadmin.wizard.office.edit');
+        Route::post('/wizard/update_office', [WizardController::class, 'update_office'])->name('companyadmin.wizard.office.update');
+//Wizard User
+        Route::get('/wizard/office/users/{office_id}', [WizardController::class, 'index_user'])->name('companyadmin.wizard.user.index');
+        Route::get('/wizard/office/user/create/{office_id}', [WizardController::class, 'create_user'])->name('companyadmin.wizard.user.create');
+        Route::post('/wizard/office/user/store', [WizardController::class, 'store_user'])->name('companyadmin.wizard.user.store');
+        Route::get('/wizard/office/user/edit/{user_id}', [WizardController::class, 'edit_user'])->name('companyadmin.wizard.user.edit');
+        Route::post('/wizard/office/user/update', [WizardController::class, 'update_user'])->name('companyadmin.wizard.user.update');
+//Wizard Godown
+
 
         Route::get('/office/create', [AdminOfficeController::class, 'create'])->name('companyadmin.office.create');
         Route::post('/office/store', [AdminOfficeController::class, 'store'])->name('companyadmin.office.store');
@@ -148,6 +183,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
         //============= Sales ===============
         Route::get('/sales', [AdminSalesController::class, 'index'])->name('companyadmin.sales.index');
+        Route::get('/sales/index/{officeId}', [AdminSalesController::class, 'index_create'])->name('companyadmin.sales.index_create');
         Route::get('/sales/create', [AdminSalesController::class, 'create'])->name('companyadmin.sales.create');
         Route::post('/sales/store', [AdminSalesController::class, 'store'])->name('companyadmin.sales.store');
         Route::get('/sales/show/{id}', [AdminSalesController::class, 'show'])->name('companyadmin.sales.show');

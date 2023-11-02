@@ -27,8 +27,10 @@ class Driver extends Model
         return $res;
     }
     public static function GetDriver($id){
+       // dd($id);
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];
         $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'Driver/GetDriverById/'.$id)->json();
+       dd($res);
         return $res;
     }
     public static function UpdateDriver($data){

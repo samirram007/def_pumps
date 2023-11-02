@@ -345,611 +345,578 @@
             }
         }
     </style>
-    <script></script>
-    <script>
-        // setEnvWithRate(1);
-        var routeRole = "{{ $routeRole }}";
 
 
-        function setEnvWithRate(productTypeId) {
-            // console.log(productTypeId);
-            var isContainer = $("#productTypeId").find(':selected').attr('data-iscontainer');
-            var rate = $("#productTypeId").find(':selected').attr('data-rate');
-            var fuelRateId = $("#productTypeId").find(':selected').attr('data-fuelrateid');
-            var quantity = $("#productTypeId").find(':selected').attr('data-quantity');
-            var primaryUnitName = $("#productTypeId").find(':selected').attr('data-primaryunitname');
-            var primaryUnitShortName = $("#productTypeId").find(':selected').attr('data-primaryunitshortname');
-            var primaryUnitSingularShortName = $("#productTypeId").find(':selected').attr(
-                'data-primaryunitsingularshortname');
-            var useSecondaryUnit = $("#productTypeId").find(':selected').attr('data-usesecondaryunit');
-            var secondaryUnitShortName = $("#productTypeId").find(':selected').attr('data-secondaryunitshortname');
-            var secondaryUnitRatio = $("#productTypeId").find(':selected').attr('data-secondaryunitratio');
-
-            $('.unit-short-name').html(' (' + primaryUnitShortName + ')');
-            $("#rate").val(rate);
-            $("#fuelRateId").val(fuelRateId);
-            if (isContainer == 'true') {
-                // console.log(isContainer);
-                isContainer = true;
-                // console.log(isContainer);
-            } else {
-                isContainer = false;
-            }
-            // if (!isContainer) {
-            //     //$("#quantity").val('');
-            //     $("#quantity").attr('readonly', false);
+</div>
 
 
-            // } else {
-            //     // $("#quantity").val(quantity);
-            //     $("#quantity").attr('readonly', false);
+<script>
+    // setEnvWithRate(1);
+    var routeRole = "{{ $routeRole }}";
 
-            // }
-            CalculateTotal();
+
+    function setEnvWithRate(productTypeId) {
+        // console.log(productTypeId);
+        var isContainer = $("#productTypeId").find(':selected').attr('data-iscontainer');
+        var rate = $("#productTypeId").find(':selected').attr('data-rate');
+        var fuelRateId = $("#productTypeId").find(':selected').attr('data-fuelrateid');
+        var quantity = $("#productTypeId").find(':selected').attr('data-quantity');
+        var primaryUnitName = $("#productTypeId").find(':selected').attr('data-primaryunitname');
+        var primaryUnitShortName = $("#productTypeId").find(':selected').attr('data-primaryunitshortname');
+        var primaryUnitSingularShortName = $("#productTypeId").find(':selected').attr(
+            'data-primaryunitsingularshortname');
+        var useSecondaryUnit = $("#productTypeId").find(':selected').attr('data-usesecondaryunit');
+        var secondaryUnitShortName = $("#productTypeId").find(':selected').attr('data-secondaryunitshortname');
+        var secondaryUnitRatio = $("#productTypeId").find(':selected').attr('data-secondaryunitratio');
+
+        $('.unit-short-name').html(' (' + primaryUnitShortName + ')');
+        $("#rate").val(rate);
+        $("#fuelRateId").val(fuelRateId);
+        if (isContainer == 'true') {
+            // console.log(isContainer);
+            isContainer = true;
+            // console.log(isContainer);
+        } else {
+            isContainer = false;
         }
+        // if (!isContainer) {
+        //     //$("#quantity").val('');
+        //     $("#quantity").attr('readonly', false);
 
-        function CalculateTotal() {
-            $('#quantity').val() == '' ? '0' : $('#quantity').val();
-            var quantity = $("#quantity").val();
-            $('#rate').val() == '' ? '0' : $('#quantiratety').val();
+
+        // } else {
+        //     // $("#quantity").val(quantity);
+        //     $("#quantity").attr('readonly', false);
+
+        // }
+        CalculateTotal();
+    }
+
+    function CalculateTotal() {
+        $('#quantity').val() == '' ? '0' : $('#quantity').val();
+        var quantity = $("#quantity").val();
+        $('#rate').val() == '' ? '0' : $('#quantiratety').val();
+        var rate = $('#rate').val();
+        $('#discount').val() == '' ? '0' : $('#discount').val();
+        var discount = $('#discount').val();
+        var total = (quantity * rate) - discount;
+        total = Number.isNaN(total) ? 0 : total;
+        $('#total').val(total == 0 ? '' : total.toFixed(2));
+    }
+    // setEnv(1);
+    // getRate(1);
+    function setEnv(productTypeId) {
+        var url = "{{ route('companyadmin.productType.getEnv', ':id') }}";
+        if (routeRole == 'pumpadmin') {
+            url = "{{ route('pumpadmin.productType.getEnv', ':id') }}";
+        }
+        url = url.replace(':id', productTypeId);
+        $('#total').val('');
+        //console.log(url);
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "json",
+            encode: true,
+        }).done(function(data) {
+
+            if (!data) {
+
+                //console.log(data.errors);
+                $.each(data.errors, function(key, value) {
+                    $('#' + key).addClass('is-invalid');
+                    $('#' + key).next().text(value);
+                    toastr.error(value);
+                });
+
+            } else {
+                console.log(data);
+                var isContainer = data.isContainer;
+                if (isContainer == true) {
+                    $("#quantity").val(data.quantity);
+                    $("#quantity").attr('readonly', false);
+                } else {
+                    $("#quantity").attr('readonly', false);
+                }
+                // $('#fuelRateId').val(data.fuelRateId);
+                //$('#rate').val(data.rate);
+                // $('#quantity').val(data.quantity);
+                // $('#discount').val(data.discount);
+                // $('#total').val(data.total);
+                // $('#comment').val(data.comment);
+            }
+        });
+    }
+
+    function getRate(productTypeId) {
+        var url = "{{ route('companyadmin.productType.getRate', ':id') }}";
+        if (routeRole == 'pumpadmin') {
+            url = "{{ route('pumpadmin.productType.getRate', ':id') }}";
+        }
+        url = url.replace(':id', productTypeId);
+        $('#total').val('');
+        //console.log(url);
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "json",
+            encode: true,
+        }).done(function(data) {
+
+            if (!data) {
+
+                //console.log(data.errors);
+                $.each(data.errors, function(key, value) {
+                    $('#' + key).addClass('is-invalid');
+                    $('#' + key).next().text(value);
+                });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong!',
+                })
+            } else {
+                console.log(data);
+                $('#rate').val(data.rate);
+                $('#fuelRateId').val(data.fuelRateId);
+                $('#discount').val() == '' ? '0' : $('#discount').val();
+                var discount = $('#discount').val();
+
+                var total = ($('#quantity').val() * data.rate) - discount;
+
+                total = Number.isNaN(total) ? 0 : total;
+                $('#total').val(total == 0 ? '' : total.toFixed(2));
+
+
+            }
+        });
+    }
+    $(document).ready(function() {
+        $("#officeId").select2();
+        $("#godownId").select2();
+        $("#customerName").focus();
+        var officeId_filter = $('#officeId_filter').val();
+        $('#officeId').val(officeId_filter);
+        setTimeout(() => {
+            $("#officeId").change();
+        }, 100);
+        $('#invoiceDate').on('change', function() {
+            setTimeout(() => {
+                $("#officeId").change();
+            }, 100);
+
+        });
+        let oldDocNo = '';
+        $("#salesTypeId").change(function() {
+            var salesTypeId = $('#salesTypeId').val();
+            var docRequired = $(this).children("option:selected").attr('data-docrequired');
+            var textValue = $(this).children("option:selected").html();
+            textValue = textValue.replace('Based', 'No').trim();
+            oldDocNo = $('#submittedDocumentNo').val().length > 0 ? $('#submittedDocumentNo')
+                .val() : oldDocNo;
+            //console.log(oldDocNo);
+            if (docRequired) {
+                $('#submittedDocumentNo').attr('readonly', false);
+                $('#submittedDocumentNo').val(oldDocNo);
+                $('#submittedDocumentNo').attr('placeholder', textValue);
+                $('#DocNoLabel').html(textValue + '<span class="text-danger">*</span>');
+            } else {
+                $('#submittedDocumentNo').attr('readonly', true);
+                $('#submittedDocumentNo').attr('placeholder', '');
+                $('#submittedDocumentNo').val('');
+                $('#DocNoLabel').html('Document No');
+            }
+
+        });
+        $("#officeId").change(function() {
+            // alert();
+            var officeId = $('#officeId').val();
+            var invoiceDate = $('#invoiceDate').val();
+            var url = "{{ route($routeRole . '.productType_by_office_id', [':id', ':date']) }}";
+
+            url = url.replace(':id', officeId);
+            url = url.replace(':date', invoiceDate);
+            //console.log(url);
+
+            $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    encode: true,
+                })
+                .done(function(data) {
+
+                    if (!data) {
+
+                        $.each(data.errors, function(key, value) {
+                            $('#' + key).addClass('is-invalid');
+                            $('#' + key).next().text(value);
+                        });
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    } else {
+                        //console.log(data);
+                        $('#productTypeId').empty();
+                        // $('#quantity').val('');
+                        // $('#productTypeId').append('<option value="">Select Product Type</option>');
+                        //console.log(data.response);
+                        var pTypeid = 0;
+                        //console.log(data.response);
+                        var item_title = '';
+                        var item_rate = '';
+                        var title_length = 0;
+                        $.each(data.response, function(key, value) {
+                            //console.log(eval(value));
+                            if (pTypeid == 0) {
+                                pTypeid = value.productTypeId;
+                            }
+                            item_title = value.productTypeName +
+                                (value.secondaryUnitId != null ? ('(' + value
+                                    .quantity +
+                                    ' ' + value.secondaryUnitShortName +
+                                    ')') : '');
+                            //console.log();
+                            title_length = item_title.length;
+                            //console.log((40 - title_length));
+                            // item_title = item_title.padEnd((40 - title_length), ".");
+                            item_title = item_title.rpad(25, '.');
+                            //console.log(item_title);
+                            item_rate = '@' +
+                                Number(value.rate).toFixed(
+                                    2) + ' INR /' +
+                                value.primaryUnitSingularShortName;
+                            $('#productTypeId').append('<option value="' + value
+                                .productTypeId +
+                                '" data-iscontainer="' + value.isContainer +
+                                '" data-fuelrateid="' + value.fuelRateId +
+                                '" data-rate="' + value.rate +
+                                '" data-quantity="' + value.quantity +
+                                '" data-primaryunitname="' + value.primaryUnitName +
+                                '" data-primaryunitshortname="' + value
+                                .primaryUnitShortName +
+                                '" data-primaryunitsingularshortname="' + value
+                                .primaryUnitSingularShortName +
+                                '" data-usesecondaryunit="' + (value
+                                    .useSecondaryUnit ? '1' : '0') +
+                                '" data-secondaryunitname="' + (value
+                                    .secondaryUnitName != null ? value
+                                    .secondaryUnitName : "") +
+                                '" data-secondaryunitshortname="' + (value
+                                    .secondaryUnitShortName != null ? value
+                                    .secondaryUnitShortName : "") +
+                                '" data-secondaryunitsingularshortname="' + (value
+                                    .secondaryUnitSingularShortName != null ? value
+                                    .secondaryUnitSingularShortName : "") +
+                                '" data-secondaryunitratio="' + (value
+                                    .secondaryUnitRatio != null ? value
+                                    .secondaryUnitRatio : "") + '">' +
+                                item_title +
+                                item_rate +
+                                '</option>');
+                        });
+                        setEnvWithRate(pTypeid)
+                        changeGodownList()
+
+
+                    }
+                    $('#productTypeId').select2();
+                });
+        });
+
+        String.prototype.lpad || (String.prototype.lpad = function(length, pad) {
+            if (length < this.length)
+                return this;
+
+            pad = pad || ' ';
+            let str = this;
+
+            while (str.length < length) {
+                str = pad + str;
+            }
+
+            return str.substr(-length);
+        });
+
+        String.prototype.rpad || (String.prototype.rpad = function(length, pad) {
+            if (length < this.length)
+                return this;
+
+            pad = pad || ' ';
+            let str = this;
+
+            while (str.length < length) {
+                str += pad;
+            }
+
+            return str.substr(0, length);
+        });
+
+        function changeGodownList() {
+            $('#godownId').empty();
+            var officeId = $('#officeId').val();
+            var productId = $('#productTypeId').val();
+            var productAsContainer = $('#productTypeId').children("option:selected").attr(
+                'data-iscontainer');
+
+            var url = "{{ route($routeRole . '.godownlist', ':id') }}";
+            // var url = "{{ route('companyadmin.godownlist', ':id') }}";
+            url = url.replace(':id', officeId);
+            $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    encode: true,
+                })
+                .done(function(data) {
+
+                    if (!data) {
+
+                        $.each(data.errors, function(key, value) {
+                            $('#' + key).addClass('is-invalid');
+                            $('#' + key).next().text(value);
+                        });
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    } else {
+                        //console.log(data);
+                        $('#godownId').empty();
+                        // $('#quantity').val('');
+                        // $('#productTypeId').append('<option value="">Select Product Type</option>');
+                        //console.log(data.response);
+                        var gTypeid = 0;
+                        //console.log(data.response);
+                        let cnt = 0;
+                        $.each(data.response, function(key, value) {
+                            // console.log(value.godownProduct)
+                            if (value.productTypeId == productId) {
+                                $.each(value.godownProduct, function(inside_key, inside_value) {
+                                    // if (productAsContainer == 'false' && inside_value.isStorage) {
+                                    if (!inside_value.isReserver) {
+                                        if (cnt == 0) {
+                                            $('#currentStock').val(inside_value
+                                                .currentStock);
+                                            if (inside_value.currentStock <= 0) {
+                                                $('#currentStock').addClass(
+                                                    'is-invalid');
+                                                // $('#currentStock').next().text(value);
+                                            } else {
+                                                if ($('#currentStock').hasClass(
+                                                        'is-invalid')) {
+                                                    $('#currentStock').removeClass(
+                                                        'is-invalid');
+                                                }
+                                            }
+                                        }
+                                        cnt++;
+                                        $('#godownId').append('<option value="' +
+                                            inside_value.godownId +
+                                            '" data-isreserver="' + inside_value
+                                            .isReserver +
+                                            '" data-capacity="' + inside_value
+                                            .capacity +
+                                            '" data-currentstock="' + inside_value
+                                            .currentStock +
+                                            '">' + inside_value
+                                            .godownName +
+                                            '</option>');
+                                    }
+
+                                });
+
+                            }
+                            //console.log(eval(value));
+                            // if (gTypeid == 0) {
+                            //     gTypeid = value.godownId;
+                            // }
+                            // console.log(productAsContainer);
+                            // if (productAsContainer == 'false' && value.isStorage) {
+                            //     $('#godownId').append('<option value="' + value
+                            //         .productTypeId +
+                            //         '" data-isstorage="' + value.isStorage + '">' + value
+                            //         .godownName +
+                            //         '</option>');
+                            // }
+
+                        });
+                        //setProductEnvWithRate(gTypeid);
+
+                    }
+                });
+        };
+
+        $('#godownId').on('change', () => {
+            let currentStock = $('#godownId').children("option:selected").attr('data-currentstock');
+            $('#currentStock').val(currentStock);
+            if (currentStock <= 0) {
+                $('#currentStock').addClass('is-invalid');
+                // $('#currentStock').next().text(value);
+            } else {
+                if ($('#currentStock').hasClass('is-invalid')) {
+                    $('#currentStock').removeClass('is-invalid');
+                }
+            }
+        });
+
+
+
+        // $('#formCreate').submit();
+        $('#discount').on('keyup', function() {
+            var productTypeId = $('#productTypeId').val();
+            //getRate(productTypeId);
+            var quantity = $('#quantity').val();
+            var rate = $('#rate').val();
+            var discount = $(this).val();
+            var total = (quantity * rate) - discount;
+            total = Number.isNaN(total) ? 0 : total;
+            $('#total').val(total == 0 ? '' : total.toFixed(2));
+        });
+        var quantityBlurCount = 0;
+        $('#quantity').on('keyup', function() {
+            var productTypeId = $('#productTypeId').val();
+            //getRate(productTypeId);
+            var quantity = $(this).val();
             var rate = $('#rate').val();
             $('#discount').val() == '' ? '0' : $('#discount').val();
             var discount = $('#discount').val();
             var total = (quantity * rate) - discount;
             total = Number.isNaN(total) ? 0 : total;
             $('#total').val(total == 0 ? '' : total.toFixed(2));
-        }
-        // setEnv(1);
-        // getRate(1);
-        function setEnv(productTypeId) {
-            var url = "{{ route('companyadmin.productType.getEnv', ':id') }}";
-            if (routeRole == 'pumpadmin') {
-                url = "{{ route('pumpadmin.productType.getEnv', ':id') }}";
-            }
-            url = url.replace(':id', productTypeId);
-            $('#total').val('');
-            //console.log(url);
-            $.ajax({
-                type: "GET",
-                url: url,
-                dataType: "json",
-                encode: true,
-            }).done(function(data) {
+            // console.log(quantity);
 
-                if (!data) {
+            calculateSecondary();
+            quantityBlurCount = 0;
+            checkAvailability();
+        });
 
-                    //console.log(data.errors);
-                    $.each(data.errors, function(key, value) {
-                        $('#' + key).addClass('is-invalid');
-                        $('#' + key).next().text(value);
-                        toastr.error(value);
-                    });
+        $('#quantity').on('blur', () => {
 
-                } else {
-                    console.log(data);
-                    var isContainer = data.isContainer;
-                    if (isContainer == true) {
-                        $("#quantity").val(data.quantity);
-                        $("#quantity").attr('readonly', false);
-                    } else {
-                        $("#quantity").attr('readonly', false);
-                    }
-                    // $('#fuelRateId').val(data.fuelRateId);
-                    //$('#rate').val(data.rate);
-                    // $('#quantity').val(data.quantity);
-                    // $('#discount').val(data.discount);
-                    // $('#total').val(data.total);
-                    // $('#comment').val(data.comment);
+            checkAvailability();
+            quantityBlurCount++;
+        });
+
+        function checkAvailability() {
+            var quantity = $("#quantity").val();
+            var currentStock = $("#currentStock").val();
+            if (parseFloat(quantity) > parseFloat(currentStock)) {
+                if (quantityBlurCount == 0) {
+                    toastr.warning(
+                        "<h3 class='text-danger font-weight-bold'>Stock is low</h3>Please Change the Tank.."
+                    );
                 }
-            });
+
+            }
+
         }
 
-        function getRate(productTypeId) {
-            var url = "{{ route('companyadmin.productType.getRate', ':id') }}";
-            if (routeRole == 'pumpadmin') {
-                url = "{{ route('pumpadmin.productType.getRate', ':id') }}";
+        function calculateSecondary() {
+            var quantity = $("#quantity").val();
+            var useSecondaryUnit = $("#productTypeId").find(':selected').attr('data-usesecondaryunit');
+            var secondaryUnitShortName = $("#productTypeId").find(':selected').attr(
+                'data-secondaryunitshortname');
+            var secondaryUnitRatio = $("#productTypeId").find(':selected').attr(
+                'data-secondaryunitratio');
+            if (useSecondaryUnit == '1') {
+                quantity = quantity * secondaryUnitRatio;
+                quantity = Number.isNaN(quantity) ? 0 : quantity;
+                quantity = quantity > 0 ? (quantity + ' ' + secondaryUnitShortName) : '';
+            } else {
+                quantity = '';
             }
-            url = url.replace(':id', productTypeId);
-            $('#total').val('');
-            //console.log(url);
-            $.ajax({
-                type: "GET",
-                url: url,
-                dataType: "json",
-                encode: true,
-            }).done(function(data) {
-
-                if (!data) {
-
-                    //console.log(data.errors);
-                    $.each(data.errors, function(key, value) {
-                        $('#' + key).addClass('is-invalid');
-                        $('#' + key).next().text(value);
-                    });
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong!',
-                    })
-                } else {
-                    console.log(data);
-                    $('#rate').val(data.rate);
-                    $('#fuelRateId').val(data.fuelRateId);
-                    $('#discount').val() == '' ? '0' : $('#discount').val();
-                    var discount = $('#discount').val();
-
-                    var total = ($('#quantity').val() * data.rate) - discount;
-
-                    total = Number.isNaN(total) ? 0 : total;
-                    $('#total').val(total == 0 ? '' : total.toFixed(2));
-
-
-                }
-            });
+            $('#secondaryQuantity').html(quantity);
         }
-        $(document).ready(function() {
-            $("#officeId").select2();
-            $("#godownId").select2();
-            $("#customerName").focus();
-            var officeId_filter = $('#officeId_filter').val();
-            $('#officeId').val(officeId_filter);
-            setTimeout(() => {
-                $("#officeId").change();
-            }, 100);
-            $('#invoiceDate').on('change', function() {
-                setTimeout(() => {
-                    $("#officeId").change();
-                }, 100);
-
-            });
-            let oldDocNo = '';
-            $("#salesTypeId").change(function() {
-                var salesTypeId = $('#salesTypeId').val();
-                var docRequired = $(this).children("option:selected").attr('data-docrequired');
-                var textValue = $(this).children("option:selected").html();
-                textValue = textValue.replace('Based', 'No').trim();
-                oldDocNo = $('#submittedDocumentNo').val().length > 0 ? $('#submittedDocumentNo')
-                    .val() : oldDocNo;
-                //console.log(oldDocNo);
-                if (docRequired) {
-                    $('#submittedDocumentNo').attr('readonly', false);
-                    $('#submittedDocumentNo').val(oldDocNo);
-                    $('#submittedDocumentNo').attr('placeholder', textValue);
-                    $('#DocNoLabel').html(textValue + '<span class="text-danger">*</span>');
-                } else {
-                    $('#submittedDocumentNo').attr('readonly', true);
-                    $('#submittedDocumentNo').attr('placeholder', '');
-                    $('#submittedDocumentNo').val('');
-                    $('#DocNoLabel').html('Document No');
-                }
-
-            });
-            $("#officeId").change(function() {
-                // alert();
-                var officeId = $('#officeId').val();
-                var invoiceDate = $('#invoiceDate').val();
-                var url = "{{ route($routeRole . '.productType_by_office_id', [':id', ':date']) }}";
-
-                url = url.replace(':id', officeId);
-                url = url.replace(':date', invoiceDate);
-                //console.log(url);
-
-                $.ajax({
-                        type: "GET",
-                        url: url,
-                        dataType: "json",
-                        encode: true,
-                    })
-                    .done(function(data) {
-
-                        if (!data) {
-
-                            $.each(data.errors, function(key, value) {
-                                $('#' + key).addClass('is-invalid');
-                                $('#' + key).next().text(value);
-                            });
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: 'Something went wrong!',
-                            })
-                        } else {
-                            //console.log(data);
-                            $('#productTypeId').empty();
-                            // $('#quantity').val('');
-                            // $('#productTypeId').append('<option value="">Select Product Type</option>');
-                            //console.log(data.response);
-                            var pTypeid = 0;
-                            //console.log(data.response);
-                            var item_title = '';
-                            var item_rate = '';
-                            var title_length = 0;
-                            $.each(data.response, function(key, value) {
-                                //console.log(eval(value));
-                                if (pTypeid == 0) {
-                                    pTypeid = value.productTypeId;
-                                }
-                                item_title = value.productTypeName +
-                                    (value.secondaryUnitId != null ? ('(' + value
-                                        .quantity +
-                                        ' ' + value.secondaryUnitShortName +
-                                        ')') : '');
-                                //console.log();
-                                title_length = item_title.length;
-                                //console.log((40 - title_length));
-                                // item_title = item_title.padEnd((40 - title_length), ".");
-                                item_title = item_title.rpad(25, '.');
-                                //console.log(item_title);
-                                item_rate = '@' +
-                                    Number(value.rate).toFixed(
-                                        2) + ' INR /' +
-                                    value.primaryUnitSingularShortName;
-                                $('#productTypeId').append('<option value="' + value
-                                    .productTypeId +
-                                    '" data-iscontainer="' + value.isContainer +
-                                    '" data-fuelrateid="' + value.fuelRateId +
-                                    '" data-rate="' + value.rate +
-                                    '" data-quantity="' + value.quantity +
-                                    '" data-primaryunitname="' + value.primaryUnitName +
-                                    '" data-primaryunitshortname="' + value
-                                    .primaryUnitShortName +
-                                    '" data-primaryunitsingularshortname="' + value
-                                    .primaryUnitSingularShortName +
-                                    '" data-usesecondaryunit="' + (value
-                                        .useSecondaryUnit ? '1' : '0') +
-                                    '" data-secondaryunitname="' + (value
-                                        .secondaryUnitName != null ? value
-                                        .secondaryUnitName : "") +
-                                    '" data-secondaryunitshortname="' + (value
-                                        .secondaryUnitShortName != null ? value
-                                        .secondaryUnitShortName : "") +
-                                    '" data-secondaryunitsingularshortname="' + (value
-                                        .secondaryUnitSingularShortName != null ? value
-                                        .secondaryUnitSingularShortName : "") +
-                                    '" data-secondaryunitratio="' + (value
-                                        .secondaryUnitRatio != null ? value
-                                        .secondaryUnitRatio : "") + '">' +
-                                    item_title +
-                                    item_rate +
-                                    '</option>');
-                            });
-                            setEnvWithRate(pTypeid)
-                            changeGodownList()
-
-
-                        }
-                        $('#productTypeId').select2();
-                    });
-            });
-
-            String.prototype.lpad || (String.prototype.lpad = function(length, pad) {
-                if (length < this.length)
-                    return this;
-
-                pad = pad || ' ';
-                let str = this;
-
-                while (str.length < length) {
-                    str = pad + str;
-                }
-
-                return str.substr(-length);
-            });
-
-            String.prototype.rpad || (String.prototype.rpad = function(length, pad) {
-                if (length < this.length)
-                    return this;
-
-                pad = pad || ' ';
-                let str = this;
-
-                while (str.length < length) {
-                    str += pad;
-                }
-
-                return str.substr(0, length);
-            });
-
-            function changeGodownList() {
-                $('#godownId').empty();
-                var officeId = $('#officeId').val();
-                var productId = $('#productTypeId').val();
-                var productAsContainer = $('#productTypeId').children("option:selected").attr(
-                    'data-iscontainer');
-
-                var url = "{{ route($routeRole . '.godownlist', ':id') }}";
-                // var url = "{{ route('companyadmin.godownlist', ':id') }}";
-                url = url.replace(':id', officeId);
-                $.ajax({
-                        type: "GET",
-                        url: url,
-                        dataType: "json",
-                        encode: true,
-                    })
-                    .done(function(data) {
-
-                        if (!data) {
-
-                            $.each(data.errors, function(key, value) {
-                                $('#' + key).addClass('is-invalid');
-                                $('#' + key).next().text(value);
-                            });
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: 'Something went wrong!',
-                            })
-                        } else {
-                            //console.log(data);
-                            $('#godownId').empty();
-                            // $('#quantity').val('');
-                            // $('#productTypeId').append('<option value="">Select Product Type</option>');
-                            //console.log(data.response);
-                            var gTypeid = 0;
-                            //console.log(data.response);
-                            let cnt = 0;
-                            $.each(data.response, function(key, value) {
-                                // console.log(value.godownProduct)
-                                if (value.productTypeId == productId) {
-                                    $.each(value.godownProduct, function(inside_key, inside_value) {
-                                        // if (productAsContainer == 'false' && inside_value.isStorage) {
-                                        if (!inside_value.isReserver) {
-                                            if (cnt == 0) {
-                                                $('#currentStock').val(inside_value
-                                                    .currentStock);
-                                                if (inside_value.currentStock <= 0) {
-                                                    $('#currentStock').addClass(
-                                                        'is-invalid');
-                                                    // $('#currentStock').next().text(value);
-                                                } else {
-                                                    if ($('#currentStock').hasClass(
-                                                            'is-invalid')) {
-                                                        $('#currentStock').removeClass(
-                                                            'is-invalid');
-                                                    }
-                                                }
-                                            }
-                                            cnt++;
-                                            $('#godownId').append('<option value="' +
-                                                inside_value.godownId +
-                                                '" data-isreserver="' + inside_value
-                                                .isReserver +
-                                                '" data-capacity="' + inside_value
-                                                .capacity +
-                                                '" data-currentstock="' + inside_value
-                                                .currentStock +
-                                                '">' + inside_value
-                                                .godownName +
-                                                '</option>');
-                                        }
-
-                                    });
-
-                                }
-                                //console.log(eval(value));
-                                // if (gTypeid == 0) {
-                                //     gTypeid = value.godownId;
-                                // }
-                                // console.log(productAsContainer);
-                                // if (productAsContainer == 'false' && value.isStorage) {
-                                //     $('#godownId').append('<option value="' + value
-                                //         .productTypeId +
-                                //         '" data-isstorage="' + value.isStorage + '">' + value
-                                //         .godownName +
-                                //         '</option>');
-                                // }
-
-                            });
-                            //setProductEnvWithRate(gTypeid);
-
-                        }
-                    });
-            };
-
-            $('#godownId').on('change', () => {
-                let currentStock = $('#godownId').children("option:selected").attr('data-currentstock');
-                $('#currentStock').val(currentStock);
-                if (currentStock <= 0) {
-                    $('#currentStock').addClass('is-invalid');
-                    // $('#currentStock').next().text(value);
-                } else {
-                    if ($('#currentStock').hasClass('is-invalid')) {
-                        $('#currentStock').removeClass('is-invalid');
-                    }
-                }
-            });
-
-
-
-            // $('#formCreate').submit();
-            $('#discount').on('keyup', function() {
-                var productTypeId = $('#productTypeId').val();
-                //getRate(productTypeId);
-                var quantity = $('#quantity').val();
-                var rate = $('#rate').val();
-                var discount = $(this).val();
-                var total = (quantity * rate) - discount;
-                total = Number.isNaN(total) ? 0 : total;
-                $('#total').val(total == 0 ? '' : total.toFixed(2));
-            });
-            var quantityBlurCount=0;
-            $('#quantity').on('keyup', function() {
-                var productTypeId = $('#productTypeId').val();
-                //getRate(productTypeId);
-                var quantity = $(this).val();
-                var rate = $('#rate').val();
-                $('#discount').val() == '' ? '0' : $('#discount').val();
-                var discount = $('#discount').val();
-                var total = (quantity * rate) - discount;
-                total = Number.isNaN(total) ? 0 : total;
-                $('#total').val(total == 0 ? '' : total.toFixed(2));
-                // console.log(quantity);
-
-                calculateSecondary();
-                quantityBlurCount=0;
-                checkAvailability();
-            });
-
-            $('#quantity').on('blur',()=>{
-
-                checkAvailability();
-                quantityBlurCount++;
-            });
-            function checkAvailability(){
-                var quantity = $("#quantity").val();
-                var currentStock=$("#currentStock").val();
-                if(parseFloat(quantity)>parseFloat(currentStock)){
-                    if(quantityBlurCount==0){
-                         toastr.warning("<h3 class='text-danger font-weight-bold'>Stock is low</h3>Please Change the Tank..");
-                    }
-
-                }
-
-            }
-            function calculateSecondary() {
-                var quantity = $("#quantity").val();
-                var useSecondaryUnit = $("#productTypeId").find(':selected').attr('data-usesecondaryunit');
-                var secondaryUnitShortName = $("#productTypeId").find(':selected').attr(
-                    'data-secondaryunitshortname');
-                var secondaryUnitRatio = $("#productTypeId").find(':selected').attr(
-                    'data-secondaryunitratio');
-                if (useSecondaryUnit == '1') {
-                    quantity = quantity * secondaryUnitRatio;
-                    quantity = Number.isNaN(quantity) ? 0 : quantity;
-                    quantity = quantity > 0 ? (quantity + ' ' + secondaryUnitShortName) : '';
-                } else {
-                    quantity = '';
-                }
-                $('#secondaryQuantity').html(quantity);
-            }
-            $("#productTypeId").change(function() {
-                var productTypeId = $(this).val();
-                setEnvWithRate(productTypeId);
-                changeGodownList();
-                calculateSecondary();
-                //setEnv(productTypeId);
-                //getRate(productTypeId);
-
-            });
-
-            $("#formCreate").on("submit", function(event) {
-
-                event.preventDefault();
-                $('.submit').attr('disabled', true);
-                //spinner
-                $('.submit').html(
-                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> '
-                );
-                var url = "{{ route('companyadmin.sales.store') }}";
-                if (routeRole == 'pumpadmin') {
-                    url = "{{ route('pumpadmin.sales.store') }}";
-                }
-                // if($('#godownId').val()=='' || $('#godownId').val()==null){
-
-                //     Swal.fire('',"Please select godown",'warning');
-                // }
-                var serializeData = $(this).serialize();
-                // alert(serializeData);
-                //alert(url);
-
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    _token: "{{ csrf_token() }}",
-                    data: serializeData,
-                    dataType: "json",
-                    encode: true,
-                }).done(function(data) {
-                    if (!data.status) {
-                      //   console.log(data);
-
-
-                        $('.submit').attr('disabled', false);
-                        $('.submit').html('Submit');
-                        let errorStr=''
-                        $.each(data, function(key, value) {
-                            $('#' + key).addClass('is-invalid');
-                            // $('#' + key).next().text(value);
-                            errorStr+=`<p>${value}</p>`;
-                            toastr.error(value);
-                            return;
-                        });
-                       // Swal.fire('',errorStr,'warning');
-                    } else {
-                        setTimeout(() => {
-                            $('.search').click();
-                            $('.close').click();
-                            toastr.success(data.message);
-                        }, 1000);
-                        //location.reload();
-                    }
-                }).fail(function(data) {
-                    $('.submit').attr('disabled', false);
-                    $('.submit').html('Submit');
-                    toastr.error(data.message);
-
-                    // console.log(data);
-                });
-
-
-            });
-
-
-            // setTimeout(() => {
-            //     loadEditData()
-            // }, 1000);
-
-
-            // function loadEditData() {
-            //     var editData = JSON.parse($('#edit_data').attr('data-editdata'));
-            //     if (editData != null) {
-            //         $('.loader').show();
-            //         $('#salesId').val(editData.salesId);
-            //         $('#invoiceDate').val(formatDate(new Date(editData.invoiceDate)));
-            //         $('#officeId').select2().val(editData.officeId).trigger('change');
-            //         $('#officeId').attr('disabled', true);
-            //         $('#customerName').val(editData.customerName);
-            //         $('#mobileNo').val(editData.mobileNo);
-            //         $('#vehicleNo').val(editData.vehicleNo);
-            //         $('#productTypeId').select2().val(editData.productTypeId).trigger('change');
-            //         $('#productTypeId').attr('disabled', true);
-            //         $('#godownId').select2().val(editData.godownId).trigger('change');
-            //         $('#rate').val(editData.rate);
-            //         $('#quantity').val(editData.quantity);
-            //         $('#discount').val(editData.discount);
-            //         $('#total').val(editData.total);
-            //         $('#paymentModeId').val(editData.paymentModeId);
-            //         $('#comment').val(editData.comment);
-            //         // document.getElementById("invoiceDate").value = formatDate(new Date(editData.invoiceDate));
-
-            //         // console.log($('#salesId').val());
-            //         $('.loader').hide();
-            //     } else {
-            //         $('#invoiceDate').val(formatDate(new Date()));
-            //         $('.loader').hide();
-
-            //     }
-
-            // }
-
-            // function formatDate(date) {
-            //     var d = new Date(date),
-            //         month = '' + (d.getMonth() + 1),
-            //         day = '' + d.getDate(),
-            //         year = d.getFullYear();
-
-            //     if (month.length < 2)
-            //         month = '0' + month;
-            //     if (day.length < 2)
-            //         day = '0' + day;
-
-            //     return [year, month, day].join('-');
-            // }
-            setTimeout(() => {
-                $('.loader').hide();
-            }, 1000);
+        $("#productTypeId").change(function() {
+            var productTypeId = $(this).val();
+            setEnvWithRate(productTypeId);
+            changeGodownList();
+            calculateSecondary();
+            //setEnv(productTypeId);
+            //getRate(productTypeId);
 
         });
-    </script>
+var hitState=false;
+        $("#formCreate").on("submit", function(event) {
 
-</div>
+            event.preventDefault();
+            if(hitState){
+                toastr.info("Please wait..")
+                return
+            }
+            hitState=true;
+            $('.submit').attr('disabled', true);
+            //spinner
+            $('.submit').html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> '
+            );
+            var url = "{{ route('companyadmin.sales.store') }}";
+            if (routeRole == 'pumpadmin') {
+                url = "{{ route('pumpadmin.sales.store') }}";
+            }
+            // if($('#godownId').val()=='' || $('#godownId').val()==null){
+
+            //     Swal.fire('',"Please select godown",'warning');
+            // }
+            var serializeData = $(this).serialize();
+            // alert(serializeData);
+            //alert(url);
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                _token: "{{ csrf_token() }}",
+                data: serializeData,
+                dataType: "json",
+                encode: true,
+            }).done(function(data) {
+                if (!data.status) {
+                    //   console.log(data);
+
+
+                    $('.submit').attr('disabled', false);
+                    $('.submit').html('Submit');
+                    let errorStr = ''
+                    hitState=false;
+                    $.each(data, function(key, value) {
+                        $('#' + key).addClass('is-invalid');
+                        // $('#' + key).next().text(value);
+                        errorStr += `<p>${value}</p>`;
+                        toastr.error(value);
+
+                        return;
+                    });
+                    // Swal.fire('',errorStr,'warning');
+                } else {
+                    setTimeout(() => {
+                        $('.search').click();
+                        $('.close').click();
+                        hitState=false;
+                        toastr.success(data.message);
+                    }, 1000);
+                    //location.reload();
+                }
+            }).fail(function(data) {
+                $('.submit').attr('disabled', false);
+                $('.submit').html('Submit');
+                toastr.error(data.message);
+                hitState=false;
+
+                // console.log(data);
+            });
+
+
+        });
+
+
+        setTimeout(() => {
+            console.log('still loading');
+            hitState=false;
+            $('.loader').hide();
+        }, 100);
+
+    });
+</script>

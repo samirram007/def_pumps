@@ -76,9 +76,42 @@ class SalesController extends Controller
 
     }
 
+    public function index_create($officeId)
+    {
+
+
+        $user = (object) $this->user;
+        $data['roleName'] = $this->roleName;
+        $data['routeRole'] = $this->routeRole;
+        $offices = ApiController::GetOfficeList($user->officeId);
+
+        $data['MasterOffice'] = session()->has('officeData') ? session()->get('officeData') : ApiController::GetOffice($user->officeId);
+
+        $data['officeList'] = ApiController::GetOfficeByMasterOfficeId($user->officeId);
+        $data['officeList'] = array_filter($data['officeList'], function ($var) {
+            return ($var['officeTypeId'] != 1);
+        });
+        $data['officeList'] = (object) $data['officeList'];
+        foreach ($offices as $key => $value) {
+
+            if ($value['masterOfficeId'] != null) {
+                $offices[$key]['MasterOffice'] = [ApiController::GetOffice($value['masterOfficeId'])];
+            }
+        }
+        $data['offices'] = $offices;
+
+        $data['paymentMode'] = $this->paymentMode;
+
+       $data['collections'] =[] ;
+       $data['selectedOfficeId']=$officeId;
+
+        return view('module.sales.sales_index', $data);
+
+    }
+
     public function create(Request $request)
     {
-        //dd($request->param);
+        // dd($request->all());
         $user = (object) $this->user;
         $data['roleName'] = $this->roleName;
         $data['routeRole'] = $this->routeRole;
@@ -119,12 +152,14 @@ class SalesController extends Controller
         $data['routeRole'] = $this->routeRole;
         $data['officeList'] = ApiController::GetOfficeByMasterOfficeId($user->officeId);
 
-        $thisData = json_decode(base64_decode($request->param), true);
-        if ($thisData != null) {
-            $data['editData'] = $thisData;
-        } else {
-            $data['editData'] = ApiController::GetSalesById($salesId)[0];
-        }
+        // $thisData = json_decode(base64_decode($request->param), true);
+        // if ($thisData != null) {
+        //     $data['editData'] = $thisData;
+        // } else {
+        //     $data['editData'] = ApiController::GetSalesById($salesId)[0];
+        // }
+        $data['editData'] = ApiController::GetSalesById($salesId)[0];
+        $thisData=$data['editData'] ;
         $info['title'] = 'Invoice : ' . $thisData['invoiceNo'];
         $data['productTypeList'] = ApiController::GetProductTypeWithRate($data['editData']['officeId'], $data['editData']['invoiceDate']);
         // $productTypeId = $data['editData']['productTypeId'];

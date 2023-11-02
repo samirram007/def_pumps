@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use App\Services\SupportService;
 use App\Http\Controllers\Controller;
@@ -29,7 +30,7 @@ class SupportController extends Controller
         // $this->supportService =  $supportService;
         $this->limit = 10;
         // $roles=ApiController::GetRoles();
-        $roles = session()->has('roles')? json_decode(json_encode(session()->get('roles')), true): session()->put('roles',ApiController::GetRoles());
+        $roles = session()->has('roles')? Helper::jsonDE(session()->get('roles')): session()->put('roles',ApiController::GetRoles());
 
         $del_val=["SuperAdmin" ];
         if($roles){
@@ -39,10 +40,10 @@ class SupportController extends Controller
                 }
             }
         }
-        $user=   session()->has('userData')?json_decode(json_encode(session()->get('userData')),true):ApiController::user(session()->get('loginid'));
+        $user=   session()->has('userData')?Helper::jsonDE(session()->get('userData') ):ApiController::user(session()->get('loginid'));
         $roleName=session()->get('roleName');
 
-        $this->user=json_decode(json_encode($user),true);
+        $this->user=Helper::jsonDE($user);
        $this->roleName=session()->get('roleName');
         $this->routeRole= str_replace(' ','_',strtolower($this->roleName));
     }

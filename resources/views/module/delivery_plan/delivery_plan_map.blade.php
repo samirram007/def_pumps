@@ -4,6 +4,7 @@
 
 
 
+
 <script>
     var map;
     var activeInfoWindow;
@@ -145,17 +146,29 @@
     }
 
     function toHoursAndMinutes(totalSeconds) {
-        const totalMinutes = Math.floor(totalSeconds / 60);
+        // const totalMinutes = Math.floor(totalSeconds / 60);
 
-        const seconds = totalSeconds % 60;
-        const hours = Math.floor(totalMinutes / 60);
-        const minutes = totalMinutes % 60;
+        // const seconds = totalSeconds % 60;
+        // const hours = Math.floor(totalMinutes / 60);
+        // const minutes = totalMinutes % 60;
 
-        return hours + '<b>h</b> ' + minutes + '<b>m</b> ' + seconds + '<b>s</b>';
+        // return hours + '<b>h</b> ' + minutes + '<b>m</b> ' + seconds + '<b>s</b>';
+        var duration=totalSeconds*1000;
+        var days = Math.floor(duration / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((duration % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((duration % (1000 * 60)) / 1000);
+            // Output the result in an element with id="demo"
+            return days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
     }
 </script>
 
+@push('script')
 <!-- <script src="mapsJavaScriptAPI.js" async defer></script> -->
 <script>
-   // console.clear();
+
+     console.clear();
 </script>
+
+@endpush
+

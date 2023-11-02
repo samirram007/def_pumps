@@ -12,8 +12,10 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('superadmin')->group(function () {
 
     Route::group(['middleware' => 'CheckRole'], function () {
-        Route::get('/', [LoginController::class, 'dashboard']);
-        Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('superadmin.dashboard');
+        // Route::get('/', [LoginController::class, 'dashboard']);
+        // Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('superadmin.dashboard');
+        Route::get('/', [MasterOfficeController::class, 'index']);
+        Route::get('/dashboard', [MasterOfficeController::class, 'index'])->name('superadmin.dashboard');
 
         Route::get('/user/profile/{loginid}', [UserController::class, 'profile'])->name('superadmin.user.profile');
         Route::get('/user/profile/edit/{loginid}', [UserController::class, 'profile'])->name('superadmin.user.profile_edit');

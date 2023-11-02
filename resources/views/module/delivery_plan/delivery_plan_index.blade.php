@@ -42,10 +42,12 @@
                         <tr>
                             <th>{{ __('Plan Name') }}</th>
                             <th>{{ __('Planing Date') }}</th>
-                            <th>{{ __('Hub') }}</th>
-                            <th>{{ __('Product') }}</th>
-                            <th>{{ __('TankerSize') }}({{ __('ltr') }})</th>
-                            <th class="text-center">{{ __('Status') }}</th>
+                            <th class="" data-visible="false">{{ __('Hub') }}</th>
+                            <th class="" data-visible="false">{{ __('Product') }}</th>
+                            <th class="text-center">{{ __('TankerSize') }}({{ __('ltr') }})</th>
+                            <th>{{ __('Driver') }}</th>
+                            <th>{{ __('NODP') }}</th>
+                            <th>{{ __('Status') }}</th>
                             <th>{{ __('Action') }}</th>
                         </tr>
 
@@ -53,6 +55,9 @@
 
 
                 </table>
+                <div class="row px-4">
+                    <div>NODP: Number of Delivery Point</div>
+                </div>
             </div>
 
         </section>
@@ -84,10 +89,42 @@
             white-space: pre-wrap;
         }
 
-        #table td:nth-child(6) {
+        #table td:nth-child(5),
+        #table th:nth-child(5) {
             text-align: center;
         }
+
+        #table td:nth-child(6),
+        #table th:nth-child(6) {
+            text-align: left;
+        }
+
+        .gap-10 {
+            gap: 10px;
+        }
+
+        .fa-circle {
+            border-radius: 50%;
+            background-color: #9ca3a270;
+            color: #0a705a;
+            font-size: 100%;
+        }
+
+        .fa-circle:active {
+            background-color: #464949d0;
+            color: #d0ebe5;
+            rotate: 45deg;
+        }
+
+        .fa-circle:hover {
+            background-color: #3b6e6e91;
+            color: #13332c;
+            rotate: -135deg;
+            transition: rotate 1s ease-in-out;
+        }
     </style>
+@endsection
+@push('script')
     <script>
         $(document).ready(function() {
 
@@ -97,10 +134,12 @@
                 );
             });
             let delivery_plans = @json($delivery_plans);
+            delivery_plans = delivery_plans.filter(item => item.deliveryPlanStatusId != 5);
             let view_url = `{{ route($routeRole . '.delivery_plan.view', ':id') }}`;
             let edit_url = `{{ route($routeRole . '.delivery_plan.edit', ':id') }}`;
             let delete_url = `{{ route($routeRole . '.delivery_plan.delete', ':id') }}`;
             let status_change_url = `{{ route($routeRole . '.delivery_plan.status_change', ':id') }}`;
+            let driver_url = `{{ route($routeRole . '.delivery_plan.driver', ':id') }}`;
             var start = moment().subtract(6, 'days');
             var end = moment();
             var listTable = $('#table').DataTable({
@@ -113,7 +152,7 @@
                 columns: [{
                         "data": null,
                         "render": function(data, type, full, meta) {
-                            return data.planTitle
+                            return data.planTitle.split("_").slice(-2).join('_')
                         }
                     },
                     {
@@ -127,19 +166,50 @@
                     {
                         "data": null,
                         "render": function(data, type, full, meta) {
-                            return data.startPoint.hubName;
+                            return null;
+                            // return data.startPoint.hubName;
                         }
                     },
                     {
                         "data": null,
                         "render": function(data, type, full, meta) {
-                            return data.product.productTypeName;
+                            return null;
+                            // return data.product.productTypeName;
                         }
                     },
                     {
                         "data": null,
                         "render": function(data, type, full, meta) {
-                            return data.containerSize;
+                            return `<div class=" text-break   text-secondary text-center text-weight-bold">${data.containerSize}</div>`;
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function(data, type, full, meta) {
+                            // console.log(data.driver);
+                            let this_id = data['deliveryPlanId'];
+                            let this_driver_url = driver_url.replace(':id', data[
+                                'deliveryPlanId']);
+                            if (data.driver == null) {
+                                return `<div class="  text-left   text-info text-weight-bold">
+                                    <a href="javascript:"  data-param="${this_id}" data-url="${this_driver_url}"  title="{{ __('Assign Driver') }}" class="load-popup status_change    text-info p-2 ">Assign Driver</a>
+                                </div>`;
+                            } else {
+                                return `<div class="   text-left   text-info text-weight-bold">
+                                    <a href="javascript:"  data-param="${this_id}" data-url="${this_driver_url}"  title="{{ __('Chnage Driver') }}" class="load-popup status_change     text-info p-2 ">
+                                        ${data.driver.driverName}<div class="pl-2 small text-gray">${data.driver.contactNumber}</div>
+                                        </a>
+
+                                </div>`;
+                            }
+
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function(data, type, full, meta) {
+                            //console.log(data);
+                            return `<div class="text-center">${data.deliveryPlanDetailsList.length}</div>`
                         }
                     },
                     {
@@ -151,12 +221,17 @@
                             let this_status = data.deliveryPlanStatus.deliveryPlanStatus;
                             // console.log(typeof(this_status));
                             // console.log(trans(this_status));
-                            return `<div class=" text-break  text-info text-weight-bold">${this_status}` +
-                                `<a href="javascript:" data-param="${this_id}" data-url="${this_status_change_url}"` +
-                                `title="{{ __('Change Status') }}"` +
-                                `class="load-popup status_change  text-break  text-info p-2 ">` +
-                                `<i class="fas fa-pencil-alt m-0 "></i></a>` +
-                                `</div>`;
+                            if (data['deliveryPlanStatusId'] == 5) {
+                                var this_str = `<span class="text-danger">Cancelled</span><br/>`;
+                                return this_str;
+                            }
+                            return `<div class="  text-info text-weight-bold text-left">
+                                <a href="javascript:" data-param="${this_id}" data-url="${this_status_change_url}"
+                                title="{{ __('Change Status') }}"
+                                class="load-popup status_change     text-info p-2 ">
+                                <i class="fas fa-pencil-alt fa-circle m-0 "></i>
+                                ${this_status}</a>
+                                </div>`;
                         }
                     },
                     {
@@ -167,22 +242,30 @@
                             let this_view_url = view_url.replace(':id', data['deliveryPlanId']);
                             let this_edit_url = edit_url.replace(':id', data['deliveryPlanId']);
                             let this_delete_url = delete_url.replace(':id', data['deliveryPlanId']);
-                            let this_str =
-                                ` <a href="${this_edit_url}"` +
-                                ` title="{{ __('Edit Plan') }}" ` +
-                                `class="   btn btn-rounded  animated-shine px-2  ">` +
-                                `{{ __('Edit Plan') }} <i class="fas fa-pencil-alt"></i></a>`;
+                            let this_str = '';
+                            if (data['deliveryPlanStatusId'] != 5) {
+                                this_str += ` <a href="${this_edit_url}"` +
+                                    ` title="{{ __('Edit Plan') }}" ` +
+                                    `class="   btn btn-rounded  animated-shine px-2  ">` +
+                                    `<i class="fas fa-pencil-alt"></i> {{ __('Edit') }} </a>`;
+                            }
 
-                            this_str += ` <a href="${this_view_url}"` +
-                                `title="{{ __('Delete') }}" class="delete  btn btn-rounded animated-shine-danger d-none   ">` +
-                                `<i class="fa fa-trash m-0 "></i></a>`;
+                            if (data['deliveryPlanStatusId'] < 4) {
+                                this_str += ` <a href="${this_delete_url}"` +
+                                    `title="{{ __('Delete') }}" class="delete  btn btn-rounded animated-shine-danger   ">` +
+                                    `<i class="fa fa-trash m-0 "></i> {{ __('Cancel') }} </a>`;
 
-                            return this_str;
+                            }
+
+                            return `<div class="d-flex justify-content-start gap-10">${this_str}</div>`;
                         }
                     },
 
 
-                ]
+                ],
+                order: [
+                    [2, 'desc']
+                ],
 
             });
             cb(start, end);
@@ -220,7 +303,9 @@
 
                         }
                         //console.log(response);
-                        delivery_plans = response.data.delivery_plans;
+                        delivery_plans = response.data.delivery_plans.filter(item => item
+                            .deliveryPlanStatusId != 5);
+                        // delivery_plans=delivery_plans.filter(item => item.deliveryPlanStatusId !=5);
                         listTable.clear().rows.add(delivery_plans).draw();
                         setTimeout(() => {
                             $('#filter').html("{{ __('Filter') }}");
@@ -274,4 +359,4 @@
 
         });
     </script>
-@endsection
+@endpush

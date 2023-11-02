@@ -46,7 +46,7 @@
 </style>
 <script>
     $('#myUL li a').on('click', function() {
-        console.log($(this).html());
+
         var lat = $(this).data('lat');
         var lng = $(this).data('lng');
         $('#latitude').val(lat);

@@ -1,7 +1,7 @@
 <div class="modal-dialog modal-lg  modal-dialog-centered mt-0 ">
     <div class="modal-content bg-info">
         <div class="modal-header">
-            <h4 class="modal-title text-light" id="title">{{ __('New Product') }} </h4>
+            <h4 class="modal-title text-light" id="title">{{ __('New Driver') }} </h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
             </button>
@@ -25,136 +25,44 @@
                                             <div class="row">
                                                 <div class="col-md-6 mb-4">
                                                     <div class="form-group">
-                                                        <label for="productTypeName">{{ __('Product Name') }}<span
+                                                        <label for="driverName">{{ __('Driver Name') }}<span
                                                                 class="text-danger">*</span></label>
-                                                        <input type="text" class="form-control" id="productTypeName"
-                                                            name="productTypeName" placeholder="Product Name"
-                                                            value="{{ old('productTypeName') }}">
-                                                        <span class="text-danger" id="productTypeNameError"></span>
+                                                        <input type="text" class="form-control" id="driverName"
+                                                            name="driverName" placeholder="Driver Name"
+                                                            value="{{ old('driverName') }}">
+                                                        <span class="text-danger" id="driverNameError"></span>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3 col-6 mb-4">
+                                                <div class="col-md-6 mb-4">
                                                     <div class="form-group">
-                                                        <label for="isContainer">{{ __('Container') }} ?<span
+                                                        <label for="contactNumber">{{ __('Contact No') }}<span
                                                                 class="text-danger">*</span></label>
-                                                        <select name="isContainer" id="isContainer"
-                                                            class="form-control">
-                                                            <option value="1">Yes</option>
-                                                            <option value="0">No</option>
-                                                        </select>
-                                                        <span class="text-danger" id="isContainerError"></span>
+                                                        <input type="text" class="form-control" id="contactNumber"
+                                                        size="10" maxlength="10"
+                                                            name="contactNumber" placeholder="Contact No"
+                                                            value="{{ old('contactNumber') }}">
+                                                        <span class="text-danger" id="contactNumberError"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-4">
+                                                    <div class="form-group">
+                                                        <label for="licenceNo">{{ __('Licence No') }}</label>
+                                                        <input type="text" class="form-control" id="licenceNo"
+                                                            name="licenceNo" placeholder="Licence No"
+                                                            value="{{ old('licenceNo') }}">
+                                                        <span class="text-danger" id="licenceNoError"></span>
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-3 col-6 mb-4">
-                                                    <div class="form-group">
-                                                        <label for="quantity">{{ __('Quantity') }} </label>
-                                                        <input type="text" class="form-control" id="quantity"
-                                                            name="quantity" placeholder="Quantity"
-                                                            value="{{ old('quantity') }}">
-                                                        <span class="text-danger" id="quantityError"></span>
-                                                    </div>
-                                                </div>
+
+
                                             </div>
 
-                                            <fieldset class="row">
-                                                <legend>{{__('Units of Measurement')}}</legend>
 
-                                                <div class="col-md-3 col-6 mb-4">
-                                                    <div class="form-group">
-                                                        <label for="primaryUnitId">{{ __('Primary Unit') }} <span
-                                                                class="text-danger">*</span></label>
-                                                        <select name="primaryUnitId" id="primaryUnitId"
-                                                            class="form-control">
-                                                            @foreach ($units as $unit)
-                                                                <option value="{{ $unit['unitId'] }}">
-                                                                    {{ $unit['unitName'] }}({{ $unit['unitShortName'] }})
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                        <span class="text-danger" id="primaryUnitIdError"></span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 col-6 mb-4">
-                                                    <div class="form-group">
-                                                        <label for="useSecondaryUnit">{{ __('Use Secondary Unit') }}
-                                                            ?</label>
-                                                        <select name="useSecondaryUnit" id="useSecondaryUnit"
-                                                            class="form-control">
-                                                            <option value="1">Yes</option>
-                                                            <option value="0">No</option>
-                                                        </select>
-                                                        <span class="text-danger" id="useSecondaryUnitError"></span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 col-6 mb-4 secondary">
-                                                    <div class="form-group">
-                                                        <label for="secondaryUnitId">{{ __('Secondary Unit') }}
-                                                        </label>
-                                                        <select name="secondaryUnitId" id="secondaryUnitId"
-                                                            class="form-control">
-                                                            @foreach ($units as $unit)
-                                                                <option value="{{ $unit['unitId'] }}">
-                                                                    {{ $unit['unitName'] }}({{ $unit['unitShortName'] }})
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                        <span class="text-danger" id="secondaryUnitIdError"></span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 col-6 mb-4 secondary">
-                                                    <div class="form-group">
-                                                        <label for="secondaryUnitRatio">{{ __('Unit Ratio') }}</label>
-                                                        <input type="text" class="form-control"
-                                                            id="secondaryUnitRatio" name="secondaryUnitRatio"
-                                                            placeholder="Unit Ratio"
-                                                            onInput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                                                            value="{{ old('secondaryUnitRatio') }}">
-                                                        <span class="text-danger" id="secondaryUnitRatioError"></span>
-                                                    </div>
-                                                </div>
-                                            </fieldset>
-                                            <fieldset class="row">
-                                                <div class="col-md-3 col-6 mb-4">
-                                                    <div class="form-group">
-                                                        <label for="recorderPoint">{{ __('Recorder Point') }}<span
-                                                                class="text-danger">*</span></label>
-                                                        <input type="text" class="form-control" id="recorderPoint"
-                                                            name="recorderPoint" placeholder="Recorder Point"
-                                                            onInput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                                                            value="{{ old('recorderPoint') }}">
-                                                        <span class="text-danger" id="recorderPointError"></span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 col-6 mb-4">
-                                                    <div class="form-group">
-                                                        <label for="maxStockLevel">{{ __('Max Stock Level') }} <span
-                                                                class="text-danger">*</span></label>
-                                                        <input type="text" class="form-control" id="maxStockLevel"
-                                                            name="maxStockLevel" placeholder="Max Stock Level"
-                                                            onInput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                                                            value="{{ old('maxStockLevel') }}">
-                                                        <span class="text-danger" id="maxStockLevelError"></span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 col-6 mb-4">
-                                                    <div class="form-group">
-                                                        <label for="color">{{ __('Colour') }} <span
-                                                                class="text-danger">*</span></label>
-                                                        <input type="color" class="form-control" id="color"
-                                                            name="color" placeholder="Colour"   value="{{ old('color') }}">
-                                                        <span class="text-danger" id="color"></span>
-                                                    </div>
-                                                </div>
-                                            </fieldset>
 
                                             <div class="row text-center">
                                                 <div class="col-6 mx-auto">
-                                                    <input type="text" class="sr-only" id="organizationId"
-                                                        name="organizationId" value="{{ $organizationId }}">
-                                                    <input type="text" class="sr-only" id="productTypeId"
-                                                        name="productTypeId" value="{{ $productTypeId }}"
-                                                        data-product="{{ !isset($product) ? '' : json_encode($product[0]) }}">
+
                                                     <button type="submit"
                                                         class="submit btn btn-rounded animated-shine px-4"><span
                                                             class="iconify" data-icon="mdi:content-save-all-outline"
@@ -204,99 +112,57 @@
 
     </style>
     <script>
-        $('#isContainer').change(function() {
-            ToggleQtyInput();
-        });
-        $('#useSecondaryUnit').change(function() {
-            ToggleSecondaryUnit();
-        });
-        $('#primaryUnitId').change(function() {
-            ToggleSecondaryUnit();
-        });
+
         $('#formCreate').submit(function() {
             event.preventDefault();
-            save_product();
+            save_driver();
         });
 
-        function save_product() {
+        function save_driver() {
             // spinner
-            $('#save').html('<div class="spinner-border text-light" role="status"><span class="sr-only"></span>Save</div>');
-            var productTypeId = $('#productTypeId').val();
-            var productTypeName = $('#productTypeName').val();
-            var isContainer = $('#isContainer').val();
-            var quantity = $('#quantity').val();
-            var color = $('#color').val();
-            var organizationId = $('#organizationId').val();
-            var recorderPoint = $('#recorderPoint').val();
-            var maxStockLevel = $('#maxStockLevel').val();
-            var primaryUnitId = $('#primaryUnitId').val();
-            var useSecondaryUnit = $('#useSecondaryUnit').val();
-            var secondaryUnitId = $('#secondaryUnitId').val();
-            var secondaryUnitRatio = $('#secondaryUnitRatio').val();
-            if (isContainer == 1) {
-                if (quantity == '') {
-                    toastr.error('Please enter Quantity');
-                    $('#save').html('Save');
+            $('.submit').html('<div class="spinner-border text-light" role="status"><span class="sr-only"></span>Save</div>');
+            var driverName = $('#driverName').val();
+            var contactNumber = $('#contactNumber').val();
+            var licenceNo = $('#licenceNo').val();
+            var officeId = "{{ $officeId }}";
+            if (driverName == '') {
+                toastr.error('Please enter Name');
+                    $('.submit').html('Save');
+                    return false;
+            }
+           if (contactNumber == '') {
+                    toastr.error('Please enter contact no');
+                    $('.submit').html('Save');
                     return false;
                 }
-            }
-            if (useSecondaryUnit == 1) {
-                if (secondaryUnitId == '') {
-                    toastr.error('Please select Secondary Unit');
-                    $('#save').html('Save');
-                    return false;
-                }
-                if (secondaryUnitRatio == '') {
-                    toastr.error('Please enter Unit Ratio');
-                    $('#save').html('Save');
-                    return false;
-                }
-            }
-            if (recorderPoint == '' || recorderPoint == 0) {
-                toastr.error('Please enter Recorder Point');
-                $('#save').html('Save');
-                return false;
-            }
-            if (maxStockLevel == '' || maxStockLevel == 0) {
-                toastr.error('Please enter Max Stock Level');
-                $('#save').html('Save');
-                return false;
-            }
+
             // console.log(productTypeId);
             //alert(productTypeId);
 
             var roleName = "{{ $roleName }}";
 
-            var url = "{{ route('superadmin.save_product') }}";
-            if (roleName == 'companyadmin') {
-                url = "{{ route('companyadmin.save_product') }}";
-            }
-            console.log(url);
+            var url = "{{ route('companyadmin.driver.store') }}";
+            // if (roleName == 'companyadmin') {
+            //     url = "{{ route('companyadmin.driver.store') }}";
+            // }
+            // console.log(url);
             $.ajax({
                 url: url,
                 type: "POST",
                 data: {
                     "_token": "{{ csrf_token() }}",
-                    productTypeId: productTypeId,
-                    productTypeName: productTypeName,
-                    isContainer: isContainer,
-                    color: color,
-                    quantity: quantity,
-                    organizationId: organizationId,
-                    recorderPoint: recorderPoint,
-                    maxStockLevel: maxStockLevel,
-                    primaryUnitId: primaryUnitId,
-                    useSecondaryUnit: useSecondaryUnit,
-                    secondaryUnitId: secondaryUnitId,
-                    secondaryUnitRatio: secondaryUnitRatio,
+                    driverName: driverName,
+                    contactNumber: contactNumber,
+                    licenceNo: licenceNo,
+                    officeId: officeId,
                 },
                 success: function(response) {
                     //  console.log(response);
-                    if (response.status == 'success') {
+                    if (response.status) {
                         toastr.success(response.message);
-                        $('#save').html('Save');
+                        $('.submit').html('Save');
                         $("#modal-popup .close").click();
-
+window.location.href="{{ route('companyadmin.driver.index') }}";
                         setTimeout(() => {
                             // console.log('loading....');
                             $('.reportPanel').html(response.html);
@@ -311,13 +177,13 @@
                         // $('.edit_data').attr('disabled', false);
                     } else {
                         toastr.error(response.message);
-                        $('#save').html('Save');
+                        $('.submit').html('Save');
                     }
                 },
                 error: function(response) {
                     //  console.log(response);
                     toastr.error('Something went wrong');
-                    $('#save').html('Save');
+                    $('.submit').html('Save');
                 }
             });
         }

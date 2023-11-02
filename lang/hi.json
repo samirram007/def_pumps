@@ -416,7 +416,12 @@
 "ltr": "लीटर",
 "pc": "पीस",
 "pcs": "पीसेस",
-
+   "Pump": "पंप",
+   "Suggested Qty.": "सुझाई गई मात्रा",
+   "Ordered Qty.": "आदेश दी गई मात्रा",
+   "Received Qty.": "प्राप्त मात्रा",
+   "Order Approval": "आदेश मंजूरी",
+"Order Processing": "आदेश प्रसंस्करण",
  "Exit": "बाहर निकलें"
 
 }

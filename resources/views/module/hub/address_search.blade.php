@@ -25,9 +25,13 @@
     $('#address_search').on('keyup', function() {
         var address = $(this).val();
         var stateName = $('#stateId').find("option:selected").text();
-        //console.log(address);
+
         if (address.length > 3) {
-            $.ajax({
+            address_search(address,stateName);
+        }
+    });
+    async function address_search(address,stateName){
+        $.ajax({
                 url: "{{ route('hub.address.search') }}",
                 type: "GET",
                 data: {
@@ -39,6 +43,5 @@
                     $('#address_search_list').html(response.html);
                 }
             });
-        }
-    });
+    }
 </script>

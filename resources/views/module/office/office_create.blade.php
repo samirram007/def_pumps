@@ -42,11 +42,11 @@
                                                 <label for="officeName">{{ __('Business Entity') }} <span
                                                         class="text text-danger  ">*</span> </label>
                                                 <small id="officeName-count-char"
-                                                    class="count-char  position-absolute right-0  ">0/20</small>
+                                                    class="count-char  position-absolute right-0  ">0/50</small>
                                                 <input type="text" class="form-control" id="officeName"
-                                                    name="officeName" value="{{ old('officeName') }}" maxlength="20"
+                                                    name="officeName" value="{{ old('officeName') }}" maxlength="50"
                                                     placeholder="{{ __('Enter Business Entity') }}"
-                                                    onkeyup="countchar(this,'officeName',20);">
+                                                    onkeyup="countchar(this,'officeName',50);">
 
 
                                             </div>

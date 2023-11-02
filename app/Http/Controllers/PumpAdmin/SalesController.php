@@ -176,31 +176,29 @@ class SalesController extends Controller
     {
         $user = (object) ApiController::User(Session::get('loginid'));
 
+       // $user = (object) $this->user;
         $data['roleName'] = $this->roleName;
         $data['routeRole'] = $this->routeRole;
-        $data['godownList'] = ApiController::GetGodownsByOfficeId($user->officeId);
+        $data['officeList'] = [ApiController::GetOffice($user->officeId)];
 
-        // $data['salesTypes'] = ApiController::GetSalesTypes();
-
-        $data['MasterOffice'] = [ApiController::GetOffice($user->officeId)];
-        if ($data['MasterOffice'][0]['masterOfficeId'] == null) {
-            $data['officeList'] = (object) ApiController::GetOfficeByMasterOfficeId($user->officeId);
-        } else {
-            $data['officeList'] = $data['MasterOffice'];
-        }
-
-        // $data['officeList'] = ApiController::GetOfficeByMasterOfficeId($user->officeId);
-
-        $data['productTypeList'] = ApiController::GetProductTypeWithRate($data['officeList'][0]['officeId']);
-        //dd( $data['productTypeList']);
-        $data['masterOfficeId'] = $user->officeId;
-        //dd($data['masterOfficeId']);
-        // $data['officeTypes'] =  ApiController::GetOfficeTypeList();
-        // dd($data['officeTypes']);
-        $data['paymentMode'] = $this->paymentMode;
-
-        $data['roles'] = $this->roles;
         $info['title'] = "New Invoice";
+        $data['editData'] = null;
+        $data['productTypeList'] = ApiController::GetProductTypeWithRate($data['officeList'][0]['officeId']);
+        $data['godownList'] = ApiController::GetGodownsByOfficeId($data['officeList'][0]['officeId']);
+
+        $data['businessTaxTypes'] = ApiController::GetBusinessTaxTypes();
+
+        $data['productTypeList'] = $this->SetUnits($data['productTypeList']);
+        // dd($data['productTypeList']);
+        $data['officeList'] = array_filter($data['officeList'], function ($var) {
+            return ($var['officeTypeId'] != 1);
+        });
+        $data['masterOfficeId'] = $user->officeId;
+        $data['officeTypes'] = ApiController::GetOfficeTypeList();
+        $data['paymentMode'] = $this->paymentMode;
+        // dd($data);
+        $data['roles'] = $this->roles;
+
         $info['size'] = "modal-lg";
         $data['info'] = $info;
         // dd($data);
@@ -241,6 +239,7 @@ class SalesController extends Controller
             'mobileNo' => 'nullable|numeric|digits:10',
             'quantity' => 'required|numeric',
             'total' => 'required|numeric|min:1',
+            'godownId' => 'required',
             'paymentModeId' => 'required',
         ]);
         // process the data
@@ -250,17 +249,10 @@ class SalesController extends Controller
                 "errors" => $validator->errors(),
             ]);
         } else {
-            // store the user
-            // $request->input('discount') == null ?  0:$request->input('discount');
             $FuelRate = ApiController::GetFuelRate($request->input('fuelRateId'));
-
-            // $CheckRate=ApiController::GetProductTypeById($request->input('fuelRateId'));
             if ($FuelRate[0]['rate'] != (double) $request->input('rate')) {
 
-                return response()->json([
-                    "status" => false,
-                    "message" => "Fuel Rate is not valid",
-                ]);
+                return response()->json(["status" => false, "errors" => ["Fuel Rate is not valid"]]);
             } else {
                 $Total = (double) $FuelRate[0]['rate'] * (double) $request->input('quantity') - (double) $request->input('discount');
                 $Total = number_format($Total, 2, '.', '');
@@ -268,15 +260,15 @@ class SalesController extends Controller
                 if ($Total != $request->input('total')) {
                     return response()->json([
                         "status" => false,
-                        "message" => "Total is not valid",
+                        "errors" => ["Total is not valid"],
                     ]);
                 }
             }
 
             $data = [
                 'customerName' => base64_encode($request->input('customerName')),
-                'officeId' => $request->input('officeId'),
                 'invoiceDate' => $request->input('invoiceDate'),
+                'officeId' => $request->input('officeId'),
                 'userId' => $user['id'],
                 'comment' => base64_encode($request->input('comment')),
                 'mobileNo' => base64_encode($request->input('mobileNo')),
@@ -287,9 +279,12 @@ class SalesController extends Controller
                 'total' => $request->input('total'),
                 'discount' => $request->input('discount') == null ? 0 : $request->input('discount'),
                 'paymentModeId' => $request->input('paymentModeId'),
+                'godownId' => $request->input('godownId'),
+                'businessTaxTypeId' => $request->input('businessTaxTypeId'),
+                'submittedDocumentNo' => $request->input('submittedDocumentNo'),
 
             ];
-            //  dd(json_encode($data));
+          //  dd(json_encode($data));
             $response = ApiController::CreateSales($data);
 
             if ($response['status'] == false) {
@@ -302,37 +297,98 @@ class SalesController extends Controller
     public function edit($salesId)
     {
 
-        $user = ApiController::User(Session::get('loginid'));
-
+        $user = (object) $this->user;
         $data['roleName'] = $this->roleName;
         $data['routeRole'] = $this->routeRole;
+        $data['officeList'] = [ApiController::GetOffice($user->officeId)];
 
-        $data['MasterOffice'] = [ApiController::GetOffice($user['officeId'])];
-        if ($data['MasterOffice'][0]['masterOfficeId'] == null) {
-            $data['officeList'] = (object) ApiController::GetOfficeByMasterOfficeId($user->officeId);
-        } else {
-            $data['officeList'] = $data['MasterOffice'];
-        }
-        $data['godownList'] = ApiController::GetGodownsByOfficeId($user->officeId);
-        // $data['salesTypes'] = ApiController::GetSalesTypes();
-
+        // $thisData = json_decode(base64_decode($request->param), true);
+        // if ($thisData != null) {
+        //     $data['editData'] = $thisData;
+        // } else {
+        //     $data['editData'] = ApiController::GetSalesById($salesId)[0];
+        // }
         $data['editData'] = ApiController::GetSalesById($salesId)[0];
+        $thisData=$data['editData'] ;
+        $info['title'] = 'Invoice : ' . $thisData['invoiceNo'];
         $data['productTypeList'] = ApiController::GetProductTypeWithRate($data['editData']['officeId'], $data['editData']['invoiceDate']);
-        $data['masterOfficeId'] = $user['officeId'];
+        // $productTypeId = $data['editData']['productTypeId'];
+        $thisProduct = [];
+        //dd($data['productTypeList']);
+        foreach ($data['productTypeList'] as $key => $value) {
+
+            if ($value['productTypeId'] == $data['editData']['productTypeId']) {
+                $thisProduct = $value;
+                break;
+            }
+        }
+
+        // $data['godownList'] = ApiController::GetGodownsByOfficeId($data['editData']['officeId']);
+        $godownList = ApiController::GetGodownsWithStockByOfficeId($data['editData']['officeId']);
+        $filter_godownList = [];
+        foreach ($godownList as $key => $value) {
+            if ($value['productTypeId'] == $data['editData']['productTypeId']) {
+
+                $filter_godownList = $value['godownProduct'];
+                break;
+            }
+        }
+        $data['godownList'] = $filter_godownList;
+
+        foreach ($data['godownList'] as $key => $value) {
+
+            if (!$thisProduct['isContainer'] && $value['godownTypeId'] == 1) {
+                unset($data['godownList'][$key]);
+            }
+            if ($thisProduct['isContainer'] && $value['godownTypeId'] == 2) {
+                unset($data['godownList'][$key]);
+            }
+        }
+
+        $data['businessTaxTypes'] = ApiController::GetBusinessTaxTypes();
+
+        $data['productTypeList'] = $this->SetUnits($data['productTypeList']);
+
+        $data['officeList'] = array_filter($data['officeList'], function ($var) {
+            return ($var['officeTypeId'] != 1);
+        });
+        $data['masterOfficeId'] = $user->officeId;
         $data['officeTypes'] = ApiController::GetOfficeTypeList();
         $data['paymentMode'] = $this->paymentMode;
-
+        // dd($data);
         $data['roles'] = $this->roles;
-        $info['title'] = "Edit Invoice";
+
         $info['size'] = "modal-lg";
         $data['info'] = $info;
-
         // dd($data['editData']);
         $GetView = view('module.sales.sales_edit', $data)->render();
         return response()->json([
             "status" => true,
             "html" => $GetView,
         ]);
+    }
+    public function SetUnits($products)
+    {
+        $units = ApiController::GetUnits();
+
+        foreach ($products as $key => $product) {
+            // $product['unitName'] = $this->Getvalues($units, $product['unitId'])['unitName'];
+
+            foreach ($units as $unit) {
+                if ($unit['unitId'] == $product['primaryUnitId']) {
+                    $products[$key]['primaryUnitName'] = $unit['unitName'];
+                    $products[$key]['primaryUnitShortName'] = $unit['unitShortName'];
+                    $products[$key]['primaryUnitSingularShortName'] = $unit['singularShortName'];
+                }
+                if ($unit['unitId'] == $product['secondaryUnitId']) {
+                    $products[$key]['secondaryUnitName'] = $unit['unitName'];
+                    $products[$key]['secondaryUnitShortName'] = $unit['unitShortName'];
+                    $products[$key]['secondaryUnitSingularShortName'] = $unit['singularShortName'];
+                }
+            }
+
+        }
+        return $products;
     }
     public function update(Request $request)
     {
@@ -393,6 +449,9 @@ class SalesController extends Controller
                 'total' => $request->input('total'),
                 'discount' => $request->input('discount') == null ? 0 : $request->input('discount'),
                 'paymentModeId' => $request->input('paymentModeId'),
+                'godownId' => $request->input('godownId'),
+                'businessTaxTypeId' => $request->input('businessTaxTypeId'),
+                'submittedDocumentNo' => $request->input('submittedDocumentNo'),
 
             ];
             //  dd(json_encode($data));

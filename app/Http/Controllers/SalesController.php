@@ -14,9 +14,11 @@ class SalesController extends Controller
         } else {
             $invoice_no = '000000';
         }
+       // dd($invoice_no);
         $sales_invoice = ApiController::getSalesInvoice($invoice_no);
+        //dd($sales_invoice);
         $current_url = url()->current();
-        $shorten_url = $this->shortenUrl($current_url);
+       // $shorten_url = $this->shortenUrl($current_url);
 
         return view('module.sales.invoice_html', compact('sales_invoice', 'current_url'));
     }

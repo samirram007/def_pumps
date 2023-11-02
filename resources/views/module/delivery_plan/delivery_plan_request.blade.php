@@ -21,11 +21,12 @@
                 value="{{ $requestData['StartingPointId'] }}">
             <input type="text" name="MinimumMultiple" class="sr-only" value="{{ $requestData['MinimumMultiple'] }}">
             <input type="text" name="TankCapacity" class="sr-only" value="{{ $requestData['TankCapacity'] }}">
-            <input type="text" name="No_of_days_for_delivery" class="sr-only"
-                value="{{ $requestData['No_of_days_for_delivery'] }}">
-            <input type="date" name="PlanDate" class="sr-only" value="{{ $requestData['planDate'] }}">
-            <input type="date" name="ExpectedDeliveryDate" class="sr-only"
+
+            <input type="datetime-local" name="planDate" class="sr-only" value="{{ $requestData['planDate'] }}">
+            <input type="datetime-local" name="expectedDeliveryDate" class="sr-only"
                 value="{{ $requestData['expectedDeliveryDate'] }}">
+            <input type="datetime-local" id="ExpectedReturnTime" name="ExpectedReturnTime" class="sr-only"
+                value="">
         @endif
 
         <div class="col-12 col-md-4 d-flex flex-row align-items-center justify-content-center  ">
@@ -63,6 +64,26 @@
                 gap: 10px;
             }
 
+            .fa-circle {
+                border-radius: 50%;
+                background-color: #9ca3a270;
+                color: #0a705a;
+                font-size: 100%;
+            }
+
+            .fa-circle:active {
+                background-color: #464949d0;
+                color: #d0ebe5;
+                rotate: 45deg;
+            }
+
+            .fa-circle:hover {
+                background-color: #3b6e6e91;
+                color: #13332c;
+                rotate: -135deg;
+                transition: rotate 1s ease-in-out;
+            }
+
             .btn-box>div {}
 
             .animated-shine {
@@ -71,24 +92,37 @@
 
             }
 
+            .value_fit {
+                max-width: 130px;
+            }
+
+            .sl_fit {
+                max-width: 30px;
+            }
+
+            .desc_fit {
+                max-width: 250px;
+            }
+
             /* Animation */
             /* @keyframes shine {
                         0%   {transform: rotate(0deg);}
                         100% {transform: rotate(-360deg);}
                         } */
         </style>
-        <div class="col-12  gap-10  d-flex flex-row align-items-center justify-content-end mt-2 ">
-            <div class="btn-box animated-shine " onclick="toggleRequestPanel(this);" title="{{ __('Request') }}">
+        <div class="col-12  gap-5  d-flex flex-row align-items-center justify-content-end mt-2 overflow-hidden ">
+            <div class="btn-box animated-shine d-none " onclick="toggleRequestPanel(this);"
+                title="{{ __('Modify Request') }}">
 
                 <i class="fa fa-paper-plane"></i>
                 <div>{{ __('Request') }}</div>
             </div>
 
             <div class="btn-box btn-block animated-shine update-route  " onclick="updateRoute(this);"
-                title="{{ __('Update route') }}">
+                title="{{ __('Set Optimize route') }}">
 
                 <i class="fa fa-bullseye"></i>
-                <div>{{ __('Update Route') }}</div>
+                <div>{{ __('Set Optimize Route') }}</div>
             </div>
             <div class="btn-box animated-shine " onclick="toggleMapPanel(this);" title="{{ __('Map View') }}">
 
@@ -100,28 +134,7 @@
 
 
         </div>
-        {{-- <div class="col-12 col-md-4 d-flex flex-row align-items-center justify-content-center  ">
-            <div class="btn-box">
-                <a href="javascript:" onclick="updateRoute();" title="{{ __('Update route') }}"
-                    class="update-route   btn btn-rounded animated-shine px-2  ">
-                    <i class="fa fa-bullseye"></i></a>
-                <div>{{ __('Update Route') }}</div>
-            </div>
-            <div class="btn-block">
-                <a href="javascript:" onclick="toggleMapPanel();" title="{{ __('Map View') }}"
-                    class="   btn btn-rounded animated-shine px-2  ">
-                    <i class="fas fa-map"></i></a>
-                <div>{{ __('Map View') }}</div>
-            </div>
-            <div class="btn-box">
-                <a href="javascript:" onclick="toggleRequestPanel();" title="{{ __('Request') }}"
-                    class="   btn btn-rounded animated-shine px-2   ">
-                    <i class="fa fa-paper-plane"></i></a>
-                <div>{{ __('Request') }}</div>
-            </div>
 
-
-        </div> --}}
 
 
     </div>
@@ -135,11 +148,13 @@
         <input type="text" name="manufactureingHub" class="sr-only" value="{{ $requestData['StartingPointId'] }}">
         <input type="text" name="MinimumMultiple" class="sr-only" value="{{ $requestData['MinimumMultiple'] }}">
         <input type="text" name="TankCapacity" class="sr-only" value="{{ $requestData['TankCapacity'] }}">
-        <input type="text" name="No_of_days_for_delivery" class="sr-only"
-            value="{{ $requestData['No_of_days_for_delivery'] }}">
-        <input type="date" name="PlanDate" class="sr-only" value="{{ $requestData['planDate'] }}">
-        <input type="date" name="ExpectedDeliveryDate" class="sr-only"
+
+        <input type="datetime-local" name="planDate" class="sr-only" value="{{ $requestData['planDate'] }}">
+        <input type="datetime-local" name="expectedDeliveryDate" class="sr-only"
             value="{{ $requestData['expectedDeliveryDate'] }}">
+        <input type="datetime-local" id="ModifiedExpectedReturnTime" name="ExpectedReturnTime" class="sr-only"
+            value="">
+        {{-- @dump($requestData) --}}
         <button id="modify_plan" type="submit" class="modify_plan  sr-only">{{ __('Update Plan') }}</button>
     @endif
 </form>
@@ -158,16 +173,16 @@
                 style="width:100%">
                 <thead>
                     <tr>
-                        <td class="">{{ __('Sl') }}</td>
-                        <td class="">{{ __('Pumps') }}</td>
-                    <td class="">{{ __('Current') }}({{ __('in ltr') }})</td>
-                    <td class="">{{ __('Availability') }}({{ __('in ltr') }})</td>
-                    <td class="editable-column">{{ __('Suggested') }}({{ __('in ltr') }})</td>
+                        <td class="sl_fit">{{ __('Sl') }}</td>
+                        <td class="desc_fit">{{ __('Pumps') }}</td>
+                        <td class="value_fit">{{ __('Current') }}({{ __('in ltr') }})</td>
+                        <td class="value_fit">{{ __('Availability') }}({{ __('in ltr') }})</td>
+                        <td class="editable-column value_fit">{{ __('Suggested') }}({{ __('in ltr') }})</td>
 
-                        <td class=""
+                        <td class="value_fit"
                             data-visible="{{ (isset($requestData) && $requestData['DeliveryPlanId']) != 0 ? true : false }}">
                             {{ __('Order') }}</td>
-                        <td class=""
+                        <td class="value_fit"
                             data-visible="{{ (isset($requestData) && $requestData['DeliveryPlanId']) != 0 ? true : false }}">
                             {{ __('Receive') }}</td>
                         <td class=""
@@ -215,11 +230,11 @@
         <table id="table2" class="table   table-striped table-bordered w-100  ">
             <thead>
                 <tr>
-                    <td class="">{{ __('Sl') }}</td>
-                    <td class="">{{ __('Pumps') }}</td>
-                    <td class="">{{ __('Current') }}({{ __('in ltr') }})</td>
-                    <td class="">{{ __('Availability') }}({{ __('in ltr') }})</td>
-                    <td class="">{{ __('Suggested') }}({{ __('in ltr') }})</td>
+                    <td class="sl_fit">{{ __('Sl') }}</td>
+                    <td class="desc_fit">{{ __('Pumps') }}</td>
+                    <td class="value_fit">{{ __('Current') }}({{ __('in ltr') }})</td>
+                    <td class="value_fit">{{ __('Availability') }}({{ __('in ltr') }})</td>
+                    <td class="value_fit">{{ __('Suggested') }}({{ __('in ltr') }})</td>
                 </tr>
             </thead>
             {{-- <tbody id="wrapperTwo">
@@ -299,6 +314,12 @@
         animation: opec 1s ease-in 1;
     }
 
+    table.dataTable>tbody>tr.child span.dtr-title {
+        display: inline-block;
+        min-width: 100px !important;
+        font-weight: bold;
+    }
+
     @keyframes opec {
         0% {
             opacity: 1
@@ -339,8 +360,10 @@
 
     .rowHeader {
         display: flex;
-        gap: 20px;
-        flex-direction: row;
+        margin-inline-start: 20px;
+        padding-inline-start: 10px;
+        gap: 5px;
+        flex-direction: column;
     }
 
     .rowHeader::before {
@@ -427,8 +450,19 @@
     }
 
     .editable {
-        height: 24px;
+        height: 40px;
         transition: all 0.3s ease-in-out;
+        border: 2px dashed #0d5a4d7c;
+        background: #30e4c62f;
+        border-radius: 5px;
+    }
+
+    .editable:focus {
+        height: 40px;
+        transition: all 0.3s ease-in-out;
+        border: 2px dashed #091a1742;
+        background: #30e4c64f;
+        border-radius: 1px;
     }
 
     .modified-cell {
@@ -437,7 +471,13 @@
     }
 
     .modified {
-        background-color: #ffd9dd !important;
+        background-color: #247bfd9c !important;
+        background: linear-gradient(to left, #247bfd9c, #ffffff02) !important;
+    }
+
+    .start-box,
+    .td_box {
+        height: 40px;
     }
 </style>
 
@@ -454,6 +494,34 @@
             event.preventDefault();
             //alert();
             // $.ajaxSetup({headers:{'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')}});
+            let btnText = $('#save_plan').html();
+            $('#save_plan').attr('disabled', true);
+            $('#save_plan').html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> '
+            );
+            var addOne = newList.reduce(function(previousValue, currentValue) {
+                return {
+                    officeId: previousValue.officeId + currentValue.officeId,
+                    atDeliveryRequirement: previousValue.atDeliveryRequirement + parseFloat(currentValue
+                        .atDeliveryRequirement),
+
+                }
+            });
+            // let newListLength=newList.length - 2;
+            var TankCapacity = {{ $requestData['TankCapacity'] }};
+            var styleCheck = 'text-info cursor-pointer';
+            var limitWarning = `Tank Capacity: ${TankCapacity} ltr`;
+            //console.log(TankCapacity,addOne.atDeliveryRequirement);
+            if (addOne.atDeliveryRequirement > TankCapacity) {
+
+                styleCheck = 'text-danger cursor-pointer';
+                limitWarning = `Exceed the Tank Capacity Limit : ${TankCapacity} ltr`;
+                toastr.error(limitWarning);
+                $('#save_plan').attr('disabled', false);
+                $('#save_plan').html(btnText);
+                return
+            }
+
             var formData = new FormData($(this)[0]);
             // console.log(formData);
 
@@ -463,11 +531,7 @@
 
             // console.log(formData);
             //return;reportPanel
-            let btnText = $('#save_plan').html();
-            $('#save_plan').attr('disabled', true);
-            $('#save_plan').html(
-                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> '
-            );
+
 
             var url = "{{ route($routeRole . '.delivery_plan.store') }}";
 
@@ -490,7 +554,7 @@
                             toastr.error(value);
                         });
                     } else {
-                        console.log(data);
+
                         toastr.error(data.message);
                     }
 
@@ -525,6 +589,29 @@
 
             event.preventDefault();
 
+
+            var addOne = newList.reduce(function(previousValue, currentValue) {
+                return {
+                    officeId: previousValue.officeId + currentValue.officeId,
+                    atDeliveryRequirement: previousValue.atDeliveryRequirement + parseFloat(currentValue
+                        .atDeliveryRequirement),
+
+                }
+            });
+            // let newListLength=newList.length - 2;
+            var TankCapacity = {{ $requestData['TankCapacity'] }};
+            var styleCheck = 'text-info cursor-pointer';
+            var limitWarning = `Tank Capacity: ${TankCapacity} ltr`;
+            //console.log(TankCapacity,addOne.atDeliveryRequirement);
+            if (addOne.atDeliveryRequirement > TankCapacity) {
+
+                styleCheck = 'text-danger cursor-pointer';
+                limitWarning = `Exceed the Tank Capacity Limit : ${TankCapacity} ltr`;
+                toastr.error(limitWarning);
+                // $('#save_plan').attr('disabled', false);
+                // $('#save_plan').html(btnText);
+                //  return;
+            }
             //alert();
             // $.ajaxSetup({headers:{'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')}});
             var formData = new FormData($(this)[0]);
@@ -560,7 +647,7 @@
                             toastr.error(value);
                         });
                     } else {
-                        console.log(data);
+
                         toastr.error(data.message);
                     }
 
@@ -569,6 +656,17 @@
                         //$('.search').click();
                         // $('.close').click();
                         newList = data.data.Routes.Algorithm_1.Route;
+                        Total_distance = data.data.Routes.Algorithm_1.Total_distance;
+                        XXExpectedReturnTime = newList[newList.length - 1]
+                            .estimatedDeliveryTime;
+                        JourneyStartTime = datetimeLocal(newList[0].estimatedDeliveryTime);
+                        ExpectedReturnTime = datetimeLocal(XExpectedReturnTime);
+
+                        TotalJourneyTime = st(JourneyStartTime, ExpectedReturnTime);
+                        //console.log(TotalJourneyTime);
+                        $('#ExpectedReturnTime').val(ExpectedReturnTime);
+                        $('#ModifiedExpectedReturnTime').val(ExpectedReturnTime);
+
                         dt_table1.clear().rows.add(newList.slice(1, -1)).draw();
                         extraList = data.data.Not_selected;
                         dt_table2.clear().rows.add(extraList).draw();
@@ -596,13 +694,64 @@
 
         //  console.log(response.Routes.Algorithm_1.Route);
         var routeList = response.Routes.Algorithm_1.Route;
+        var Total_distance = response.Routes.Algorithm_1.Total_distance;
+        // console.log(Total_distance);
         //console.log(response.hasOwnProperty('DeliveryPlan_statusId'));
         var DeliveryPlanStatusId = response.hasOwnProperty('DeliveryPlan_statusId') ? response.DeliveryPlan_statusId : 0;
         //console.log("Plan Status: "+DeliveryPlanStatusId);
         newList = routeList;
+        // console.log(Date.Parse(newList[newList.length - 1].estimatedDeliveryTime));
+        var XExpectedReturnTime = newList[newList.length - 1].estimatedDeliveryTime;
+        var JourneyStartTime = datetimeLocal(newList[0].estimatedDeliveryTime);
+        var ExpectedReturnTime = datetimeLocal(XExpectedReturnTime);
+
+        var TotalJourneyTime = st(JourneyStartTime, ExpectedReturnTime);
+        //console.log(TotalJourneyTime);
+        $('#ExpectedReturnTime').val(ExpectedReturnTime);
+        $('#ModifiedExpectedReturnTime').val(ExpectedReturnTime);
         var extra_list = response.Not_selected;
 
         var extraList = extra_list;
+
+        function st(starttime, endtime) {
+
+            //this is correct way to get time gap between two dates
+            var duration = (new Date(endtime)).getTime() - (new Date(starttime)).getTime();
+            // console.log(starttime, endtime, distance);
+
+            // Time calculations for days, hours, minutes and seconds
+            var days = Math.floor(duration / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((duration % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((duration % (1000 * 60)) / 1000);
+            // Output the result in an element with id="demo"
+            return days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+            // var x = setInterval(function() {
+
+            //     // Time calculations for days, hours, minutes and seconds
+            //     var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            //     var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            //     var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            //     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            //     // Output the result in an element with id="demo"
+            //     document.getElementById("demo").innerHTML = days + "d " + hours + "h " +
+            //         minutes + "m " + seconds + "s ";
+            //     //This line is added to decrease distance by 1 second
+            //     distance -= 1000
+            //     // If the count down is over, write some text
+            //     if (distance < 0) {
+            //         clearInterval(x);
+            //         document.getElementById("demo").innerHTML = "EXPIRED";
+            //     }
+            // }, 1000);
+        }
+
+        function datetimeLocal(datetime) {
+            const dt = new Date(datetime);
+            dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
+            return dt.toISOString().slice(0, 16);
+        }
 
         function replacer(key, value) {
             if (typeof value === 'string') {
@@ -619,11 +768,10 @@
             modifiedOffice.push(newList[index]['officeId']);
             newList.splice(index, 1);
 
-            // console.log(newList);
+
             newList = reindex_array_keys(newList);
             dt_table1.clear().rows.add(newList.slice(1, -1)).draw();
-            // console.log(newList);
-            // reArrange(newList);
+
             extraList = reindex_array_keys(extraList);
             dt_table2.clear().rows.add(extraList).draw();
             //    reArrangeWrapperTwo(extraList);
@@ -637,11 +785,10 @@
             // reIndexList();
 
             //Old Method
-            // console.log(typeof(newList));
-            // console.log( extraList[index]['officeId']);
+
             modifiedOffice.push(extraList[index]['officeId']);
             newList.splice(newList.length - 1, 0, extraList[index]);
-            // console.log(newList);
+
             newList = reindex_array_keys(newList);
             dt_table1.clear().rows.add(newList.slice(1, -1)).draw();
 
@@ -694,7 +841,7 @@
             var reqTotal = 0;
             $.each(newList, function(index, value) {
                 if (value.atDeliveryRequirement > 0) {
-                    // console.log(index-1);
+
                     var check1 = (index > 1 && index < newList.length - 1) ? 'active' :
                         'not-active disabled';
                     var check2 = (index > 0 && index < newList.length - 2) ? 'active' :
@@ -740,7 +887,7 @@
             var QreqTotal = 0;
             $.each(extraList, function(index, value) {
                 if (value.atDeliveryRequirement > 0) {
-                    // console.log(index-1);
+
                     // var check1 = (index > 1 && index < extraList.length - 1) ? 'active' : 'not-active disabled';
                     // var check2 = (index > 0 && index < extraList.length - 2) ? 'active' : 'not-active disabled';
                     str += '<tr class="" draggable="true">';
@@ -783,7 +930,7 @@
             return temp;
         }
 
-        function calculateSummary() {
+        async function calculateSummary() {
 
 
             var addOne = newList.reduce(function(previousValue, currentValue) {
@@ -795,16 +942,31 @@
                 }
             });
             // let newListLength=newList.length - 2;
-            var strOne = `<div class="rowHeader">` +
-                `<div>Total requirements for  suggested ${(newList.length - 2)} pump(s) is ` +
-                `: ${ parseFloat(addOne.atDeliveryRequirement).toFixed(0)} ltr</div>` +
-                `</div>`;
+            var TankCapacity = {{ $requestData['TankCapacity'] }};
+            var styleCheck = 'text-info cursor-pointer';
+            var limitWarning = `Tank Capacity: ${TankCapacity} ltr`;
+            //console.log(TankCapacity,addOne.atDeliveryRequirement);
+            if (addOne.atDeliveryRequirement > TankCapacity) {
+
+                styleCheck = 'text-danger cursor-pointer';
+                limitWarning = `Exceed the Tank Capacity Limit : ${TankCapacity} ltr`;
+                toastr.error(limitWarning);
+            }
+
+            var strOne = `<ul class="rowHeader">
+                <li title="${limitWarning}">Total requirements for  suggested ${(newList.length - 2)} pump(s) is
+                    :<span class="${styleCheck}"> ${ parseFloat(addOne.atDeliveryRequirement).toFixed(0)} ltr</span></li>
+                    <li>Suggested Distance : <span>${Total_distance.toFixed(0)} km</span></li>
+                    <li> Suggested Travel Time : ${TotalJourneyTime}</li>
+
+                    </ul>`;
             $('#SummaryOne').html(strOne);
 
             var addTwo = extraList.reduce(function(previousValue, currentValue) {
                 return {
                     officeId: previousValue.officeId + currentValue.officeId,
-                    atDeliveryRequirement: previousValue.atDeliveryRequirement + currentValue.atDeliveryRequirement,
+                    atDeliveryRequirement: previousValue.atDeliveryRequirement + currentValue
+                        .atDeliveryRequirement,
 
                 }
             });
@@ -857,6 +1019,7 @@
 
         var idx = 1;
         var modifiedOffice = []
+        var TotalDistance = 0;
         var dt_table1 = $('#table1').DataTable({
             responsive: true,
             select: false,
@@ -876,7 +1039,7 @@
                 $(row).attr('onDragStart', 'dragStart(event)');
                 if (modifiedOffice.includes(data.officeId)) {
                     $(row).addClass('modified');
-                    console.log(row);
+
                 }
 
             },
@@ -886,7 +1049,7 @@
                         let icon = "{{ asset('theme/images/drag.png') }}";
                         let dragArea = `${ meta.row + 1}`;
                         let xStr = `<span class="draggable-icon"><img src="${icon}"</span>`;
-                        return `${ dragArea}`;
+                        return `<div class="start-box d-flex justify-content-between align-items-center  ">${ dragArea}</div>`;
                     }
                 },
                 {
@@ -898,35 +1061,57 @@
                         var check2 = (meta.row < (newList.slice(1, -1).length) - 1) ? 'active' :
                             'not-active disabled';
 
-                        var btn = `<div class="` + check1 + `" ` + `onclick="swapNow(` + (meta.row + 1) +
+                        var btn = `<div class="td_box ` + check1 + `" ` + `onclick="swapNow(` + (meta.row +
+                                1) +
                             `,` + meta.row + `)">` +
                             `<i class="fas fa-arrow-up"></i></div>` +
                             `<div class="` + check2 + `" ` + `onclick="swapNow(` + (meta.row + 1) + `,` + (
                                 meta.row + 2) + `)">` +
                             `<i class="fas fa-arrow-down"></i></div>` +
-                            `<div onclick="deleteNow(` + (meta.row + 1) + `);">` +
-                            `    <i class="fas    fa-download"></i>` +
+                            `<div class="bg-danger text-white" onclick="deleteNow(` + (meta.row + 1) +
+                            `);">` +
+                            `    <i class="fas    fa-minus-circle"></i>` +
                             `</div>`;
-                        return '<div class="d-flex justify-content-between"><div>' + data.officeName +
-                            '</div>' + '<div class="dragItem">' + btn + '</div></div>';
+                        var options = {
+                            year: "2-digit",
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        };
+                        var SubProp = ``;
+                        if (data.hasOwnProperty('estimatedDeliveryTime')) {
+                            TotalDistance += data.distance;
+                            SubProp = `      <div class="pl-2 text-primary"><small>Delivery at: <abbr title="attribute">${new Intl.DateTimeFormat('en-GB',options).format(Date.parse(data.estimatedDeliveryTime))}</abbr></small></div>
+                                    <div class="pl-2 text-primary"><small>Distance(km) : <abbr title="attribute">${TotalDistance.toFixed(0)}(${data.distance.toFixed(0)}) </abbr></small></div>
+                              `;
+                        }
+
+                        return `<div class="d-flex justify-content-between align-items-center title="${data.officeName}" ">
+                                <div class="overflow-hidden">
+                                    <strong><em>${trimToMaxLength(data.officeName,20)}</em></strong>
+                                    ${SubProp}
+                                </div>
+                            <div class="dragItem bg-transparent p-2 rounded" >${btn}</div>
+                            </div>`;
                     }
                 },
                 {
                     data: null,
                     "render": function(data, type, full, meta) {
-                        return parseFloat(data.currentStock).toFixed(0);
+                        return `<div class="td_box d-flex justify-content-between align-items-center ">${parseFloat(data.currentStock).toFixed(0)}</div>`;
                     }
                 },
                 {
                     data: null,
                     "render": function(data, type, full, meta) {
-                        return parseFloat(data.totalCapacity - data.currentStock).toFixed(0);
+                        return `<div class="td_box d-flex justify-content-between align-items-center ">${parseFloat(data.totalCapacity - data.currentStock).toFixed(0)}</div>`;
                     }
                 },
                 {
                     data: null,
                     "render": function(data, type, full, meta) {
-                        return `<div class="editable" data-rowindex="${(meta.row + 1)}" data-key="atDeliveryRequirement">${parseFloat(data.atDeliveryRequirement).toFixed(0)}</div>`;
+                        return `<div class="editable td_box d-flex align-items-center justify-content-center" data-rowindex="${(meta.row + 1)}" data-key="atDeliveryRequirement">${parseFloat(data.atDeliveryRequirement).toFixed(0)}</div>`;
                     }
                 },
                 {
@@ -937,14 +1122,14 @@
                             if (data.hasOwnProperty('ApprovedQuantity')) {
                                 //return data.ApprovedQuantity.toFixed(0);
                                 if (data.ApproveStatus == -1) {
-                                    return ` <div class="d-flex align-items-center justify-content-center">` +
+                                    return ` <div class="td_box d-flex align-items-center justify-content-center">` +
                                         `<label style="color:red;">X</label>`;
                                     `</div>`;
                                 }
                                 if (data.ApprovedQuantity == 0 || data.ApprovedQuantity == null) {
                                     return ``;
                                 }
-                                return ` <div class="d-flex align-items-center justify-content-center">` +
+                                return ` <div class="td_box d-flex align-items-center justify-content-center">` +
                                     `<div>${ data.ApprovedQuantity } </div>` +
                                     `</div>`;
                             }
@@ -961,17 +1146,17 @@
                             if (data.hasOwnProperty('ReceivedQuantity')) {
                                 // return data.ReceivedQuantity.toFixed(0);
                                 if (data.ApproveStatus == -1) {
-                                    return ` <div class="d-flex align-items-center justify-content-center">` +
+                                    return ` <div class="td_box d-flex align-items-center justify-content-center">` +
                                         `<label style="color:red;">X</label>`;
                                     `</div>`;
                                 }
-                                if (data.RreceivedQuantity == 0 || data.RreceivedQuantity == null) {
-                                    return ` <div class="d-flex align-items-center justify-content-center">` +
+                                if (data.ReceivedQuantity == 0 || data.ReceivedQuantity == null) {
+                                    return ` <div class="td_box d-flex align-items-center justify-content-center">` +
                                         `<label style="color:green;">-</label>`;
                                     `</div>`;
                                 }
-                                return ` <div class="d-flex align-items-center justify-content-center">` +
-                                    `<div>${ data.RreceivedQuantity }</div>` +
+                                return ` <div class="td_box d-flex align-items-center justify-content-center">` +
+                                    `<div>${ data.ReceivedQuantity }</div>` +
                                     `</div>`;
                             }
                             return '';
@@ -997,28 +1182,28 @@
                                 let this_approval_url = approval_url.replace(':id', this_id);
                                 let this_receive_url = receive_url.replace(':id', this_id);
                                 var this_status =
-                                    ` <div class="d-flex align-items-center justify-content-center">` +
+                                    ` <div class="td_box d-flex align-items-center justify-content-start">` +
+                                    `<a href="javascript:" data-param="${this_id}" data-url="${this_approval_url}"` +
+                                    `title="Approve Requirement"` +
+                                    `class="load-popup edit-quantity    text-info p-2 ">` +
+                                    `<i class="fas fa-pencil-alt fa-circle m-0 "></i></a>` +
                                     `<a href="javascript:" ` +
                                     `class="load-popup edit-quantity    text-secondary p-2 font-weight-bolder " ` +
                                     `style="color:gray;" data-param="${this_id}" data-url="${this_approval_url}">` +
                                     `<label >Waiting for approval</label>` +
                                     `</a>` +
-                                    `<a href="javascript:" data-param="${this_id}" data-url="${this_approval_url}"` +
-                                    `title="Approve Requirement"` +
-                                    `class="load-popup edit-quantity    text-info p-2 ">` +
-                                    `<i class="fas fa-pencil-alt m-0 "></i></a>` +
                                     `</div>`;
 
                                 if (data.ApproveStatus == -1) {
                                     this_status =
-                                        ` <div class="d-flex align-items-center justify-content-center">` +
+                                        ` <div class="d-flex align-items-center justify-content-start">` +
                                         `<label style="color:red;">Rejected</label>`;
                                     `</div>`;
                                 }
                                 if (DeliveryPlanStatusId == 1) {
                                     if (data.ApproveStatus == -1) {
                                         this_status =
-                                            ` <div class="d-flex align-items-center justify-content-center">` +
+                                            ` <div class="d-flex align-items-center justify-content-start">` +
                                             `<a href="javascript:" ` +
                                             `class="load-popup edit-quantity    text-success p-2 font-weight-bolder " ` +
                                             `data-param="${this_id}" data-url="${this_approval_url}">` +
@@ -1026,106 +1211,131 @@
                                             `</a>` + `</div>`;
                                     } else if (data.ApproveStatus == 2) {
                                         this_status =
-                                            ` <div class="d-flex align-items-center justify-content-center">` +
-                                            `<a href="javascript:" ` +
-                                            `class="load-popup edit-quantity    text-success p-2 font-weight-bolder " ` +
-                                            `style="color:green;" data-param="${this_id}" data-url="${this_approval_url}">` +
-                                            `<label >${data.ApprovedQuantity}  Order Placed</label>` +
-                                            `</a>` +
+                                            ` <div class="d-flex align-items-center justify-content-start">` +
                                             `<a href="javascript:" data-param="${this_id}" data-url="${this_approval_url}"` +
                                             `title="Approve Requirement"` +
                                             `class="load-popup edit-quantity    text-info p-2 ">` +
-                                            `<i class="fas fa-pencil-alt m-0 "></i></a>` +
+                                            `<i class="fas fa-pencil-alt fa-circle m-0 "></i></a>` +
+                                            `<a href="javascript:" ` +
+                                            `class="load-popup edit-quantity    text-success p-2 font-weight-bolder " ` +
+                                            `style="color:green;" data-param="${this_id}" data-url="${this_approval_url}">` +
+                                            `<label >${data.ApprovedQuantity} ltr  Order Placed</label>` +
+                                            `</a>` +
+
                                             `</div>`;
                                     } else if (data.ApproveStatus == 3) {
                                         this_status =
-                                            ` <div class="d-flex align-items-center justify-content-center">` +
+                                            ` <div class="d-flex align-items-center justify-content-start">` +
                                             `<a href="javascript:" ` +
                                             `class="load-popup receive-quantity    text-success p-2 font-weight-bolder " ` +
                                             `style="color:green;" data-param="${this_id}" data-url="${this_receive_url}">` +
-                                            `<label >${data.ReceivedQuantity}  Received</label>` +
+                                            `<label >${data.ReceivedQuantity} ltr  Received</label>` +
                                             `</a>` + `</div>`;
                                     }
-                                }
-                                if (DeliveryPlanStatusId == 2) {
-                                    if (data.ApproveStatus == 2) {
+                                } else if (DeliveryPlanStatusId == 2) {
+
+
+                                    if (data.ApprovedQuantity > 0) {
+                                        // this_status =
+                                        //     ` <div class="d-flex align-items-center justify-content-start text-break text-success p-2 font-weight-bolder">` +
+                                        //     `<lavel>${ data.ApprovedQuantity }  Order Placed</lavel>` +
+                                        //     `</div>`;
+
                                         this_status =
-                                            ` <div class="d-flex align-items-center justify-content-center text-break text-success p-2 font-weight-bolder">` +
-                                            `<lavel>${ data.ApprovedQuantity }  Order Under Processing</lavel>` +
-                                            `</div>`;
-                                    } else if (data.ApproveStatus == 3) {
-                                        this_status =
-                                            ` <div class="d-flex align-items-center justify-content-center">` +
+                                            ` <div class="td_box d-flex align-items-center justify-content-start">` +
+                                            `<a href="javascript:" data-param="${this_id}" data-url="${this_approval_url}"` +
+                                            `title="Order Placed"` +
+                                            `class="load-popup edit-quantity    text-info p-2 ">` +
+                                            `<i class="fas fa-pencil-alt fa-circle m-0 "></i></a>` +
                                             `<a href="javascript:" ` +
-                                            `class="load-popup receive-quantity    text-success p-2 font-weight-bolder " ` +
-                                            `style="color:green;" data-param="${this_id}" data-url="${this_receive_url}">` +
-                                            `<label >${data.ReceivedQuantity}  Received</label>` +
+                                            `class="load-popup edit-quantity    text-secondary p-2 font-weight-bolder " ` +
+                                            `style="color:gray;" data-param="${this_id}" data-url="${this_approval_url}">` +
+                                            `<label >${ data.ApprovedQuantity } ltr  Order Placed</label>` +
                                             `</a>` +
-                                            `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
-                                            `title="Approve Requirement"` +
-                                            `class="load-popup receive-quantity   text-info p-2 ">` +
-                                            `<i class="fas fa-pencil-alt m-0 "></i></a>` +
                                             `</div>`;
+                                    } else {
+                                        this_status = this_status;
                                     }
+
+
                                 } else if (DeliveryPlanStatusId == 3) {
                                     if (data.ApproveStatus == 2) {
-                                        this_status =
-                                            ` <div class="d-flex align-items-center justify-content-center">` +
-                                            `<a href="javascript:" ` +
-                                            `class="load-popup receive-quantity    text-success p-2 font-weight-bolder " ` +
-                                            `style="color:green;" data-param="${this_id}" data-url="${this_receive_url}">` +
-                                            `<label >${data.ApprovedQuantity}  Delivery on the way</label>` +
-                                            `</a>` +
-                                            `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
-                                            `title="Approve Requirement"` +
-                                            `class="load-popup receive-quantity   text-info p-2 ">` +
-                                            `<i class="fas fa-pencil-alt m-0 "></i></a>` +
-                                            `</div>`;
+                                        if (data.DeliveredQuantity > 0) {
+                                            this_status =
+                                                ` <div class="d-flex align-items-center justify-content-start">` +
+                                                `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
+                                                `title="Delivered"` +
+                                                `class="load-popup receive-quantity   text-info p-2 ">` +
+                                                `<i class="fas fa-pencil-alt fa-circle m-0 "></i></a>` +
+                                                `<a href="javascript:" ` +
+                                                `class="load-popup receive-quantity    text-success p-2 font-weight-bolder " ` +
+                                                `style="color:green;" data-param="${this_id}" data-url="${this_receive_url}">` +
+                                                `<label >${data.DeliveredQuantity} ltr  Delivered</label>` +
+                                                `</a>` +
+                                                `</div>`;
+                                        } else {
+                                            this_status =
+                                                ` <div class="d-flex align-items-center justify-content-start">` +
+                                                `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
+                                                `title="Receive` +
+                                                `class="load-popup receive-quantity   text-info p-2 ">` +
+                                                `<i class="fas fa-pencil-alt fa-circle m-0 "></i></a>` +
+                                                `<a href="javascript:" ` +
+                                                `class="load-popup receive-quantity    text-success p-2 font-weight-bolder " ` +
+                                                `style="color:green;" data-param="${this_id}" data-url="${this_receive_url}">` +
+                                                `<label >${data.ApprovedQuantity} ltr  Delivery on the way</label>` +
+                                                `</a>` +
+
+                                                `</div>`;
+                                        }
+
                                     } else if (data.ApproveStatus == 3) {
                                         this_status =
-                                            ` <div class="d-flex align-items-center justify-content-center">` +
+                                            ` <div class="d-flex align-items-center justify-content-start">` +
+                                            `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
+                                            `title="Received"` +
+                                            `class="load-popup receive-quantity  text-break  text-info p-2 ">` +
+                                            `<i class="fas fa-pencil-alt fa-circle m-0 "></i></a>` +
                                             `<a href="javascript:" ` +
                                             `class="load-popup receive-quantity    text-success p-2 font-weight-bolder " ` +
                                             `style="color:green;" data-param="${this_id}" data-url="${this_receive_url}">` +
-                                            `<label >${data.ReceivedQuantity}  Received</label>` +
+                                            `<label >${data.ReceivedQuantity} ltr  Received</label>` +
                                             `</a>` +
-                                            `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
-                                            `title="Approve Requirement"` +
-                                            `class="load-popup receive-quantity  text-break  text-info p-2 ">` +
-                                            `<i class="fas fa-pencil-alt m-0 "></i></a>` +
+
                                             `</div>`;
                                     }
                                 } else if (DeliveryPlanStatusId == 4) {
                                     if (data.ApproveStatus == 2) {
                                         this_status =
-                                            ` <div class="d-flex align-items-center justify-content-center">` +
-                                            `<a href="javascript:" ` +
-                                            `class="load-popup receive-quantity  text-break  text-info p-2 font-weight-bolder " ` +
-                                            `style="color:orange;" data-param="${this_id}" data-url="${this_receive_url}">` +
-                                            `<label >${data.ApprovedQuantity}  Receiving Confirmation Pending</label>` +
-                                            `</a>` +
+                                            ` <div class="d-flex align-items-center justify-content-start badge badge-primary  ">` +
                                             `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
                                             `title="Approve Requirement"` +
                                             `class="load-popup receive-quantity  text-break  text-info p-2 ">` +
-                                            `<i class="fas fa-pencil-alt m-0 "></i></a>` +
+                                            `<i class="fas fa-pencil-alt fa-circle m-0 "></i></a>` +
+                                            `<a href="javascript:" ` +
+                                            `class="load-popup receive-quantity  text-break  text-info p-2 font-weight-bolder " ` +
+                                            `style="color:orange;" data-param="${this_id}" data-url="${this_receive_url}">` +
+                                            `<label >${data.ApprovedQuantity} ltr  Receiving Pending</label>` +
+                                            `</a>` +
+
 
                                             `</div>`;
                                     } else if (data.ApproveStatus == 3) {
                                         this_status =
-                                            ` <div class="d-flex align-items-center justify-content-center text-break">` +
-                                            `<label >${data.ReceivedQuantity}  Received</label>` +
+                                            ` <div class="d-flex align-items-center justify-content-start text-break">` +
+                                            `<label >${data.ReceivedQuantity} ltr  Received</label>` +
                                             `</div>`;
                                     }
 
                                 } else if (DeliveryPlanStatusId == 5) {
                                     this_status =
-                                        `<label class="text-danger text-break">Order Cancelled By Admin</label> `;
+                                        `<label class="text-danger text-break">Cancelled</label> `;
 
                                 }
 
 
 
-                                  return `${ this_status  }`;
+                                return `${ this_status  }`;
                             }
                             return 'Not Found';
                         }
@@ -1238,10 +1448,12 @@
 
                     "data": null,
                     "render": function(data, type, full, meta) {
-                        var btn = `<div onclick="addNow(` + meta.row + `);">` +
-                            `    <i class="fas    fa-upload"></i>` +
+                        var btn = `<div class="bg-primary text-white" onclick="addNow(` + meta.row +
+                            `);">` +
+                            `    <i class="fas    fa-plus-circle"></i>` +
                             `</div>`;
-                        return '<div class="d-flex justify-content-between"><div>' + data.officeName +
+                        return '<div class="d-flex justify-content-between"><div class="overflow-hidden">' +
+                            trimToMaxLength(data.officeName, 30) +
                             '</div>' + '<div class="dragItem">' + btn + '</div></div>';
                     }
                 },
@@ -1336,30 +1548,7 @@
             }
 
         })
-        // $('#table1 tr>').on('drop', (e) => {
-        //     let dragging = document.querySelector('.dragging')
-        //     dragging.classList.remove('dragging');
-        //     if ($(dragging).attr('data-source') == 'table1') {
-        //         let thisNode = e.target
-        //         // console.log(thisNode);
-        //         let a = 0;
-        //         while (thisNode.tagName != 'TR') {
-        //             thisNode = thisNode.parentNode;
-        //             //console.log(thisNode);
-        //             ++a;
-        //             if (a > 4) return;
-        //         }
-        //         console.log($(dragging).attr('data-index'))
-        //         swapNow(thisNode.getAttribute('data-index'), $(dragging).attr('data-index'));
-        //         //console.log(e.target.getAttribute('data-index'));
-        //         // if(thisNode.getAttribute('data-index')!=$(dragging).attr('data-index')){
 
-        //         // }
-
-        //     } else {
-        //         console.log("Drop Others");
-        //     }
-        // })
         $(document).ready(() => {
             calculateSummary();
         });

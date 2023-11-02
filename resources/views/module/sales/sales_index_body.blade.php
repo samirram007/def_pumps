@@ -147,7 +147,7 @@
                               } else {
                                   $bgColor = '';
                               }
-                              
+
                           @endphp
 
                           <tr
@@ -193,7 +193,8 @@
                                           title="{{ __('Edit') }}"
                                           class="load-popup edit    mx-2 text-info d-inline-flex "><i
                                               class="fa fa-edit fa-lg"></i></a> --}}
-                                      <a href="javascript:" data-param="{{ base64_encode(json_encode($data)) }}"
+                                      {{-- <a href="javascript:" data-param="{{ base64_encode(json_encode($data)) }}" --}}
+                                      <a href="javascript:" data-param=""
                                           data-url="{{ route($routeRole . '.sales.edit', $data->salesId) }}"
                                           title="{{ __('Edit Invoice') }}"
                                           class="load-popup mx-2 text-info d-inline-flex">

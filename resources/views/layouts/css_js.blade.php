@@ -39,24 +39,20 @@
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> --}}
 <link rel="stylesheet" type="text/css" href="{{ asset('datetime/daterangepicker.css') }}" />
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
-{{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script> --}}
-{{-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js"></script> --}}
-<script type="text/javascript" src="{{ asset('datetime/moment.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('datetime/daterangepicker.js') }}" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
-<script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
+
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
-<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+{{-- <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" /> --}}
+<link rel="stylesheet" href="{{ asset('css/aos.css') }}" />
 
 
 <!-- endinject -->
 <link rel="stylesheet" href="{{asset('landing/dist/css/switch.css')}}">
 {{-- <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"  ></script> --}}
 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
 
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
 <link rel="shortcut icon" href="{{ asset('theme/images/logo.png') }}" />
 <style>
     .antialiased {
@@ -88,23 +84,6 @@
 </style>
 <link rel="stylesheet" href="{{ asset('css/bn/bn-style.css') }}">
 
-{{-- <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script type="text/javascript">
-    google.load("elements", "1", {
-    packages: "inputtools"
-    });
-  </script>
-  <script>
-    function onLoad() {
-      var inputFields = document.querySelectorAll('input[type=text], textarea');
-      inputFields.forEach(function(inputField) {
-        inputField.addEventListener('focus', function() {
-          google.language.translate.setLanguagePair('', 'hi');
-        });
-      });
-    }
-    google.setOnLoadCallback(onLoad);
-  </script> --}}
   <style>
     .preloader{
         position: fixed;

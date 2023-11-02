@@ -43,6 +43,12 @@
     "ltr":"ltr",
     "pc":"pc",
     "pcs":"pcs",
+"Pump":"Pump",
+"Suggested Qty.":"Suggested Qty.",
+"Ordered Qty.":"Ordered Qty.",
+"Received Qty.":"Received Qty.",
+"Order Approval":"Order Approval",
+    "Order Processing": "Order Processing",
 
 
     "Exit":"Exit"

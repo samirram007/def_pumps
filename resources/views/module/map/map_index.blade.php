@@ -312,10 +312,9 @@
                     const infowindow = new google.maps.InfoWindow({
                         content: `<div class="info-window">
                     <h3>${feature.textTitle}</h3>
-                    <p>${feature.textData}</p>` +
-                            `<div class="info-window-products border-bottom border-dark font-weight-bold"> Current Stock </div>` +
-                            productContent +
-                            `</div>`
+                    <p>${feature.textData}</p>
+                    <div class="info-window-products border-bottom border-dark font-weight-bold"> Current Stock </div>
+                    ${productContent}</div>`
                     });
 
 

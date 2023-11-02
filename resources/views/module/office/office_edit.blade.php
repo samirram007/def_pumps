@@ -47,12 +47,12 @@
                                                 <label for="officeName">{{ __('Business Entity') }}<span
                                                         class="text text-danger  ">*</span></label>
                                                         <small id="officeName-count-char"
-                                                    class="count-char  position-absolute right-0  ">{{strlen($editData->officeName)}}/20</small>
+                                                    class="count-char  position-absolute right-0  ">{{strlen($editData->officeName)}}/50</small>
                                                 <input type="text" class="form-control" id="officeName"
-                                                maxlength="20"
+                                                maxlength="50"
                                                     name="officeName" value="{{ $editData->officeName }}"
                                                     placeholder="{{ __('Enter Business Entity') }}"
-                                                    onkeyup="countchar(this,'officeName',20);">
+                                                    onkeyup="countchar(this,'officeName',50);">
                                             </div>
                                         </div>
                                         <div class="col-md-6">

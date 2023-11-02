@@ -22,8 +22,13 @@
                         class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails['deliveryPlan']['planDate'])) }}</span>
                 </div>
                 <div class="col-md-6">
-                    {{ __('Delivery Date') }}: <span
-                        class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails['deliveryPlan']['planDate'])) }}</span>
+                    @if ($planDetails['deliveredQuantity'] > 0)
+                        {{ __('Delivery Date') }}: <span
+                            class="font-weight-bold">{{ date('d-M-Y H:i:s', strtotime($planDetails['deliveredAt'])) }}</span>
+                    @else
+                        {{ __('Delivery Date') }}: <span
+                            class="font-weight-bold">{{ date('d-M-Y H:i:s', strtotime($planDetails['expectedDeliveryTime'])) }}</span>
+                    @endif
                 </div>
                 <div class="col-md-6">
                     {{ __('Product') }}: <span
@@ -38,7 +43,11 @@
                             if ($planDetails['deliveryPlan']['deliveryPlanStatusId'] == 2) {
                                 $status = '<span class="font-weight-bold text-success">Order Placed</span>';
                             } elseif ($planDetails['deliveryPlan']['deliveryPlanStatusId'] == 3) {
-                                $status = '<span class="font-weight-bold text-success">Delivery On The Way</span>';
+                                if ($planDetails['deliveredQuantity'] > 0) {
+                                    $status = '<span class="font-weight-bold text-success">Delivered</span>';
+                                } else {
+                                    $status = '<span class="font-weight-bold text-success">Delivery On The Way</span>';
+                                }
                             }
                         } elseif ($planDetails['approveStatus'] == 3) {
                             $status = '<span class="font-weight-bold text-success">Received</span>';
@@ -52,18 +61,28 @@
                         {{ __('Received Quantity') }}: <span class="font-weight-bold"
                             id="receivedQty">{{ $planDetails['receivedQuantity'] }}</span>
                     @else
-                        {{ __('Receiving Quantity') }}: <span class="font-weight-bold"
-                            id="receivedQty">{{ $planDetails['approvedQuantity'] }}</span>
+                        @if ($planDetails['deliveredQuantity'] > 0)
+                            {{ __('Receiving Quantity') }}: <span class="font-weight-bold"
+                                id="receivedQty">{{ $planDetails['deliveredQuantity'] }}</span>
+                        @else
+                            {{ __('Receiving Quantity') }}: <span class="font-weight-bold"
+                                id="receivedQty">{{ $planDetails['approvedQuantity'] }}</span>
+                        @endif
                     @endif
                 </div>
                 <div class="col-md-6">
                     {{-- {{ $planDetails['approveStatus'] }} --}}
                     @if ($planDetails['approveStatus'] == 3)
                         {{ __('Remaining Quantity') }}: <span class="font-weight-bold" id="remainingQty">0</span>
-                        <span class="sr-only"
-                            id="distributedQty">{{ $planDetails['receivedQuantity'] }}</span>
+                        <span class="sr-only" id="distributedQty">{{ $planDetails['receivedQuantity'] }}</span>
                     @else
-                        {{ __('Remaining Quantity') }}: <span class="font-weight-bold" id="remainingQty">{{ $planDetails['approvedQuantity'] }}</span>
+                        @if ($planDetails['deliveredQuantity'] > 0)
+                            {{ __('Remaining Quantity') }}: <span class="font-weight-bold"
+                                id="remainingQty">{{ $planDetails['deliveredQuantity'] }}</span>
+                        @else
+                            {{ __('Remaining Quantity') }}: <span class="font-weight-bold"
+                                id="remainingQty">{{ $planDetails['approvedQuantity'] }}</span>
+                        @endif
                         <span class="sr-only" id="distributedQty">0</span>
                     @endif
 
@@ -83,14 +102,14 @@
 
 
 
-                            <div class="card">
+                            <div class="card p-2">
 
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label
                                                 for="plannedQuantity">{{ __('Suggested Quantity') }}({{ __($planDetails['productUnit']['unitShortName']) }})
-                                                <span class="text-danger">*</span></label>
+                                            </label>
                                             <input type="text" size="10" class="form-control" disabled
                                                 value="{{ $planDetails['plannedQuantity'] }}">
                                             <input type="text" size="10" class="sr-only" id="plannedQuantity"
@@ -99,11 +118,11 @@
                                     </div>
 
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label
                                                 for="approvedQuantity">{{ __('Ordered Quantity') }}({{ __($planDetails['productUnit']['unitShortName']) }})
-                                                <span class="text-danger">*</span></label>
+                                            </label>
                                             <input type="text" size="10" class="form-control" disabled
                                                 value="{{ $planDetails['approvedQuantity'] == null ? '' : $planDetails['approvedQuantity'] }}">
                                             <input type="text" size="10" class="sr-only" id="approvedQuantity"
@@ -112,11 +131,25 @@
                                                 value="{{ $planDetails['approvedQuantity'] == null ? '' : $planDetails['approvedQuantity'] }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+
+                                        <div class="form-group">
+                                            <label
+                                                for="deliveredQuantity">{{ __('Delivered Quantity') }}({{ __($planDetails['productUnit']['unitShortName']) }})
+                                            </label>
+                                            <input type="text" size="10" class="form-control" disabled
+                                                value="{{ $planDetails['deliveredQuantity'] == null ? '' : $planDetails['deliveredQuantity'] }}">
+                                            <input type="text" size="10" class="sr-only" id="deliveredQuantity"
+                                                name="deliveredQuantity"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/^([0-9]*\.[0-9]{0,2}).*/,'$1');"
+                                                value="{{ $planDetails['deliveredQuantity'] == null ? '' : $planDetails['deliveredQuantity'] }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label
                                                 for="receivedQuantity">{{ __('Received Quantity') }}({{ __($planDetails['productUnit']['unitShortName']) }})
-                                                <span class="text-danger">*</span></label>
+                                            </label>
                                             <input type="text" size="10" class="form-control"
                                                 id="receivedQuantity" name="receivedQuantity"
                                                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/^([0-9]*\.[0-9]{0,2}).*/,'$1');"
@@ -124,10 +157,19 @@
                                         </div>
                                     </div>
                                     <div class="col-12">
-                                        <div style="font-size:0.8rem"
-                                            class="mt-2 mb-4 panel panel-info w-100 bg-light rounded text-center text-info  ">
-                                            Leave "{{ __('Receive Quantity') }}" empty to confirm "Ordered Quantity"
-                                        </div>
+                                        @if ($planDetails['deliveredQuantity'] > 0)
+                                            <div style="font-size:0.8rem"
+                                                class="mt-2 mb-4 panel panel-info w-100 bg-light rounded text-center text-info  ">
+                                                Leave "{{ __('Receive Quantity') }}" empty to confirm "Delivered
+                                                Quantity"
+                                            </div>
+                                        @else
+                                            <div style="font-size:0.8rem"
+                                                class="mt-2 mb-4 panel panel-info w-100 bg-light rounded text-center text-info  ">
+                                                Leave "{{ __('Receive Quantity') }}" empty to confirm "Ordered
+                                                Quantity"
+                                            </div>
+                                        @endif
                                     </div>
 
                                 </div>
@@ -135,8 +177,8 @@
                                 <div class="row text-center mb-4">
                                     <div class="col-6 mx-auto">
                                         <button type="button" class="next btn btn-rounded animated-shine px-4"><span
-                                                class="iconify" data-icon="mdi:content-save-all-outline" data-width="15"
-                                                data-height="15"></span>
+                                                class="iconify" data-icon="mdi:content-save-all-outline"
+                                                data-width="15" data-height="15"></span>
                                             {{ __('Next') }}</button>
 
                                     </div>
@@ -272,6 +314,7 @@
                             margin: .3rem auto;
                             z-index: 1;
                         }
+
                         .panelInputStock>label {
                             white-space: nowrap;
                         }
@@ -296,7 +339,7 @@
         var godownsArray = [];
         var godowns = @JSON($godowns[0]['godownProduct']);
         var deliveryGodownMapper = @JSON($planDetails['deliveryGodownMapper']);
-        console.log(deliveryGodownMapper);
+        // console.log(deliveryGodownMapper);
         $(document).ready(() => {
             setTimeout(() => {
                 $('#receivedQuantity').focus();
@@ -314,18 +357,18 @@
             let current = tankElement.dataset.index;
             let tankArray = godowns[index];
             let target = tankArray.currentStock;
-            let capacity=tankArray.capacity ;
-            let remainingCapacity=parseFloat(document.getElementById('remainingQty').innerHTML);
+            let capacity = tankArray.capacity;
+            let remainingCapacity = parseFloat(document.getElementById('remainingQty').innerHTML);
 
-            let fillableQty=(capacity-target)>remainingCapacity?remainingCapacity:(capacity-target);
+            let fillableQty = (capacity - target) > remainingCapacity ? remainingCapacity : (capacity - target);
 
             if (tankElement.querySelector('.panelInputStock').classList.contains('sr-only')) {
                 tankElement.querySelector('.panelInputStock').classList.remove('sr-only')
                 tankElement.querySelector('.inputBox').focus();
-                tankElement.querySelector('.inputBox').value=parseInt(fillableQty)
+                tankElement.querySelector('.inputBox').value = parseInt(fillableQty)
             } else {
                 tankElement.querySelector('.panelInputStock').classList.add('sr-only')
-                tankElement.querySelector('.inputBox').value=''
+                tankElement.querySelector('.inputBox').value = ''
             }
 
         }
@@ -348,7 +391,7 @@
                     tankElement.querySelector('.inputBox').focus();
                     let errorStr = "Quantity overflow!<br>Please! check your input"
                     toastr.warning(errorStr)
-                   // Swal.fire('', errorStr, 'warning');
+                    // Swal.fire('', errorStr, 'warning');
 
                     return;
                 }
@@ -395,7 +438,7 @@
                     tankElement.querySelector('.addedStock').innerHTML =
                         ` + ${(parseInt(tankArray.capacity)-parseInt(tankArray.currentStock)).toFixed(0)}(added)`;
                     styleText =
-                        `linear-gradient(${angle}deg, rgba(0,151,255,0.6) ${fluidPercentage}%, rgba(255,255,255,0) ${fluidPercentage+2}% )`;
+                        `linear-gradient(${angle}deg, rgba(201,150,0,0.6) ${fluidPercentage}%, rgba(255,255,255,0) ${fluidPercentage+2}% )`;
 
                     tankElement.style.background = styleText;
                     tankElement.style.transitionStyle = "ease-out";
@@ -413,7 +456,7 @@
                     tankElement.querySelector('.addedStock').innerHTML =
                         ` + ${ parseInt(thisStock) .toFixed(0)}(added)`;
                     styleText =
-                        `linear-gradient(${angle}deg, rgba(0,151,255,0.6) ${fluidPercentage}%, rgba(255,255,255,0) ${fluidPercentage+2}% )`;
+                        `linear-gradient(${angle}deg, rgba(201,150,0,0.6) ${fluidPercentage}%, rgba(255,255,255,0) ${fluidPercentage+2}% )`;
 
                     tankElement.style.background = styleText;
                     tankElement.style.transitionStyle = "ease-out";
@@ -435,7 +478,7 @@
                     angle = 0.2;
                 }
                 styleText =
-                    `linear-gradient(${angle}deg, rgba(0,151,255,0.6) ${fluidPercentage}%, rgba(255,255,255,0) ${fluidPercentage+5}% )`;
+                    `linear-gradient(${angle}deg, rgba(201,150,0,0.6) ${fluidPercentage}%, rgba(255,255,255,0) ${fluidPercentage+5}% )`;
 
                 tankElement.style.background = styleText;
                 tankElement.style.transitionStyle = "ease-in";
@@ -515,7 +558,7 @@
                 return accumulator + parseInt(object.quantity);
             }, 0);
             $('#distributedQty').html(distributed)
-            $('#remainingQty').html(rcvdQty-distributed)
+            $('#remainingQty').html(rcvdQty - distributed)
             // console.log(distributed, rcvdQty);
             if (distributed >= parseInt(rcvdQty)) {
                 // console.log(distributed);
@@ -550,18 +593,19 @@
                     }
                 );
                 // console.log(thisdeliveryGodownMapper);
-               let LoadedQuantity=thisdeliveryGodownMapper.length==0?0:thisdeliveryGodownMapper[0].quantity;
-                    console.log(LoadedQuantity);
-                    godown.currentStock-=LoadedQuantity;
+                let LoadedQuantity = thisdeliveryGodownMapper.length == 0 ? 0 : thisdeliveryGodownMapper[0]
+                    .quantity;
+                console.log(LoadedQuantity);
+                godown.currentStock -= LoadedQuantity;
                 let fluidPercentage = parseInt(godown.currentStock) / parseInt(godown.capacity) * 100;
 
                 let styleText = `background: ` +
-                    `linear-gradient(0deg, rgba(0,201,210,0.3) ${fluidPercentage}%, rgba(255,255,255,0) ${fluidPercentage}% )`;
-                    if(LoadedQuantity>0){
-                        let LoadedPercentage=parseInt(LoadedQuantity) / parseInt(godown.capacity) * 100;
-                        styleText = `background: ` +
-                    `linear-gradient(0deg, rgba(00,201,200,0.6) ${fluidPercentage}%, rgba(151,151,151,0.6) ${fluidPercentage}%,rgba(151,151,155,0.2) ${LoadedPercentage+fluidPercentage}%,rgba(255,255,255,0) ${fluidPercentage}% )`;
-                    }
+                    `linear-gradient(0deg, rgba(201,150,0,0.3) ${fluidPercentage}%, rgba(255,255,255,0) ${fluidPercentage}% )`;
+                if (LoadedQuantity > 0) {
+                    let LoadedPercentage = parseInt(LoadedQuantity) / parseInt(godown.capacity) * 100;
+                    styleText = `background: ` +
+                        `linear-gradient(0deg, rgba(201,150,0,0.6) ${fluidPercentage}%, rgba(151,151,151,0.6) ${fluidPercentage}%,rgba(151,151,155,0.2) ${LoadedPercentage+fluidPercentage}%,rgba(255,255,255,0) ${fluidPercentage}% )`;
+                }
                 strGodown += `<div id="godown${ godown.godownId }" ` +
                     `style="${styleText}"` +
                     `data-index="${ index }"` +
@@ -577,8 +621,8 @@
                     `<div class="isReserver">{{ __('Reserver') }}: ${ godown.isReserver }` +
                     `</div>` +
                     `<div class="currentStock">` +
-                    `{{ __('Current') }}:${ godown.currentStock.toFixed(0) } <span class="addedStock">`+
-                        `+ ${LoadedQuantity>0? LoadedQuantity+'(added)':''}</span></div>` +
+                    `{{ __('Current') }}:${ godown.currentStock.toFixed(0) } <span class="addedStock">` +
+                    `+ ${LoadedQuantity>0? LoadedQuantity+'(added)':''}</span></div>` +
                     `<div class="panelInputStock sr-only"  >` +
                     `<button type="button" class="img-btn" onclick="showPanel(${ godown.godownId },${ index });">
                 <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
@@ -655,12 +699,18 @@
                 $('#receivedQty').html($('#receivedQuantity').val())
                 $('#remainingQty').html($('#receivedQuantity').val())
 
+            } else if ($('#deliveredQuantity').val() > 0) {
+                $('#receivedQty').html($('#deliveredQuantity').val())
+                $('#remainingQty').html($('#deliveredQuantity').val())
             } else {
                 $('#receivedQty').html($('#approvedQuantity').val())
                 $('#remainingQty').html($('#approvedQuantity').val())
             }
 
         });
+        if(@json($next)){
+            $('.next').trigger("click");
+        }
         $("#formApprove").on("submit", function(event) {
             event.preventDefault();
             if (godownsArray.length == 0) {
@@ -668,10 +718,18 @@
                 return;
             }
             // console.log(parseFloat($('#approvedQuantity').val()) ,$('#plannedQuantity').val());
-            if (parseFloat($('#receivedQuantity').val()) > parseFloat($('#approvedQuantity').val())) {
-                toastr.error("Maximum Qunatity exceed...");
-                $('#receivedQuantity').focus();
-                return;
+            if (parseFloat($('#deliveredQuantity').val())>0) {
+                if (parseFloat($('#receivedQuantity').val()) > parseFloat($('#deliveredQuantity').val())) {
+                    toastr.error("Maximum Qunatity exceed...");
+                    $('#receivedQuantity').focus();
+                    return;
+                }
+            } else {
+                if (parseFloat($('#receivedQuantity').val()) > parseFloat($('#approvedQuantity').val())) {
+                    toastr.error("Maximum Qunatity exceed...");
+                    $('#receivedQuantity').focus();
+                    return;
+                }
             }
 
             $('.submit').html(

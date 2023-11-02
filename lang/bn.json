@@ -438,6 +438,15 @@
 "ltr": "লিটার",
 "pc": "পিস",
 "pcs": "পিসেস",
+   "Pump": "পাম্প",
+   "Suggested Qty.": "প্রস্তাবিত পরিমাণ",
+   "Ordered Qty.": "অর্ডার প্রদত্ত পরিমাণ",
+   "Received Qty.": "প্রাপ্ত পরিমাণ",
+   "Order Approval": "অর্ডার অনুমোদন",
+   "Order Processing": "আদেশ প্রসেসিং",
+   "Enter the name of the pump. Be precise and use any common abbreviations if necessary. <br>For example, \"CP-500 Water Pump.\"":"পাম্পের নামটি লিখুন। যদি আবশ্যক হয়, তাহলে স্পষ্ট এবং সংক্ষেপে নাম এবং আবশ্যক হলে যে কোন সাধারণ সংকেত ব্যবহার করুন। <br>উদাহরণস্বরূপ, \"CP-500 Water Pump\"",
+   "New Pump":"নতুন পাম্প",
+
 "Exit": "বাহির"
 
 

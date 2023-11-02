@@ -4,7 +4,10 @@
 <div>
 
 
-        <li><a href="#" data-lat="{{$address['geometry']['location']['lat']}}" data-lng="{{$address['geometry']['location']['lng']}}"> {{$address['formatted_address']}}</a></li>
+        <li><a href="#" data-address="{{$address['formatted_address']}}" data-lat="{{$address['geometry']['location']['lat']}}" data-lng="{{$address['geometry']['location']['lng']}}">{{$address['formatted_address']}}<div class="small"><span class="text-success mr-4">Lat: {{$address['geometry']['location']['lat']}}</span> <span class="text-danger ml-4">Lng: {{$address['geometry']['location']['lng']}}</span></div>
+
+        </a>
+        </li>
 
 
 </div>
@@ -40,9 +43,13 @@
     $('#myUL li a').on('click', function() {
         var lat = $(this).data('lat');
         var lng = $(this).data('lng');
+        var address=$(this).data('address');
         $('#latitude').val(lat);
         $('#longitude').val(lng);
-        $('#officeAddress').val($(this).text());
+        $('#officeAddress').val(address);
+        $('#address_search').val(address);
+        // $('#officeAddress').val($(this).text());
+        // $('#address_search').val($(this).text());
         $('#google_address_search_panel').addClass('sr-only');
     });
 </script>

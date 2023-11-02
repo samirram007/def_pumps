@@ -22,6 +22,14 @@
         <span class="menu-title">{{ __('Business Entity') }} </span>
     </a>
 </li>
+@if(session()->get('masterOfficeId')==null)
+<li class="nav-item   ">
+    <a class="nav-link my-2" href="{{ route('companyadmin.driver.index') }}">
+    <i class="fa fa-building mr-3" aria-hidden="true"></i>
+        <span class="menu-title">{{ __('Driver') }} </span>
+    </a>
+</li>
+@endif
 <li class="nav-item    ">
     <a class="nav-link my-2" href="{{ route('companyadmin.user.index') }}">
         <i class="fas fa-users mr-3"></i>

@@ -25,6 +25,8 @@ Route::get('/', [LoginController::class, 'welcome'])->name('welcome');
 
 Route::get('lang/{locale}', [LocalizationController::class, 'index'])->name('lang');
 Route::get('/si/{invoice_no}', [SalesController::class, 'sales_invoice'])->name('sales_invoice');
+Route::get('/unsubscribe', function(){ return view('unsubscribe');})->name('unsubscribe');
+Route::post('/unsubscribe', function(){ return view('unsubscribe');});
 
 Route::get('/office/search', [OfficeController::class, 'address_search'])->name('office.address.search');
 Route::get('/hub/search', [HubController::class, 'address_search'])->name('hub.address.search');
@@ -50,6 +52,7 @@ Route::group(['middleware' => 'preventbackhistory'], function () {
         require __DIR__ . '/superadminauth.php';
         require __DIR__ . '/adminauth.php';
         require __DIR__ . '/pumpadminauth.php';
+        require __DIR__ . '/driverauth.php';
 
         //================= Support Routes ======================
         Route::get('admin/support/list', [SupportController::class, 'SupportList'])->name('companyadmin.support.list');

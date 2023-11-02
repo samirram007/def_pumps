@@ -18,7 +18,6 @@ class DeliveryPlan extends Model
     {
         $this->token = Session::has('_token') ? Session::get('_token') : '';
     }
-
     #override
     public static function get_all()
     {
@@ -61,6 +60,13 @@ class DeliveryPlan extends Model
        // dd($res);
         return $res;
     }
+    public static function ApproveDeliveryPlanDetailsByAdmin($data){
+      //  dd(gettype($data));
+        $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];
+        $res = Http::withHeaders($headers)->post(env('API_RESOURCE_URL') . 'DeliveryPlan/ApproveDeliveryPlanDetailsQuantityByAdmin',$data);
+       // dd($res);
+        return $res;
+    }
     public static function UpdateDeliveryPlanStatus($data){
        // dd(json_encode($data));
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];
@@ -75,6 +81,13 @@ class DeliveryPlan extends Model
        // dd($res);
         return $res;
     }
+    public static function AssignDriver($data){
+        // dd(json_encode($data));
+         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];
+         $res = Http::withHeaders($headers)->post(env('API_RESOURCE_URL') . 'DeliveryPlan/AssignDriver',$data);
+        // dd($res);
+         return $res;
+     }
     public static function GetDeliveryPlan($id){
         //dd(json_encode($data));
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];
@@ -89,10 +102,24 @@ class DeliveryPlan extends Model
        // dd($res);
         return $res;
     }
+    public static function GetDeliveryPlanByOfficeId($id){
+        //dd(json_encode($data));
+        $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];
+        $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'DeliveryPlan/DeliveryPlanByOfficeId/'.$id)->json();
+       // dd($res);
+        return $res;
+    }
     public static function GetDeliveryPlanDetailsByOfficeId($id){
         //dd(json_encode($data));
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];
         $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'DeliveryPlan/DeliveryPlanDetailsByOfficeId/'.$id)->json();
+       // dd($res);
+        return $res;
+    }
+    public static function GetDeliveryPlanDetailsByDeliveryPlanIdOfficeId($deliveryPlanId,$officeId){
+        //dd(json_encode($data));
+        $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];
+        $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'DeliveryPlan/DeliveryPlanDetailsByDeliveryPlanIdOfficeId/'.$deliveryPlanId.'/'.$officeId)->json();
        // dd($res);
         return $res;
     }

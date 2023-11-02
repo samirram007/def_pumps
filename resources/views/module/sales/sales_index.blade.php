@@ -160,9 +160,9 @@
                                     {{ __('Mark Disputed') }}</a>
                             @endif
 
-                            <a href="javascript:" data-param="" data-url="{{ route($routeRole . '.sales.create') }}"
-                                title="{{ __('New Invoice') }}"
-                                class="load-popup float-right btn btn-rounded animated-shine px-2 mb-2 ">
+                            <a id="new-invoice"  href="javascript:" data-param=""
+                                data-url="{{ route($routeRole . '.sales.create') }}" title="{{ __('New Invoice') }}"
+                                class=" load-popup float-right btn btn-rounded animated-shine px-2 mb-2 ">
                                 {{ __('New Invoice') }}</a>
                         </div>
 
@@ -187,7 +187,9 @@
                             <div class="label-text">{{ __('Business Entity') }}</div>
                             <select name="officeId_filter" id="officeId_filter" class="form-control">
                                 @foreach ($officeList as $office)
-                                    <option value="{{ $office['officeId'] }}">{{ __($office['officeName']) }}</option>
+                                    <option value="{{ $office['officeId'] }}"
+                                        {{ (isset($selectedOfficeId) && $selectedOfficeId) == $office['officeId'] ? 'selected' : '' }}>
+                                        {{ __($office['officeName']) }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -355,6 +357,9 @@
         $url_sales_pdf = route($routeRole . '.sales_pdf');
         //dd($url_filter);
     @endphp
+@endsection
+
+@push('script')
     <script>
         $(document).ready(function() {
             $('.toggle-legends').click(function() {
@@ -363,37 +368,56 @@
         });
     </script>
     <script>
-        var routeRole = "{{ $routeRole }}";
-        function search(){
+        var routeRole = @json($routeRole);
+        var selectedOfficeId = @json(isset($selectedOfficeId) ? $selectedOfficeId : '');
+        async function search() {
             $('.reportPanel').html(
-                    '<div class="alert alert-info"><i class="fa fa-spinner fa-spin"></i> Please wait...</div>'
-                );
-                var officeId = $('#officeId_filter').val();
-                var fromDate = $('#fromDate').val();
-                var toDate = $('#toDate').val();
-                var status = $('#status_filter').val();
-                    console.log(fromDate );
+                '<div class="alert alert-info"><i class="fa fa-spinner fa-spin"></i> Please wait...</div>'
+            );
+            var officeId = $('#officeId_filter').val();
+            var fromDate = $('#fromDate').val();
+            var toDate = $('#toDate').val();
+            var status = $('#status_filter').val();
+            console.log(fromDate);
 
-                $.ajax({
-                    url: '{{ $url_sales_filter }}',
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        officeId: officeId,
-                        fromDate: fromDate,
-                        toDate: toDate,
-                        status: status
-                    },
-                    success: function(response) {
-                        //     console.log(response);
-                        $('.reportPanel').html(response.view);
+            $.ajax({
+                url: '{{ $url_sales_filter }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    officeId: officeId,
+                    fromDate: fromDate,
+                    toDate: toDate,
+                    status: status
+                },
+                success: function(response) {
+                    //     console.log(response);
+                    $('.reportPanel').html(response.view);
+
+                    if (selectedOfficeId != '') {
+                         history.pushState({}, "", "{{ route($routeRole . '.sales.index') }}");
+                        selectedOfficeId = '';
+                         $('#new-invoice').click();
+                        // setTimeout(() => {
+
+                        //     // console.log('whay not');
+                        //     // $('#new-invoice').trigger('click');
+                        //     // console.log('whay not doing');
+                        // }, 1000);
+
+
                     }
-                });
+
+
+
+
+                }
+            });
         }
         $(document).ready(function() {
 
             $('.search').on('click', function() {
-              search();
+                search();
             });
             // setTimeout(() => {
             //      $('.search').click();
@@ -405,14 +429,14 @@
                 search();
             });
             $('#fromDate').on('change', function() {
-                console.log('I am from Date'+ $('#fromDate').val());
-                if($('#fromDate').val()!=''){
+                console.log('I am from Date' + $('#fromDate').val());
+                if ($('#fromDate').val() != '') {
                     search();
                 }
 
             });
             $('#toDate').on('change', function() {
-                if($('#toDate').val()!=''){
+                if ($('#toDate').val() != '') {
                     search();
                 }
             });
@@ -484,7 +508,6 @@
                             toDate: toDate
                         },
                         success: function(result, status, xhr) {
-                            //console.log(result);
 
                             var disposition = xhr.getResponseHeader('content-disposition');
                             var matches = /"([^"]*)"/.exec(disposition);
@@ -496,8 +519,6 @@
                                 currentdate.getMinutes() +
                                 currentdate.getSeconds();
 
-                            // document.write(datetime);
-                            //var filename = (matches != null && matches[1] ? matches[1] : datetime + '.pdf');
                             var filename = fileName;
 
                             // The actual download
@@ -512,15 +533,12 @@
 
                             link.click();
                             document.body.removeChild(link);
-                            //toastr.success('Downloaded');
                         },
                     }).done(function(data) {
                         toastr.success('Downloaded');
-                        //console.log(data);
                     })
                     .fail(function(data) {
                         toastr.error('No data found');
-                        // console.log(data);
                     });
             });
             $('#officeId').select2();
@@ -547,9 +565,7 @@
                         if (data.status == 1) {
                             $('#salesIds').val('');
                             toastr.success(data.message);
-                            console.log(updateCount++);
-                            $('.search').click();
-                            //  $('#table').DataTable().draw();
+                            $('.search').click()
                         } else {
                             toastr.error(data.message);
                         }
@@ -564,4 +580,8 @@
 
         });
     </script>
+    {{-- <script src="../../js/sales_create.js"></script> --}}
+@endpush
+
+@section('modal_script')
 @endsection

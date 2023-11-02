@@ -17,7 +17,7 @@
             }
 
         </style>
-        <div class="bg-light d-flex">
+        <div class="bg-light d-none">
             <div class="units  btn-active btn btn-link d-flex align-items-center"> <i class="fa fa-plus-circle mr-2" style="font-size:24px;"></i> UNITS</div>
             <div class="colors btn btn-link d-flex align-items-center"> <i class="fa fa-paint-brush mr-2" style="font-size:24px;"></i> COLOUR</div>
             <div class="rates btn btn-link d-flex align-items-center"> <i class="fa fa-at mr-2" style="font-size:24px;"></i> RATE</div>

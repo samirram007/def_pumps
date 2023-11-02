@@ -54,28 +54,28 @@
                         <tbody>
                             @foreach ($offices as $key => $office)
 
-                                @include('companyadmin.office._partial.table_row', ['data' => $office])
+                                @include('companyadmin.office._partials.table_row', ['data' => $office])
                                 {{-- @include('companyadmin.office._partial.office_details_row', ['data' => $office]) --}}
 
                                 @if ($office['children'] != null)
                                     @foreach ($office['children'] as $key => $child)
 
-                                        @include('companyadmin.office._partial.table_row', ['data' => $child])
+                                        @include('companyadmin.office._partials.table_row', ['data' => $child])
                                         {{-- @include('companyadmin.office._partial.office_details_row', ['data' => $child]) --}}
 
                                         @if ($child['children'] != null)
                                             @foreach ($child['children'] as $child_key => $sub_child)
 
-                                                    @include('companyadmin.office._partial.table_row', [ 'data' => $sub_child, ])
+                                                    @include('companyadmin.office._partials.table_row', [ 'data' => $sub_child, ])
                                                     {{-- @include('companyadmin.office._partial.office_details_row', ['data' => $sub_child]) --}}
                                                 @if ($sub_child['children'] != null)
                                                     @foreach ($sub_child['children'] as $sub_child_key => $sub_child1)
-                                                            @include('companyadmin.office._partial.table_row', [
+                                                            @include('companyadmin.office._partials.table_row', [
                                                                 'data' => $sub_child1,
                                                             ])
                                                         @if ($sub_child1['children'] != null)
                                                             @foreach ($sub_child1['children'] as $sub_child1_key => $sub_child2)
-                                                                    @include('companyadmin.office._partial.table_row',['data' => $sub_child2])
+                                                                    @include('companyadmin.office._partials.table_row',['data' => $sub_child2])
                                                                     {{-- @include('companyadmin.office._partial.office_details_row', ['data' => $sub_child2]) --}}
                                                             @endforeach
                                                         @endif

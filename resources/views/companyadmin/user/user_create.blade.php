@@ -181,18 +181,7 @@
              });
          });
      </script>
-     <script>
-         //  $(document).ready(function() {
-         //      $('#roleName').select2({
-         //          placeholder: "Select Role",
-         //          allowClear: true
-         //      });
-         //      $('#officeId').select2({
-         //          placeholder: "Select Office",
-         //          allowClear: true
-         //      });
-         //  });
-     </script>
+
 
      <script>
          $(document).ready(function() {
