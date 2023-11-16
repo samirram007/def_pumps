@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Office;
-use Illuminate\Http\Request;
-use App\Services\OfficeService;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Controller;
+use App\Models\Office;
+use App\Services\OfficeService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -32,10 +32,10 @@ class OfficeController extends Controller
 
         $this->office = json_decode(json_encode(session()->get('officeData')), true);
         // $roles = ApiController::GetRoles();
-        $roles = session()->has('roles')? json_decode(json_encode(session()->get('roles')), true): session()->put('roles',ApiController::GetRoles());
+        $roles = session()->has('roles') ? json_decode(json_encode(session()->get('roles')), true) : session()->put('roles', ApiController::GetRoles());
 
         $del_val = ['SuperAdmin', 'CompanyAdmin'];
-        if($roles){
+        if ($roles) {
             foreach ($roles as $key => $value) {
                 if (!in_array($value['name'], $del_val)) {
                     $this->roles[$value['name']] = $value['name'];
@@ -52,13 +52,14 @@ class OfficeController extends Controller
 
     public function index()
     {
-        $data['title']='';
+        $data['title'] = '';
 
         // load the view and pass the users
         return view('companyadmin.office.office_index', $data);
 
     }
-    public function populateOffice(){
+    public function populateOffice()
+    {
         $user = (object) $this->user;
         $fiscalYearId = session()->has('fiscalYearId') ? session()->get('fiscalYearId') : $user->fiscalYear['fiscalYearId'];
 
@@ -113,8 +114,8 @@ class OfficeController extends Controller
     public function create()
     {
 
-        $data['roleName']=$this->roleName;
-        $data['routeRole']=$this->routeRole;
+        $data['roleName'] = $this->roleName;
+        $data['routeRole'] = $this->routeRole;
 
         $user = (object) $this->user;
 
@@ -122,7 +123,7 @@ class OfficeController extends Controller
         //dd($data['masterOfficeId']);
         $data['officeTypes'] = ApiController::GetOfficeTypeList();
         $data['gstTypes'] = ApiController::GetGstTypeList();
-        $data['masterOfficeList']=Office::GetMasterOfficeList($user->officeId);
+        $data['masterOfficeList'] = Office::GetMasterOfficeList($user->officeId);
         $info['title'] = "Create Office";
         $info['size'] = "modal-lg";
 
@@ -135,8 +136,8 @@ class OfficeController extends Controller
     public function create_wizard()
     {
 
-        $data['roleName']=$this->roleName;
-        $data['routeRole']=$this->routeRole;
+        $data['roleName'] = $this->roleName;
+        $data['routeRole'] = $this->routeRole;
 
         $user = (object) $this->user;
 
@@ -145,7 +146,7 @@ class OfficeController extends Controller
         $data['officeTypes'] = ApiController::GetOfficeTypeList();
         $data['gstTypes'] = ApiController::GetGstTypeList();
         // $data['masterOfficeList']=Office::GetMasterOfficeList($user->officeId);
-        $data['masterOfficeList']=Office::GetOfficeById($user->officeId);
+        $data['masterOfficeList'] = Office::GetOfficeById($user->officeId);
         //dd($data['masterOfficeList']);
         $info['title'] = "Create Office";
         $info['size'] = "modal-lg";
@@ -172,12 +173,12 @@ class OfficeController extends Controller
             'masterOfficeId' => 'required',
             'officeContactNo' => 'nullable|numeric|digits:10',
             'officeEmail' => 'nullable|max:255|email',
-        ],[
+        ], [
             'officeName.required' => 'Office Name is required',
             'officeName.max' => 'Office Name is too long',
-          'masterOfficeId.required' => 'Master Office is required',
+            'masterOfficeId.required' => 'Master Office is required',
         ])
-         ;
+        ;
         // process the data
         if ($validator->fails()) {
             return response()->json([
@@ -224,22 +225,17 @@ class OfficeController extends Controller
             return response()->json([
                 "status" => true,
                 "message" => "Office created successfully",
-                "officeId"=>$response['id']
+                "officeId" => $response['id'],
             ]);
 
             //return redirect()->route('companyadmin.office.index')->with('success', 'Office created successfully');
         }
     }
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
-        $data['roleName']=$this->roleName;
-        $data['routeRole']=$this->routeRole;
+        $data['roleName'] = $this->roleName;
+        $data['routeRole'] = $this->routeRole;
         // get the user
         $office = ApiController::GetOffice($id);
 
@@ -263,11 +259,11 @@ class OfficeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request,$id)
+    public function edit(Request $request, $id)
     {
-       // dd($id);
-        $data['roleName']=$this->roleName;
-        $data['routeRole']=$this->routeRole;
+        // dd($id);
+        $data['roleName'] = $this->roleName;
+        $data['routeRole'] = $this->routeRole;
         $office = [ApiController::GetOffice($id)];
 
         $data['officeTypes'] = ApiController::GetOfficeTypeList();
@@ -276,13 +272,13 @@ class OfficeController extends Controller
         $info['title'] = "Edit Office";
         $info['size'] = "modal-lg";
         $user = (object) $this->user;
-        $data['masterOfficeList']=Office::GetMasterOfficeList($user->officeId);
+        $data['masterOfficeList'] = Office::GetMasterOfficeList($user->officeId);
         //dd($data);
         $GetView = view('companyadmin.office.office_edit', $data)->render();
 
         return response()->json([
             "status" => true,
-            "html" =>  base64_encode($GetView ),
+            "html" => base64_encode($GetView),
         ]);
 
     }

@@ -8,10 +8,10 @@
     {{-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> --}}
     <title>{{ env('APP_NAME') }}</title>
     <!-- plugins:css -->
-    
+
     @include('layouts.css_js')
     @yield('style')
-{{-- @vite(['resources/js/app.js']) --}}
+    {{-- @vite(['resources/js/app.js']) --}}
 
 </head>
 
@@ -50,7 +50,7 @@
            --}}
                 @yield('content')
                 <div class="modal fade" id="modal-popup" data-backdrop="static" role="dialog"
-                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    aria-labelledby="staticBackdropLabel" style="padding-right: 0!important" aria-hidden="true">
 
                 </div>
                 <div class="modal fade" id="modal-wizard" data-backdrop="static" role="dialog"
@@ -74,13 +74,13 @@
     @include('layouts.footer')
     @include('layouts.css_js_2')
 
-<!-- This is yield script begin -->
+    <!-- This is yield script begin -->
 
 
     @stack('script')
     @yield('modal_script')
 
-   <!-- This is yield script end -->
+    <!-- This is yield script end -->
     {{-- @stack('scripts') --}}
     @vite('resources/js/app.js')
 </body>

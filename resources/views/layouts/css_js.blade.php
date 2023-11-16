@@ -30,8 +30,8 @@
 <link rel="stylesheet" href="{{ asset('css/theme.css') }}">
 <!-- endinject -->
 <!-- fonts-->
-<link rel="stylesheet"
-    href="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.1.1/css/all.min.css') }}">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.1.1/css/all.min.css') }}">
 <!-- custom-->
 <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 
@@ -46,7 +46,7 @@
 
 
 <!-- endinject -->
-<link rel="stylesheet" href="{{asset('landing/dist/css/switch.css')}}">
+<link rel="stylesheet" href="{{ asset('landing/dist/css/switch.css') }}">
 {{-- <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"  ></script> --}}
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
@@ -84,8 +84,8 @@
 </style>
 <link rel="stylesheet" href="{{ asset('css/bn/bn-style.css') }}">
 
-  <style>
-    .preloader{
+<style>
+    .preloader {
         position: fixed;
         top: 0;
         left: 0;
@@ -94,14 +94,16 @@
         background-color: rgba(37, 35, 35, 0.664);
         z-index: 99;
     }
-    .preloader .loader{
+
+    .preloader .loader {
         position: absolute;
         left: 50%;
         top: 50%;
-        transform: translate(-50%,-50%);
+        transform: translate(-50%, -50%);
         font-size: 10px;
     }
-    .preloader .loader .loader__figure{
+
+    .preloader .loader .loader__figure {
         display: inline-block;
         width: 20px;
         height: 20px;
@@ -109,43 +111,50 @@
         background: #f00;
         animation: loader 0.5s infinite ease-in-out;
     }
-    @keyframes loader{
-        0%{
+
+    @keyframes loader {
+        0% {
             transform: scale(0);
             background: rgba(50, 59, 73, 0.678);
         }
-        55%{
+
+        55% {
             transform: scale(3);
             background: rgba(55, 98, 134, 0.5);
         }
 
-        100%{
+        100% {
             transform: scale(0);
             background: rgba(219, 211, 216, 0.171);
             /* opacity: 0; */
         }
     }
-    @keyframes loader2{
-        0%{
+
+    @keyframes loader2 {
+        0% {
             transform: scale(0);
             background: #f00;
         }
-        25%{
+
+        25% {
             transform: scale(3);
             background: rgb(29, 125, 204);
         }
-        50%{
+
+        50% {
             transform: scale(0);
             background: #0f0;
         }
-        75%{
+
+        75% {
             transform: scale(3);
             background: rgb(6, 131, 104);
         }
-        100%{
+
+        100% {
             transform: scale(0);
             background: rgb(255, 91, 200);
             /* opacity: 0; */
         }
     }
-  </style>
+</style>

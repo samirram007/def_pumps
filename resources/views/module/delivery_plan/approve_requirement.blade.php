@@ -14,29 +14,33 @@
                 </div>
                 <div class="col-md-6">
 
-                    {{ __('Hub') }}: <span class="font-weight-bold">{{ $planDetails['startPoint']['hubName'] }}</span>
+                    {{ __('Hub') }}: <span
+                        class="font-weight-bold">{{ $planDetails['startPoint']['hubName'] }}</span>
                 </div>
                 <div class="col-md-6">
-                    {{ __('Plan Date') }}: <span class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails['deliveryPlan']['planDate'])) }}</span>
+                    {{ __('Plan Date') }}: <span
+                        class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails['deliveryPlan']['planDate'])) }}</span>
                 </div>
                 <div class="col-md-6">
-                    {{ __('Delivery Date') }}: <span class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails['deliveryPlan']['planDate'])) }}</span>
+                    {{ __('Delivery Date') }}: <span
+                        class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails['deliveryPlan']['planDate'])) }}</span>
                 </div>
                 <div class="col-md-6">
-                    {{ __('Product') }}: <span class="font-weight-bold">{{  $planDetails['product']['productTypeName'] }}</span>
+                    {{ __('Product') }}: <span
+                        class="font-weight-bold">{{ $planDetails['product']['productTypeName'] }}</span>
                 </div>
                 <div class="col-md-6">
                     @php
-                        $status='<span class="font-weight-bold text-gray">Waiting for approval</span>';
-                        if($planDetails['approveStatus']==-1){
-                            $status='<span class="font-weight-bold text-danger">Rejected</span>';
+                        $status = '<span class="font-weight-bold text-gray">Waiting for approval</span>';
+                        if ($planDetails['deliveryPlanDetailsStatusId'] == 3) {
+                            $status = '<span class="font-weight-bold text-danger">Rejected</span>';
                         }
-                        if($planDetails['approveStatus']==2){
-                            $status='<span class="font-weight-bold text-success">Order Placed</span>';
+                        if ($planDetails['deliveryPlanDetailsStatusId'] == 2) {
+                            $status = '<span class="font-weight-bold text-success">Order Placed</span>';
                         }
 
                     @endphp
-                    {{ __('Status') }}:  {!!   $status !!}
+                    {{ __('Status') }}: {!! $status !!}
                 </div>
 
 
@@ -64,11 +68,11 @@
                                                         <label
                                                             for="plannedQuantity">{{ __('Suggested Quantity') }}({{ __($planDetails['productUnit']['unitShortName']) }})
                                                             <span class="text-danger">*</span></label>
-                                                        <input type="text" size="10" class="form-control"  disabled
-                                                             value="{{ $planDetails['plannedQuantity'] }}">
+                                                        <input type="text" size="10" class="form-control"
+                                                            disabled value="{{ $planDetails['plannedQuantity'] }}">
                                                         <input type="text" size="10" class="sr-only"
                                                             id="plannedQuantity" name="plannedQuantity"
-                                                           value="{{ $planDetails['plannedQuantity'] }}">
+                                                            value="{{ $planDetails['plannedQuantity'] }}">
                                                     </div>
                                                 </div>
 
@@ -85,7 +89,10 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
-                                                    <div style="font-size:0.8rem" class="mt-2 mb-4 panel panel-info w-100 bg-light rounded text-center text-info  " > Leave "{{ __('Order Quantity') }}"" empty to confirm "Suggested Quantity"</div>
+                                                    <div style="font-size:0.8rem"
+                                                        class="mt-2 mb-4 panel panel-info w-100 bg-light rounded text-center text-info  ">
+                                                        Leave "{{ __('Order Quantity') }}"" empty to confirm "Suggested
+                                                        Quantity"</div>
                                                 </div>
 
                                             </div>
@@ -101,7 +108,7 @@
                                                 </div>
                                                 <div class="col-6 mx-auto">
                                                     <button type="button"
-                                                        class="reject btn btn-rounded animated-shine-danger px-4" >
+                                                        class="reject btn btn-rounded animated-shine-danger px-4">
                                                         <i class="fa fa-ban"></i>
                                                         {{ __('Reject') }}</button>
                                                 </div>
@@ -125,7 +132,7 @@
             }, 500);
 
         });
-        $('.reject').on("click",function(){
+        $('.reject').on("click", function() {
             $('.reject').html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> '
             );
@@ -151,8 +158,8 @@
 
                 } else {
                     // console.log(data.data);
-                  //  $('#reportPanel').html(data.html);
-                  toastr.warning(data.message);
+                    //  $('#reportPanel').html(data.html);
+                    toastr.warning(data.message);
                     setTimeout(() => {
 
                         // $('.submit').attr('disabled', false);
@@ -163,7 +170,7 @@
                         //window.location.reload();
                     }, 1000);
                     return;
-                   // toggleRequestPanel();
+                    // toggleRequestPanel();
                 }
                 $('.reject').attr('disabled', false);
                 $('.reject').html('Reject');
@@ -218,20 +225,19 @@
 
                 } else {
                     // console.log(data.data);
-                  //  $('#reportPanel').html(data.html);
-                  toastr.success(data.message);
+                    //  $('#reportPanel').html(data.html);
+                    toastr.success(data.message);
                     setTimeout(() => {
 
                         // $('.submit').attr('disabled', false);
                         // $('.submit').html('Approve');
-                        if(document.getElementById('RequestPlan')){
+                        if (document.getElementById('RequestPlan')) {
                             console.log('Available');
                             //init_loading();
 
                             $('#requestForm').submit();
                             //$('#RequestPlan').click();
-                        }
-                        else if(document.getElementById('filter')){
+                        } else if (document.getElementById('filter')) {
                             //console.log('Filter Ok');
                             $('#filter').click();
                         }
@@ -242,7 +248,7 @@
                         // window.location.reload();
                     }, 1000);
                     return;
-                   // toggleRequestPanel();
+                    // toggleRequestPanel();
                 }
                 $('.submit').attr('disabled', false);
                 $('.submit').html('Approve');
@@ -255,6 +261,5 @@
                 // console.log(data);
             });
         });
-
     </script>
 </div>

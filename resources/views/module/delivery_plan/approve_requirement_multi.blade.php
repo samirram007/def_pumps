@@ -1,46 +1,55 @@
-<div class="modal-dialog modal-lg  modal-dialog-centered mt-0 ">
+<div class="modal-dialog modal-xl  modal-dialog-top mt-4 ">
     <div class="modal-content bg-info">
         <div class="modal-header">
+            <button type="button" class="back load-popup-back"
+                data-param="{{ $deliveryPlanId ?? $deliveryPlan['deliveryPlanId'] }}" aria-label="Close">
+                <i class="fas fa-arrow-circle-left" aria-hidden="true" style="font-size:24px; color:#fff"></i>
+            </button>
             <h4 class="modal-title text-light">{{ __('Order Approval') }} </h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
             </button>
         </div>
 
-        <div class="modal-body bg-light">
+        <div class="modal-body bg-light py-2">
             <div class="row">
                 <div class="col-12 pb-2">
-                    {{ __('Title') }}: <span
-                        class="font-weight-bold">{{ $planDetails[0]['deliveryPlan']['planTitle'] }}</span>
+                    {{ __('Title') }}: <span class="font-weight-bold">{{ $deliveryPlan['planTitle'] }}</span>
                 </div>
                 <div class="col-md-6">
 
                     {{ __('Hub') }}: <span
-                        class="font-weight-bold">{{ $planDetails[0]['startPoint']['hubName'] }}</span>
+                        class="font-weight-bold">{{ $deliveryPlan['startPoint']['hubName'] }}</span>
                 </div>
                 <div class="col-md-6">
                     {{ __('Plan Date') }}: <span
-                        class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails[0]['deliveryPlan']['planDate'])) }}</span>
+                        class="font-weight-bold">{{ date('d-M-Y', strtotime($deliveryPlan['planDate'])) }}</span>
                 </div>
 
                 <div class="col-md-6">
                     {{ __('Product') }}: <span
-                        class="font-weight-bold">{{ $planDetails[0]['product']['productTypeName'] }}</span>
+                        class="font-weight-bold">{{ $deliveryPlan['product']['productTypeName'] }}</span>
                 </div>
                 <div class="col-md-6">
                     {{ __('Delivery Date') }}: <span
-                        class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails[0]['deliveryPlan']['expectedDeliveryDate'])) }}</span>
+                        class="font-weight-bold">{{ date('d-M-Y', strtotime($deliveryPlan['expectedDeliveryDate'])) }}</span>
                 </div>
                 <div class="col-md-6">
-                    @php
-                        $status = '<span class="font-weight-bold text-gray">Waiting for approval</span>';
-                        if ($planDetails[0]['deliveryPlan']['deliveryPlanStatusId'] == -1) {
-                            $status = '<span class="font-weight-bold text-danger">Rejected</span>';
-                        }
-                        if ($planDetails[0]['deliveryPlan']['deliveryPlanStatusId'] == 2) {
-                            $status = '<span class="font-weight-bold text-success">Order Under Processing</span>';
-                        }
-                    @endphp {!! $status !!}
+                    {{-- @dd($deliveryPlan) --}}
+                    {{ __('Current Status') }}: <span class="text-info">
+                        {{ __($deliveryPlan['deliveryPlanStatus']['deliveryPlanStatus']) }}</span>
+
+
+                    {{-- @php
+                        // $status = '<span class="font-weight-bold text-gray">' . $deliveryPlan['deliveryPlanStatus']['deliveryPlanStatus'] . '</span>';
+                        // $status = '<span class="font-weight-bold text-gray">Waiting for approval</span>';
+                        // if ($deliveryPlan['deliveryPlanStatusId'] == -1) {
+                        //     $status = '<span class="font-weight-bold text-danger">Rejected</span>';
+                        // }
+                        // if ($deliveryPlan['deliveryPlanStatusId'] == 2) {
+                        //     $status = '<span class="font-weight-bold text-success">Under Processing</span>';
+                        // }
+                    @endphp {!! $status !!} --}}
                 </div>
 
 
@@ -48,12 +57,12 @@
         </div>
         <form id="formApprove" enctype="multipart/form-data">
             @csrf
-            <div class="modal-body bg-light p-0" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="1000">
+            <div class="modal-body bg-light p-0">
                 <div class=" w-100  ">
 
                     <section class="content">
 
-                        @foreach ($planDetails as $key => $plan)
+                        @foreach ($deliveryPlan['deliveryPlanDetailsList'] as $key => $plan)
                             <div class="rounded card bg-white shadow min-h-100 px-3">
 
 
@@ -64,7 +73,7 @@
                                             </label>
                                             <input type="text" size="10"
                                                 class="form-control border border-success"
-                                                value="{{ $plan['officeName'] }}">
+                                                value="{{ $plan['office']['officeName'] }}">
 
                                         </div>
 
@@ -72,7 +81,7 @@
                                     <div class="col-md-4">
                                         {{-- {{ __('Quantity') }} ({{ __($plan['productUnit']['unitShortName']) }}) --}}
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-6">
                                                 <div class="form-group">
                                                     <label for="plannedQuantity">{{ __('Suggested') }}
                                                     </label>
@@ -85,7 +94,7 @@
                                             </div>
 
 
-                                            <div class="col-md-6">
+                                            <div class="col-6">
                                                 <div class="form-group">
                                                     <label for="approvedQuantity">{{ __('Order Qty') }}
                                                     </label>
@@ -96,7 +105,7 @@
                                                         name="approvedQuantity[]"
                                                         oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/^([0-9]*\.[0-9]{0,2}).*/,'$1');"
                                                         value="{{ $plan['approvedQuantity'] == null ? '' : $plan['approvedQuantity'] }}"
-                                                        {{ $plan['approveStatus'] == -1 ? 'readonly' : '' }}>
+                                                        {{ $plan['deliveryPlanDetailsStatusId'] == 3 ? 'readonly' : '' }}>
                                                 </div>
                                             </div>
                                         </div>
@@ -108,7 +117,7 @@
                                             <input type="text" class="sr-only" name="deliveryPlanDetailsId[]"
                                                 value="{{ $plan['deliveryPlanDetailsId'] }}">
 
-                                            <label for="approveStatus">{{ __('Status') }}
+                                            <label for="deliveryPlanDetailsStatusId">{{ __('Status') }}
                                             </label>
 
                                             <div class="switch-field">
@@ -117,14 +126,14 @@
                                                     id="radio-one{{ $plan['deliveryPlanDetailsId'] }}"
                                                     name="switch_one[][{{ $plan['deliveryPlanDetailsId'] }}]"
                                                     value="2"
-                                                    {{ $plan['approveStatus'] == 2 ? 'checked' : '' }} />
+                                                    {{ !in_array($plan['deliveryPlanDetailsStatusId'], [3]) ? 'checked' : '' }} />
                                                 <label
                                                     for="radio-one{{ $plan['deliveryPlanDetailsId'] }}">Approve</label>
                                                 <input type="radio" class="reject"
                                                     id="radio-two{{ $plan['deliveryPlanDetailsId'] }}"
                                                     name="switch_one[][{{ $plan['deliveryPlanDetailsId'] }}]"
-                                                    value="-1"
-                                                    {{ $plan['approveStatus'] == -1 ? 'checked' : '' }} />
+                                                    value="3"
+                                                    {{ $plan['deliveryPlanDetailsStatusId'] == 3 ? 'checked' : '' }} />
                                                 <label
                                                     for="radio-two{{ $plan['deliveryPlanDetailsId'] }}">Reject</label>
                                             </div>
@@ -152,9 +161,9 @@
                                         </div>
                                         <div class="col-12 mx-auto">
                                             <button type="submit"
-                                                class="submit btn btn-rounded animated-shine px-4"><span class="iconify"
-                                                    data-icon="mdi:content-save-all-outline" data-width="15"
-                                                    data-height="15"></span>
+                                                class="submit btn btn-rounded animated-shine px-4"><span
+                                                    class="iconify" data-icon="mdi:content-save-all-outline"
+                                                    data-width="15" data-height="15"></span>
                                                 {{ __('UPDATE APPROVE STATUS') }}</button>
 
                                         </div>
@@ -169,7 +178,7 @@
             </div>
 
         </form>
-        {{-- @dd($planDetails) --}}
+
     </div>
     <style>
         .switch-field {

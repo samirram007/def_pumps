@@ -1,5 +1,11 @@
 @extends('layouts.main')
 @section('content')
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('MAP_KEY') }}&callback=initMap" async defer></script>
+    <script>
+        async function initMap() {
+            return
+        }
+    </script>
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -37,7 +43,7 @@
 
             </div>
             <div class="reportPanel mt-3  ">
-                <table id="table" class="table   table-striped table-bordered   ">
+                <table id="table1" class="table   table-striped table-bordered   ">
                     <thead>
                         <tr>
                             <th>{{ __('Plan Name') }}</th>
@@ -84,7 +90,7 @@
             white-space: pre-wrap;
         }
 
-        #table td:nth-child(6) {
+        #table1 td:nth-child(6) {
             text-align: center;
         }
     </style>
@@ -99,16 +105,17 @@
                 );
             });
             let delivery_plans = @json($delivery_plans);
+            let isTopAdmin = false;
             delivery_plans = delivery_plans.filter(item => item.deliveryPlanStatusId != 5);
-            let view_url = `{{ route($routeRole . '.delivery_plan.view', ':id') }}`;
-            let edit_url = `{{ route($routeRole . '.delivery_plan.edit', ':id') }}`;
-            let delete_url = `{{ route($routeRole . '.delivery_plan.delete', ':id') }}`;
-            let approve_url = `{{ route($routeRole . '.delivery_plan.approve', ':id') }}`;
-            let receive_url = `{{ route($routeRole . '.delivery_plan.receive', ':id') }}`;
-            let status_change_url = `{{ route($routeRole . '.delivery_plan.status_change', ':id') }}`;
+            var view_url = `{{ route($routeRole . '.delivery_plan.view', ':id') }}`;
+            var edit_url = `{{ route($routeRole . '.delivery_plan.edit', ':id') }}`;
+            var delete_url = `{{ route($routeRole . '.delivery_plan.delete', ':id') }}`;
+            var approve_url = `{{ route($routeRole . '.delivery_plan.approve', ':id') }}`;
+            var receive_url = `{{ route($routeRole . '.delivery_plan.receive', ':id') }}`;
+            var status_change_url = `{{ route($routeRole . '.delivery_plan.status_change', ':id') }}`;
             var start = moment().subtract(6, 'days');
             var end = moment();
-            var listTable = $('#table').DataTable({
+            var listTable = $('#table1').DataTable({
                 responsive: true,
                 select: false,
                 paging: true,
@@ -156,11 +163,20 @@
                             let this_status = data.deliveryPlanStatus.deliveryPlanStatus;
                             // console.log(typeof(this_status));
                             // console.log(trans(this_status));
-                            if (data['deliveryPlanStatusId'] == 5) {
+
+                            if (data['deliveryPlanStatusId'] == 7) {
                                 var this_str = `<span class="text-danger">Cancelled</span><br/>`;
                                 return this_str;
                             }
-                            return `<div class=" text-break  text-info text-weight-bold">${this_status}</div>`;
+                            if ([2, 3, 4, 5, 6].includes(data['deliveryPlanStatusId'])) {
+                                return `<div class="  text-info text-weight-bold text-left">
+                                <a href="javascript:" data-param="${this_id}" data-url="${this_status_change_url}"
+                                title="{{ __('Change Status') }}"
+                                class="load-popup status_change     text-info p-2 ">
+                                <i class="fas fa-pencil-alt fa-circle m-0 "></i>
+                                ${this_status}</a>
+                                </div>`;
+                            }
                         }
                     },
                     {
@@ -171,21 +187,19 @@
                             let this_view_url = view_url.replace(':id', data['deliveryPlanId']);
                             let this_edit_url = edit_url.replace(':id', data['deliveryPlanId']);
                             let this_delete_url = delete_url.replace(':id', data['deliveryPlanId']);
-                            let this_approve_url = approve_url.replace(':id', data['deliveryPlanId']);
-                            let this_receive_url = receive_url.replace(':id', data['deliveryPlanId']);
+                            let this_approve_url = approve_url.replace(':id', data[
+                                'deliveryPlanId']);
+                            let this_receive_url = receive_url.replace(':id', data[
+                                'deliveryPlanId']);
                             let this_str = '';
-                            if (data['deliveryPlanStatusId'] === 2) {
-                                this_str += ` <a  href="javascript:" data-param=""
-                                                data-url="${this_approve_url}" title="{{ __('Approve Plan') }}"
+                            if ([2].includes(data['deliveryPlanStatusId'])) {
+                                this_str +=
+                                    ` <a  href="javascript:" data-param=""
+                                                data-url="${this_approve_url}" title="${data.deliveryPlanStatus.deliveryPlanStatus }"
                                                 class="load-popup   btn btn-rounded  animated-shine px-2  ">
-                                                <i class="fas fa-check"></i> {{ __('Approve') }} </a>`;
+                                                <i class="fa fa-pencil"></i>Approve</a>`;
                             }
-                            if (data['deliveryPlanStatusId'] === 3) {
-                                this_str += ` <a  href="javascript:" data-param=""
-                                                data-url="${this_receive_url}" title="{{ __('Receiveing') }}"
-                                                class="load-popup   btn btn-rounded  animated-shine px-2  ">
-                                                <i class="fa fa-download"></i> {{ __('Receiving') }} </a>`;
-                            }
+
 
 
 

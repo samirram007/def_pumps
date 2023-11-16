@@ -12,10 +12,7 @@
                 <div class="row mb-2 justify-content-between align-items-center">
                     <div class="col-md-8">
                         <h4 class="m-0   text-dark d-flex justify-content-start align-items-center gap-10">
-                            {{ __('Delivery plan') }}<a href="javascript:" id="requestFilter"
-                                onclick="toggleRequestPanel(this);" title="{{ __('Toggle Panel') }}"
-                                class=" toggle-1 d-none float-right btn btn-rounded animated-shine px-2    ">
-                                <i class="fa fa-eye"></i></a></h4>
+                            {{ __('Delivery plan') }}</h4>
                         <ol class="breadcrumb float-sm-left border-0 p-0 m-0">
                             <li class="breadcrumb-item "><a href="{{ route($routeRole . '.dashboard') }}"
                                     class="text-active">{{ __('Dashboard') }}</a></li>
@@ -30,6 +27,10 @@
                         </ol>
                     </div><!-- /.col -->
                     <div class="col-4 ">
+                        <a href="javascript:" id="requestFilter" onclick="toggleRequestPanel(this);"
+                            title="{{ __('Show/Hide Request Panel') }}"
+                            class=" toggle-1 d-none float-right btn btn-rounded animated-shine px-2    ">
+                            <i class="fa fa-eye"></i> {{ __('Show or Hide Request Panel') }}</a>
                         {{-- <a href="javascript:" onclick="toggleMapPanel(this);" title="{{ __('Map View') }}"
                             class="  float-right btn btn-rounded animated-shine px-2 mb-2 ">
                             <i class="fas fa-map"></i></a> --}}
@@ -175,7 +176,7 @@
                                             {{ __('load') }}</button> --}}
                                         <a href="javascript:" id="requestFilter" onclick="toggleRequestPanel(this);"
                                             title="{{ __('Toggle Panel') }}"
-                                            class="toggle-2 float-right btn btn-rounded animated-shine px-2 mb-2   ">
+                                            class="toggle-2 d-none float-right btn btn-rounded animated-shine px-2 mb-2   ">
                                             <i class="fa fa-eye"></i> Toggle Panel</a>
                                     </div>
 
@@ -310,6 +311,8 @@
     <script>
         const deliveryPlanId = {{ $deliveryPlanId }};
 
+        var isOptimize = true
+
         const delivery_details = @json($delivery_details);
 
         $("#requestForm").on("submit", function(event) {
@@ -353,7 +356,7 @@
 
                     $('#reportPanel').html(data.html);
                     setTimeout(() => {
-
+                        isOptimize = true
                         toastr.success(data.message);
                     }, 1000);
                     toggleRequestPanel();

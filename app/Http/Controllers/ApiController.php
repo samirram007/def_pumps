@@ -224,6 +224,14 @@ class ApiController extends Controller
 
         return $res;
     }
+    public static function CreateWizardOffice($data)
+    {
+        //dd(json_encode($data));
+        $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*"];
+        $res = Http::withHeaders($headers)->post(env('API_RESOURCE_URL') . 'Office/CreateOffice/', $data);
+
+        return $res;
+    }
     public static function UpdateOffice($data)
     {
         //dd(json_encode($data));
@@ -400,7 +408,7 @@ class ApiController extends Controller
     public static function SaveDocumentResource($lstFiles, $saveDocumentResourc)
     {
         if ($lstFiles != null) {
-           // dd($saveDocumentResourc);
+            // dd($saveDocumentResourc);
             $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "multipart/form-data",
                 "Content-Type" => "multipart/form-data; boundary=<calculated when request is sent>;  ",
                 "Content-Disposition" => "form-data; name=lstFiles; filename=lstFiles; ",
@@ -429,17 +437,17 @@ class ApiController extends Controller
     }
     public static function GetSalesIndexByDateOffice($fromDate, $toDate, $officeId, $status = null)
     {
-         //dd($fromDate );
+        //dd($fromDate );
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*"];
         if ($status == null) {
-            $strUrl=env('API_RESOURCE_URL') . 'Sales/GetByDateRangeOffice/' . $fromDate . '/' . $toDate . '/' . $officeId;
+            $strUrl = env('API_RESOURCE_URL') . 'Sales/GetByDateRangeOffice/' . $fromDate . '/' . $toDate . '/' . $officeId;
             //dd($strUrl);
             $res = Http::withHeaders($headers)->get($strUrl)->json();
-              //dd($res);
+            //dd($res);
         } else {
             $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'Sales/GetByDateRangeOfficeStatus/' . $fromDate . '/' . $toDate . '/' . $officeId . '/' . $status)->json();
         }
-       // dd($res);
+        // dd($res);
         return $res;
     }
     public static function GetExpenseIndexByDateOffice($fromDate, $toDate, $officeId)
@@ -671,7 +679,7 @@ class ApiController extends Controller
         //dd($data);
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*"];
         $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'PaymentMode/GetPaymentModeList')->json();
-       // dd($res);
+        // dd($res);
         return $res;
     }
     public static function GetFuelRate($id)

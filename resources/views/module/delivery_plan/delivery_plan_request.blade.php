@@ -492,6 +492,12 @@
         $("#formSavePlan").on("submit", function(event) {
 
             event.preventDefault();
+            if (!isOptimize) {
+                toastr.error("Route Optimization Required")
+                return
+
+
+            }
             //alert();
             // $.ajaxSetup({headers:{'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')}});
             let btnText = $('#save_plan').html();
@@ -529,7 +535,7 @@
             formData.append('data', JSON.stringify(data));
             formData.append('extraList', JSON.stringify(extraList));
 
-            // console.log(formData);
+            console.log(data);
             //return;reportPanel
 
 
@@ -691,7 +697,7 @@
         var response = @json($response);
 
 
-
+        isOptimize = true
         //  console.log(response.Routes.Algorithm_1.Route);
         var routeList = response.Routes.Algorithm_1.Route;
         var Total_distance = response.Routes.Algorithm_1.Total_distance;
@@ -780,6 +786,7 @@
         }
 
         function addNow(index) {
+
             //New Method
             // newList.splice(newList.length - 1, 0, extraList[index]);
             // reIndexList();
@@ -800,7 +807,8 @@
         }
 
         function updateRoute(element) {
-
+            isOptimize = true
+            TotalDistance = 0;
             let i_element = '';
             Object.values(element.childNodes).forEach(val => {
                 var tag = val.tagName;
@@ -839,6 +847,7 @@
             var str = '';
             var count = 0;
             var reqTotal = 0;
+            TotalDistance = 0;
             $.each(newList, function(index, value) {
                 if (value.atDeliveryRequirement > 0) {
 
@@ -885,6 +894,7 @@
             var str = '';
             var Qcount = 0;
             var QreqTotal = 0;
+            TotalDistance = 0;
             $.each(extraList, function(index, value) {
                 if (value.atDeliveryRequirement > 0) {
 
@@ -931,8 +941,10 @@
         }
 
         async function calculateSummary() {
+            isOptimize = false;
+            TotalDistance = 0;
 
-
+            // console.log('isOptimize:' + isOptimize);
             var addOne = newList.reduce(function(previousValue, currentValue) {
                 return {
                     officeId: previousValue.officeId + currentValue.officeId,
@@ -980,6 +992,7 @@
 
 
         function swapNow(index1, index2) {
+            isOptimize = false;
             modifiedOffice.push(newList[index1]['officeId']);
             modifiedOffice.push(newList[index2]['officeId']);
             newList = swap(newList, index1, index2);
@@ -987,7 +1000,7 @@
         }
 
         function swap(items, index1, index2) {
-
+            isOptimize = false;
             // index1 validity check
             if (index1 < 0 || index1 >= items.length)
                 return items;
@@ -1082,6 +1095,7 @@
                         var SubProp = ``;
                         if (data.hasOwnProperty('estimatedDeliveryTime')) {
                             TotalDistance += data.distance;
+                            // console.log(TotalDistance, data.distance);
                             SubProp = `      <div class="pl-2 text-primary"><small>Delivery at: <abbr title="attribute">${new Intl.DateTimeFormat('en-GB',options).format(Date.parse(data.estimatedDeliveryTime))}</abbr></small></div>
                                     <div class="pl-2 text-primary"><small>Distance(km) : <abbr title="attribute">${TotalDistance.toFixed(0)}(${data.distance.toFixed(0)}) </abbr></small></div>
                               `;
@@ -1121,7 +1135,7 @@
                         if (data.hasOwnProperty('DeliveryPlanId')) {
                             if (data.hasOwnProperty('ApprovedQuantity')) {
                                 //return data.ApprovedQuantity.toFixed(0);
-                                if (data.ApproveStatus == -1) {
+                                if (data.DeliveryPlanDetailsStatusId == 3) {
                                     return ` <div class="td_box d-flex align-items-center justify-content-center">` +
                                         `<label style="color:red;">X</label>`;
                                     `</div>`;
@@ -1145,7 +1159,7 @@
                         if (data.hasOwnProperty('DeliveryPlanId')) {
                             if (data.hasOwnProperty('ReceivedQuantity')) {
                                 // return data.ReceivedQuantity.toFixed(0);
-                                if (data.ApproveStatus == -1) {
+                                if (data.DeliveryPlanDetailsStatusId == 3) {
                                     return ` <div class="td_box d-flex align-items-center justify-content-center">` +
                                         `<label style="color:red;">X</label>`;
                                     `</div>`;
@@ -1171,10 +1185,10 @@
 
                         if (data.hasOwnProperty('DeliveryPlanId')) {
 
-                            if (data.hasOwnProperty('ApproveStatus')) {
+                            if (data.hasOwnProperty('DeliveryPlanDetailsStatusId')) {
 
 
-                                //   return data.ApproveStatus;
+                                //   return data.DeliveryPlanDetailsStatusId;
                                 let this_id = data.DeliveryPlanDetailsId;
                                 var DeliveryPlanStatusId = response.hasOwnProperty(
                                     'DeliveryPlan_statusId') ? response.DeliveryPlan_statusId : 0;
@@ -1182,114 +1196,51 @@
                                 let this_approval_url = approval_url.replace(':id', this_id);
                                 let this_receive_url = receive_url.replace(':id', this_id);
                                 var this_status =
-                                    ` <div class="td_box d-flex align-items-center justify-content-start">` +
-                                    `<a href="javascript:" data-param="${this_id}" data-url="${this_approval_url}"` +
-                                    `title="Approve Requirement"` +
-                                    `class="load-popup edit-quantity    text-info p-2 ">` +
-                                    `<i class="fas fa-pencil-alt fa-circle m-0 "></i></a>` +
-                                    `<a href="javascript:" ` +
-                                    `class="load-popup edit-quantity    text-secondary p-2 font-weight-bolder " ` +
-                                    `style="color:gray;" data-param="${this_id}" data-url="${this_approval_url}">` +
-                                    `<label >Waiting for approval</label>` +
-                                    `</a>` +
-                                    `</div>`;
+                                    ` <div class="td_box d-flex align-items-center justify-content-start">{{ __('Waiting for approval') }}</div>`;
 
-                                if (data.ApproveStatus == -1) {
+                                if (data.DeliveryPlanDetailsStatusId == 3) {
                                     this_status =
-                                        ` <div class="d-flex align-items-center justify-content-start">` +
-                                        `<label style="color:red;">Rejected</label>`;
-                                    `</div>`;
+                                        ` <div class="d-flex align-items-center justify-content-start"> {{ __('Rejected') }} </div>`;
                                 }
                                 if (DeliveryPlanStatusId == 1) {
-                                    if (data.ApproveStatus == -1) {
+                                    if (data.DeliveryPlanDetailsStatusId == 3) {
                                         this_status =
-                                            ` <div class="d-flex align-items-center justify-content-start">` +
-                                            `<a href="javascript:" ` +
-                                            `class="load-popup edit-quantity    text-success p-2 font-weight-bolder " ` +
-                                            `data-param="${this_id}" data-url="${this_approval_url}">` +
-                                            `<label style="color:red;">Rejected</label>` +
-                                            `</a>` + `</div>`;
-                                    } else if (data.ApproveStatus == 2) {
+                                            ` <div class="d-flex align-items-center justify-content-start">{{ __('Rejected') }}</div>`;
+                                    } else if (data.DeliveryPlanDetailsStatusId == 2) {
                                         this_status =
-                                            ` <div class="d-flex align-items-center justify-content-start">` +
-                                            `<a href="javascript:" data-param="${this_id}" data-url="${this_approval_url}"` +
-                                            `title="Approve Requirement"` +
-                                            `class="load-popup edit-quantity    text-info p-2 ">` +
-                                            `<i class="fas fa-pencil-alt fa-circle m-0 "></i></a>` +
-                                            `<a href="javascript:" ` +
-                                            `class="load-popup edit-quantity    text-success p-2 font-weight-bolder " ` +
-                                            `style="color:green;" data-param="${this_id}" data-url="${this_approval_url}">` +
-                                            `<label >${data.ApprovedQuantity} ltr  Order Placed</label>` +
-                                            `</a>` +
-
-                                            `</div>`;
-                                    } else if (data.ApproveStatus == 3) {
+                                            ` <div class="d-flex align-items-center justify-content-start">${data.ApprovedQuantity} ltr  Order Placed</div>`;
+                                    } else if (data.DeliveryPlanDetailsStatusId == 4) {
                                         this_status =
-                                            ` <div class="d-flex align-items-center justify-content-start">` +
-                                            `<a href="javascript:" ` +
-                                            `class="load-popup receive-quantity    text-success p-2 font-weight-bolder " ` +
-                                            `style="color:green;" data-param="${this_id}" data-url="${this_receive_url}">` +
-                                            `<label >${data.ReceivedQuantity} ltr  Received</label>` +
-                                            `</a>` + `</div>`;
+                                            ` <div class="d-flex align-items-center justify-content-start">${data.DeliveredQuantity} ltr  Delivered</div>`;
+                                    } else if (data.DeliveryPlanDetailsStatusId == 5) {
+                                        this_status =
+                                            ` <div class="d-flex align-items-center justify-content-start">${data.ReceivedQuantity} ltr  Received</div>`;
                                     }
                                 } else if (DeliveryPlanStatusId == 2) {
 
 
-                                    if (data.ApprovedQuantity > 0) {
-                                        // this_status =
-                                        //     ` <div class="d-flex align-items-center justify-content-start text-break text-success p-2 font-weight-bolder">` +
-                                        //     `<lavel>${ data.ApprovedQuantity }  Order Placed</lavel>` +
-                                        //     `</div>`;
-
+                                    if (data.DeliveryPlanDetailsStatusId == 2) {
                                         this_status =
-                                            ` <div class="td_box d-flex align-items-center justify-content-start">` +
-                                            `<a href="javascript:" data-param="${this_id}" data-url="${this_approval_url}"` +
-                                            `title="Order Placed"` +
-                                            `class="load-popup edit-quantity    text-info p-2 ">` +
-                                            `<i class="fas fa-pencil-alt fa-circle m-0 "></i></a>` +
-                                            `<a href="javascript:" ` +
-                                            `class="load-popup edit-quantity    text-secondary p-2 font-weight-bolder " ` +
-                                            `style="color:gray;" data-param="${this_id}" data-url="${this_approval_url}">` +
-                                            `<label >${ data.ApprovedQuantity } ltr  Order Placed</label>` +
-                                            `</a>` +
-                                            `</div>`;
+                                            `<div class="td_box d-flex align-items-center justify-content-start">${ data.ApprovedQuantity } ltr  Order Placed</div>`;
+                                    } else if (data.DeliveryPlanDetailsStatusId == 3) {
+                                        this_status =
+                                            `<div class="td_box d-flex align-items-center justify-content-start">{{ __('Rejected') }}</div>`;
                                     } else {
                                         this_status = this_status;
                                     }
 
 
                                 } else if (DeliveryPlanStatusId == 3) {
-                                    if (data.ApproveStatus == 2) {
+                                    if (data.DeliveryPlanDetailsStatusId == 2) {
                                         if (data.DeliveredQuantity > 0) {
                                             this_status =
-                                                ` <div class="d-flex align-items-center justify-content-start">` +
-                                                `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
-                                                `title="Delivered"` +
-                                                `class="load-popup receive-quantity   text-info p-2 ">` +
-                                                `<i class="fas fa-pencil-alt fa-circle m-0 "></i></a>` +
-                                                `<a href="javascript:" ` +
-                                                `class="load-popup receive-quantity    text-success p-2 font-weight-bolder " ` +
-                                                `style="color:green;" data-param="${this_id}" data-url="${this_receive_url}">` +
-                                                `<label >${data.DeliveredQuantity} ltr  Delivered</label>` +
-                                                `</a>` +
-                                                `</div>`;
+                                                ` <div class="d-flex align-items-center justify-content-start">${data.DeliveredQuantity} ltr  Delivered</div>`;
                                         } else {
                                             this_status =
-                                                ` <div class="d-flex align-items-center justify-content-start">` +
-                                                `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
-                                                `title="Receive` +
-                                                `class="load-popup receive-quantity   text-info p-2 ">` +
-                                                `<i class="fas fa-pencil-alt fa-circle m-0 "></i></a>` +
-                                                `<a href="javascript:" ` +
-                                                `class="load-popup receive-quantity    text-success p-2 font-weight-bolder " ` +
-                                                `style="color:green;" data-param="${this_id}" data-url="${this_receive_url}">` +
-                                                `<label >${data.ApprovedQuantity} ltr  Delivery on the way</label>` +
-                                                `</a>` +
-
-                                                `</div>`;
+                                                ` <div class="d-flex align-items-center justify-content-start">${data.ApprovedQuantity} ltr  In Transit</div>`;
                                         }
 
-                                    } else if (data.ApproveStatus == 3) {
+                                    } else if (data.DeliveryPlanDetailsStatusId == 5) {
                                         this_status =
                                             ` <div class="d-flex align-items-center justify-content-start">` +
                                             `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
@@ -1304,30 +1255,16 @@
 
                                             `</div>`;
                                     }
-                                } else if (DeliveryPlanStatusId == 4) {
-                                    if (data.ApproveStatus == 2) {
+                                } else if ([4, 5, 6].includes(DeliveryPlanStatusId)) {
+                                    if (data.DeliveryPlanDetailsStatusId == 2) {
                                         this_status =
-                                            ` <div class="d-flex align-items-center justify-content-start badge badge-primary  ">` +
-                                            `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
-                                            `title="Approve Requirement"` +
-                                            `class="load-popup receive-quantity  text-break  text-info p-2 ">` +
-                                            `<i class="fas fa-pencil-alt fa-circle m-0 "></i></a>` +
-                                            `<a href="javascript:" ` +
-                                            `class="load-popup receive-quantity  text-break  text-info p-2 font-weight-bolder " ` +
-                                            `style="color:orange;" data-param="${this_id}" data-url="${this_receive_url}">` +
-                                            `<label >${data.ApprovedQuantity} ltr  Receiving Pending</label>` +
-                                            `</a>` +
-
-
-                                            `</div>`;
-                                    } else if (data.ApproveStatus == 3) {
+                                            ` <div class="d-flex align-items-center justify-content-start badge badge-primary  ">${data.ApprovedQuantity} ltr  Receiving Pending</div>`;
+                                    } else if (data.DeliveryPlanDetailsStatusId == 5) {
                                         this_status =
-                                            ` <div class="d-flex align-items-center justify-content-start text-break">` +
-                                            `<label >${data.ReceivedQuantity} ltr  Received</label>` +
-                                            `</div>`;
+                                            ` <div class="d-flex align-items-center justify-content-start text-break">${data.ReceivedQuantity} ltr  Received</div>`;
                                     }
 
-                                } else if (DeliveryPlanStatusId == 5) {
+                                } else if (DeliveryPlanStatusId == 7) {
                                     this_status =
                                         `<label class="text-danger text-break">Cancelled</label> `;
 

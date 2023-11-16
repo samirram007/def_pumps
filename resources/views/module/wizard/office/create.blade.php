@@ -182,6 +182,10 @@
         opacity: 1;
     }
 </style>
+<div class="stepper bg-light  ">
+    @include('module.wizard.step_progressbar')
+</div>
+
 <form id="formCreate">
     @csrf
 
@@ -201,18 +205,18 @@
                 </div>
 
 
-                <div class=" col-md-8 px-0 ">
+                <div class=" col-12 px-0 ">
 
                     <div class="wizard-box scroll-box card card-primary   mr-md-2">
 
 
-                        <div class="card-body d-flex flex-column justify-content-between">
+                        <div class="card-body d-flex flex-column justify-content-start">
                             <div class="row pl-2 d-flex justify-content-start text-left h6">
                                 {{ __('General Information of new pump') }}
                             </div>
                             <div class="row ">
                                 @if (isset($masterOfficeList))
-                                    <div class="col-md-6 sr-only">
+                                    <div class="col-md-3 sr-only">
                                         <div class="form-group">
                                             <label for="masterOfficeId">{{ __('Parent Entity') }} <span
                                                     class="text text-danger  ">*</span> </label>
@@ -231,7 +235,7 @@
                                         value="{{ $masterOfficeId }}">
                                 @endif
 
-                                <div id="h-officeName" class="col-md-6">
+                                <div id="h-officeName" class="col-md-3">
                                     <div class="form-group">
 
                                         <label for="officeName">{{ __('Pump Name') }} <span
@@ -253,7 +257,7 @@
 
                                 </div>
 
-                                <div id="h-officeType" class="col-md-6">
+                                <div id="h-officeType" class="col-md-3">
                                     <div class="form-group">
                                         <label for="officeTypeId">{{ __('Business Entity Type') }}<span
                                                 class="text text-danger ">*</span></label>
@@ -272,7 +276,7 @@
 
 
 
-                                <div id="h-officeEmail" class="col-md-6">
+                                <div id="h-officeEmail" class="col-md-3">
                                     <div class="form-group">
                                         <label for="officeEmail">{{ __('Email') }}</label>
                                         <input type="email" class="form-control" id="officeEmail" name="officeEmail"
@@ -284,7 +288,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="h-officeContactNo" class="col-md-6">
+                                <div id="h-officeContactNo" class="col-md-3">
                                     <div class="form-group">
                                         <label for="officeContactNo">{{ __('Contact No') }}</label>
                                         <small id="officeContactNo-count-char"
@@ -301,7 +305,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="h-officeGstType" class="col-md-6">
+                                <div id="h-officeGstType" class="col-md-3">
                                     <div class="form-group">
                                         <label for="gstTypeId">{{ __('GST Type') }}</label>
 
@@ -319,7 +323,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="h-gstNumber" class="col-md-6">
+                                <div id="h-gstNumber" class="col-md-3">
                                     <div class="form-group">
                                         <label for="gstNumber">{{ __('GST No') }} <span class="text text-danger  "
                                                 id="gst_number_require"></span></label>
@@ -336,13 +340,13 @@
                                     </div>
                                 </div>
 
-                                <div id="h-officeRegisterAddress" class="col-md-12">
+                                <div id="h-officeRegisterAddress" class="col-md-6">
 
                                     <div class="form-group">
                                         <label
                                             for="registeredAddress">{{ __('Business Communication Address') }}</label>
 
-                                        <textarea class="form-control" rows="3" id="registeredAddress" name="registeredAddress"
+                                        <textarea class="form-control" rows="1" id="registeredAddress" name="registeredAddress"
                                             placeholder="{{ __('Business Communication Address') }}">{{ old('registeredAddress') }}</textarea>
                                         <div class="description">
                                             The official business address, which includes street address, city, state,
@@ -351,10 +355,8 @@
                                     </div>
 
                                 </div>
-                                <style>
 
-                                </style>
-                                <div id="h-officeAddress" class="col-md-12 ">
+                                <div id="h-officeAddress" class="col-md-6 ">
                                     <div class="form-group">
                                         <label for="officeAddress">{{ __('Pump Location (Google Search Address)') }}
                                         </label>
@@ -419,9 +421,30 @@
                             </div>
 
                         </div>
+                        <div class=" py-4 bg-white   ">
+                            <div class="row">
+                                <div class="col-md-4 offset-md-4">
+                                    <button type="submit" id="h-officeSave"
+                                        class=" submit btn   btn-rounded animated-shine  w-100 px-4">
+                                        {{ __('Save & Next') }}</button>
+
+                                </div>
+                                @if (!env('APP_DEBUG'))
+                                    <div class="col-md-4 offset-md-4">
+                                        <button type="button"
+                                            onclick="loadWizardGodown('3F6BBA8A-E944-4740-0B60-08DBA781DEDC')"
+                                            class="  btn btn-rounded animated-shine px-4">
+                                            {{ __('Test') }}</button>
+                                    </div>
+                                @endif
+                            </div>
+
+
+
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 d-none">
                     <div class="card btn-section row text-center border-top bg-white  pt-2 pb-4  ">
 
                         <div class="card-body d-flex flex-column justify-content-between">
@@ -452,12 +475,12 @@
                                 </div>
                                 <div class="form-group row">
 
-                                    <label for="price"
+                                    <label for="rate"
                                         class="col-sm-4 col-form-label text-left">{{ __('Price') }}
                                         <span class="text text-danger  ">*</span> </label>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control" id="price" name="price"
-                                            value="{{ old('price') }}" maxlength="50"
+                                        <input type="text" class="form-control" id="rate" name="rate"
+                                            value="{{ old('rate') }}" maxlength="50"
                                             placeholder="{{ __('Price') }}">
                                     </div>
 
@@ -502,7 +525,7 @@
 
                                 <button type="submit" id="h-officeSave"
                                     class=" submit btn   btn-rounded animated-shine-primary   px-4">
-                                    {{ __('Confirm as new pump') }}</button>
+                                    {{ __('Save') }}</button>
                                 @if (env('APP_DEBUG'))
                                     <button type="button"
                                         onclick="loadWizardGodown('3F6BBA8A-E944-4740-0B60-08DBA781DEDC')"
@@ -639,7 +662,7 @@
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> '
             );
 
-            const url = "{{ route($routeRole . '.office.store') }}";
+            const url = "{{ route($routeRole . '.wizard.office.store') }}";
             var serializeData = $(this).serialize();
 
 
@@ -667,7 +690,7 @@
                     loadWizardRate(data.officeId);
                     setTimeout(() => {
                         populateOffice();
-                    }, 1500);
+                    }, 100);
                     // location.reload();
                 }
             }).fail(function(data) {

@@ -1,46 +1,48 @@
-
-
 <div id="progressbar" class="progressbar">
-    {{-- <div class="progress-step progress-step-active" data-title="Pump Info"></div>
+    <div class="progress-step progress-step-active" data-title="Pump Info"></div>
     <div class="progress-step" data-title="Godown"></div>
     <div class="progress-step" data-title="Rate"></div>
     <div class="progress-step" data-title="Invoice No"></div>
-    <div class="progress-step" data-title="User"></div> --}}
+    <div class="progress-step" data-title="User"></div>
 
 </div>
 <script>
-
     //console.log(stepper);
-
-
-
 </script>
 
 <style>
     *,
     *::before,
-    *::after{
+    *::after {
         box-sizing: border-box;
     }
-    .stepper{
+
+    .stepper {
         /* width: clamp(320px,20%,430px); */
         width: 100%;
         margin: 0 auto;
         border: 1px solid #ccc;
         border-radius: 0.35rem;
-        padding: 1.5rem;
+        padding: 1.5rem 1rem;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     }
+
+    @media (max-width:480px) {
+        .stepper {
+            padding: 1.5rem 0;
+        }
+    }
+
     .progressbar {
-    position: relative;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    counter-reset: step;
-    margin: 0 1.5rem 1.5rem 1.5rem;
-}
-    .progressbar::before
-    {
+        position: relative;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        counter-reset: step;
+        margin: 0 1.5rem 1.5rem 1.5rem;
+    }
+
+    .progressbar::before {
         content: "";
         position: absolute;
         top: 50%;
@@ -51,7 +53,8 @@
         z-index: 1;
 
     }
-    .progress-step{
+
+    .progress-step {
         width: 2.1875rem;
         height: 2.1875rem;
         background-color: #dcdcdc;
@@ -62,39 +65,47 @@
         z-index: 2;
 
     }
-    .progress-step:hover{
+
+    .progress-step:hover {
         box-shadow: 0 0 5px 2px #3993dd99;
-        border:2px solid #ccc;
+        border: 2px solid #ccc;
         cursor: pointer;
         transition: 0.2s;
     }
-    .progress-step::before{
+
+    .progress-step::before {
         counter-increment: step;
-        content:counter(step);
+        content: counter(step);
         z-index: 3;
         color: #284cc0;
         font-size: 0.8rem;
     }
-    .progress-step::after{
+
+    .progress-step::after {
         content: attr(data-title);
         position: absolute;
         top: calc(100% + 0.5rem);
         font-size: 0.8rem;
         justify-content: center;
-        text-align:center;
+        text-align: center;
+        width: max-content;
 
     }
-    .progress-step-active{
+
+    .progress-step-active {
         background-color: #284cc0;
         color: #ccc;
     }
-    .progress-step-active:before{
+
+    .progress-step-active:before {
         color: #ccc;
     }
-    .progress-step-active:after{
+
+    .progress-step-active:after {
         color: #284cc0;
     }
-    .progress-step:hover{
+
+    .progress-step:hover {
         font-weight: bold;
         transition: 0.2s;
     }

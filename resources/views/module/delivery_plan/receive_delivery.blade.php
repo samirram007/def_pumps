@@ -1,92 +1,99 @@
-<div class="modal-dialog modal-lg  modal-dialog-centered mt-0 ">
+<div class="modal-dialog modal-xl  modal-dialog-top mt-4 ">
     <div class="modal-content bg-info">
-        <div class="modal-header">
-            <h4 class="modal-title text-light">{{ __('Order Receiving') }} </h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
-            </button>
-        </div>
+        @include('module.delivery_plan.receiving.delivery.top_header')
 
-        <div class="modal-body bg-light">
+        <div class="modal-body bg-light py-2">
             <div class="row">
-                <div class="col-md-6">
-                    {{ __('Pump') }}: <span class="font-weight-bold">{{ $planDetails['officeName'] }}</span>
-                </div>
-                <div class="col-md-6">
+                <div class="col-md-6 left-col">
+                    <div>
+                        {{ __('Pump') }}: <span class="font-weight-bold">{{ $planDetails['officeName'] }}</span>
+                    </div>
+                    <div>
 
-                    {{ __('Hub') }}: <span
-                        class="font-weight-bold">{{ $planDetails['startPoint']['hubName'] }}</span>
+                        {{ __('Hub') }}: <span
+                            class="font-weight-bold">{{ $planDetails['startPoint']['hubName'] }}</span>
+                    </div>
+                    <div>
+                        {{ __('Product') }}: <span
+                            class="font-weight-bold">{{ $planDetails['product']['productTypeName'] }}</span>
+                    </div>
+                    <div>
+                        @if ($planDetails['deliveryPlanDetailsStatusId'] == 5)
+                            {{ __('Received Quantity') }}: <span class="font-weight-bold"
+                                id="receivedQty">{{ $planDetails['receivedQuantity'] }}</span>
+                        @else
+                            @if ($planDetails['deliveredQuantity'] > 0)
+                                {{ __('Receiving Quantity') }}: <span class="font-weight-bold"
+                                    id="receivedQty">{{ $planDetails['deliveredQuantity'] }}</span>
+                            @else
+                                {{ __('Receiving Quantity') }}: <span class="font-weight-bold"
+                                    id="receivedQty">{{ $planDetails['approvedQuantity'] }}</span>
+                            @endif
+                        @endif
+                    </div>
+                    <div>
+                        {{-- {{ $planDetails['approveStatus'] }} --}}
+                        @if ($planDetails['deliveryPlanDetailsStatusId'] == 5)
+                            {{ __('Remaining Quantity') }}: <span class="font-weight-bold" id="remainingQty">0</span>
+                            <span class="sr-only" id="distributedQty">{{ $planDetails['receivedQuantity'] }}</span>
+                        @else
+                            @if ($planDetails['deliveredQuantity'] > 0)
+                                {{ __('Remaining Quantity') }}: <span class="font-weight-bold"
+                                    id="remainingQty">{{ $planDetails['deliveredQuantity'] }}</span>
+                            @else
+                                {{ __('Remaining Quantity') }}: <span class="font-weight-bold"
+                                    id="remainingQty">{{ $planDetails['approvedQuantity'] }}</span>
+                            @endif
+                            <span class="sr-only" id="distributedQty">0</span>
+                        @endif
+
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    {{ __('Plan Date') }}: <span
-                        class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails['deliveryPlan']['planDate'])) }}</span>
-                </div>
-                <div class="col-md-6">
-                    @if ($planDetails['deliveredQuantity'] > 0)
-                        {{ __('Delivery Date') }}: <span
-                            class="font-weight-bold">{{ date('d-M-Y H:i:s', strtotime($planDetails['deliveredAt'])) }}</span>
-                    @else
-                        {{ __('Delivery Date') }}: <span
-                            class="font-weight-bold">{{ date('d-M-Y H:i:s', strtotime($planDetails['expectedDeliveryTime'])) }}</span>
-                    @endif
-                </div>
-                <div class="col-md-6">
-                    {{ __('Product') }}: <span
-                        class="font-weight-bold">{{ $planDetails['product']['productTypeName'] }}</span>
-                </div>
-                <div class="col-md-6">
-                    @php
-                        $status = '<span class="font-weight-bold text-gray">Receive Confirmation Pending</span>';
-                        if ($planDetails['approveStatus'] == -1) {
-                            $status = '<span class="font-weight-bold text-danger">Rejected</span>';
-                        } elseif ($planDetails['approveStatus'] == 2) {
-                            if ($planDetails['deliveryPlan']['deliveryPlanStatusId'] == 2) {
-                                $status = '<span class="font-weight-bold text-success">Order Placed</span>';
-                            } elseif ($planDetails['deliveryPlan']['deliveryPlanStatusId'] == 3) {
-                                if ($planDetails['deliveredQuantity'] > 0) {
-                                    $status = '<span class="font-weight-bold text-success">Delivered</span>';
-                                } else {
-                                    $status = '<span class="font-weight-bold text-success">Delivery On The Way</span>';
+                <div class="col-md-6 right-col">
+                    <div>
+                        {{ __('Plan Date') }}: <span
+                            class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails['deliveryPlan']['planDate'])) }}</span>
+                    </div>
+
+
+                    <div>
+                        @if ($planDetails['deliveredQuantity'] > 0)
+                            {{ __('Delivery Date') }}: <span
+                                class="font-weight-bold">{{ date('d-M-Y H:i:s', strtotime($planDetails['deliveredAt'])) }}</span>
+                        @else
+                            {{ __('Delivery Date') }}: <span
+                                class="font-weight-bold">{{ date('d-M-Y H:i:s', strtotime($planDetails['expectedDeliveryTime'])) }}</span>
+                        @endif
+                    </div>
+                    <div>
+                        @php
+                            $status = '<span class="font-weight-bold text-gray">Receive Confirmation Pending</span>';
+                            if ($planDetails['deliveryPlanDetailsStatusId'] == 3) {
+                                $status = '<span class="font-weight-bold text-danger">Rejected</span>';
+                            } elseif ($planDetails['deliveryPlanDetailsStatusId'] == 2) {
+                                if ($planDetails['deliveryPlan']['deliveryPlanStatusId'] == 2) {
+                                    $status = '<span class="font-weight-bold text-success">Order Placed</span>';
+                                } elseif ($planDetails['deliveryPlan']['deliveryPlanStatusId'] == 3) {
+                                    if ($planDetails['deliveredQuantity'] > 0) {
+                                        $status = '<span class="font-weight-bold text-success">Delivered</span>';
+                                    } else {
+                                        $status = '<span class="font-weight-bold text-success">Delivery On The Way</span>';
+                                    }
                                 }
+                            } elseif ($planDetails['deliveryPlanDetailsStatusId'] == 5) {
+                                $status = '<span class="font-weight-bold text-success">Received</span>';
                             }
-                        } elseif ($planDetails['approveStatus'] == 3) {
-                            $status = '<span class="font-weight-bold text-success">Received</span>';
-                        }
 
-                    @endphp
-                    {{ __('Status') }}: {!! $status !!}
+                        @endphp
+                        {{ __('Status') }}: {!! $status !!}
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    @if ($planDetails['approveStatus'] == 3)
-                        {{ __('Received Quantity') }}: <span class="font-weight-bold"
-                            id="receivedQty">{{ $planDetails['receivedQuantity'] }}</span>
-                    @else
-                        @if ($planDetails['deliveredQuantity'] > 0)
-                            {{ __('Receiving Quantity') }}: <span class="font-weight-bold"
-                                id="receivedQty">{{ $planDetails['deliveredQuantity'] }}</span>
-                        @else
-                            {{ __('Receiving Quantity') }}: <span class="font-weight-bold"
-                                id="receivedQty">{{ $planDetails['approvedQuantity'] }}</span>
-                        @endif
-                    @endif
-                </div>
-                <div class="col-md-6">
-                    {{-- {{ $planDetails['approveStatus'] }} --}}
-                    @if ($planDetails['approveStatus'] == 3)
-                        {{ __('Remaining Quantity') }}: <span class="font-weight-bold" id="remainingQty">0</span>
-                        <span class="sr-only" id="distributedQty">{{ $planDetails['receivedQuantity'] }}</span>
-                    @else
-                        @if ($planDetails['deliveredQuantity'] > 0)
-                            {{ __('Remaining Quantity') }}: <span class="font-weight-bold"
-                                id="remainingQty">{{ $planDetails['deliveredQuantity'] }}</span>
-                        @else
-                            {{ __('Remaining Quantity') }}: <span class="font-weight-bold"
-                                id="remainingQty">{{ $planDetails['approvedQuantity'] }}</span>
-                        @endif
-                        <span class="sr-only" id="distributedQty">0</span>
-                    @endif
 
-                </div>
+
+
+
+
+
 
 
             </div>
@@ -200,33 +207,20 @@
                         <div class=" p-3 bg-white shadow min-h-100">
                             <div class="card">
                                 <div id="godownList" class=" godownList">
-                                    {{-- @dd($godowns[0]['godownProduct'] ) --}}
-                                    {{-- @foreach ($godowns[0]['godownProduct'] as $key => $godown)
-                                        <div id="godown{{ $godown['godownId'] }}"
-                                            data-godownid="{{ $godown['godownId'] }}" class="godown">
-                                            <div class="name">{{ $godown['godownName'] }}</div>
-                                            <div class="capacity">{{ __('Capacity') }}: {{ $godown['capacity'] }}
-                                            </div>
-                                            <div class="isReserver">{{ __('Reserver') }}: {{ $godown['isReserver'] }}
-                                            </div>
-                                            <div class="currentStock">
-                                                {{ __('Current') }}:{{ $godown['currentStock'] }}</div>
 
-
-                                        </div>
-                                    @endforeach --}}
                                 </div>
 
-                                <div class="row text-center mb-4 mt-4">
-                                    <div class="col-6 mx-auto">
+                                <div class="row text-center mb-4 mt-4 ">
+                                    <div class="pt-4 border-top border-info"></div>
+                                    <div class="offset-md-4 col-md-4 mx-auto ">
                                         <button type="submit"
-                                            class="submit btn btn-rounded animated-shine px-4 disabled" disabled><span
-                                                class="iconify" data-icon="mdi:content-save-all-outline"
+                                            class="submit w-100 btn btn-rounded animated-shine px-4 disabled"
+                                            disabled><span class="iconify" data-icon="mdi:content-save-all-outline"
                                                 data-width="15" data-height="15"></span>
                                             {{ __('Confirm') }}</button>
 
                                     </div>
-                                    <div class="col-6 mx-auto">
+                                    <div class="col-6 mx-auto d-none">
                                         {{-- <button type="button"
                                     class="reject btn btn-rounded animated-shine-danger px-4" >
                                     <i class="fa fa-ban"></i>
@@ -237,6 +231,34 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="rounded card p-3 bg-white shadow min-h-100">
+
+                            <div class="card card-primary">
+
+
+                                <div class="card-body">
+
+                                    <div class="row text-left">
+                                        <div class="col-12 d-flex">
+                                            <div>
+                                                <i class="fa fa-lightbulb-o fa-3x text-warning"></i>
+                                            </div>
+
+                                            <div style="font-size:1.0rem"
+                                                class="mt-2 pl-2 mb-4 panel panel-info    text-info  ">
+                                                <div> Click <i class=" fa fa-plus"></i> to fill the Tank</div>
+                                            </div>
+
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
                     </section>
                     <style scoped>
                         .godownList {
@@ -708,7 +730,7 @@
             }
 
         });
-        if(@json($next)){
+        if (@json($next)) {
             $('.next').trigger("click");
         }
         $("#formApprove").on("submit", function(event) {
@@ -718,7 +740,7 @@
                 return;
             }
             // console.log(parseFloat($('#approvedQuantity').val()) ,$('#plannedQuantity').val());
-            if (parseFloat($('#deliveredQuantity').val())>0) {
+            if (parseFloat($('#deliveredQuantity').val()) > 0) {
                 if (parseFloat($('#receivedQuantity').val()) > parseFloat($('#deliveredQuantity').val())) {
                     toastr.error("Maximum Qunatity exceed...");
                     $('#receivedQuantity').focus();

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Godown;
 use App\Models\Office;
 use App\Services\OfficeService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class WizardController extends Controller
 {
@@ -181,6 +183,79 @@ class WizardController extends Controller
             "html" => $GetView,
         ]);
     }
+
+    public function store_office(Request $request)
+    {
+        // validate the data
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'officeName' => 'required|max:255',
+            'masterOfficeId' => 'required',
+            'officeContactNo' => 'nullable|numeric|digits:10',
+            'officeEmail' => 'nullable|max:255|email',
+        ], [
+            'officeName.required' => 'Office Name is required',
+            'officeName.max' => 'Office Name is too long',
+            'masterOfficeId.required' => 'Master Office is required',
+        ])
+        ;
+        // process the data
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "errors" => $validator->errors(),
+            ]);
+        } else {
+            if ($request->input('gstTypeId') > 0) {
+                $validator = Validator::make($request->all(), [
+                    'gstNumber' => 'required|min:13|max:15',
+                ]);
+                if ($validator->fails()) {
+                    return response()->json([
+                        "status" => false,
+                        "errors" => $validator->errors(),
+                    ]);
+                }
+            }
+            // store the user
+            $data = [
+                'officeName' => base64_encode($request->input('officeName')),
+                'officeTypeId' => $request->input('officeTypeId'),
+                'masterOfficeId' => $request->input('masterOfficeId'),
+                'registeredAddress' => base64_encode($request->input('registeredAddress')),
+                'officeAddress' => base64_encode($request->input('officeAddress')),
+                'officeContactNo' => $request->input('officeContactNo'),
+                'officeEmail' => $request->input('officeEmail'),
+                'longitude' => $request->input('longitude'),
+                'latitude' => $request->input('latitude'),
+                'appName' => null,
+                'tagLine' => null,
+                'logo' => null,
+                'pin' => null,
+                'stateId' => 0,
+                'countryId' => null,
+                'gstNumber' => $request->input('gstNumber'),
+                'gstTypeId' => $request->input('gstTypeId'),
+                'panNumber' => null,
+                'isActive' => true,
+                'openingStock' => $request->input('openingStock'),
+                'rate' => $request->input('rate'),
+                'invoiceNo' => $request->input('invoiceNo'),
+            ];
+            //dd(json_encode($data));
+            // $response = ApiController::CreateOffice($data);
+            $response = ApiController::CreateWizardOffice($data);
+
+            return response()->json([
+                "status" => true,
+                "message" => "Office created successfully",
+                "officeId" => $response['id'],
+            ]);
+
+            //return redirect()->route('companyadmin.office.index')->with('success', 'Office created successfully');
+        }
+    }
+
     private function showOffice($id)
     {
 

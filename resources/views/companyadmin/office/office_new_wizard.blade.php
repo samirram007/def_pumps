@@ -1,4 +1,4 @@
-<div class="modal-dialog modal-lg  modal-dialog-centered mt-0">
+<div class="modal-dialog modal-xl  modal-dialog-top mt-4">
     <div class="modal-content bg-info">
         <div class="modal-header">
             <h4 class="modal-title text-light">{{ __('New Business Entity') }} </h4>

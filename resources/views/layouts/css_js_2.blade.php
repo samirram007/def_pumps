@@ -246,6 +246,30 @@
                 }
             })
         });
+
+        $(document).on('click', '.delete_remove', function(e) {
+            e.preventDefault();
+            var link = $(this).attr("href");
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Your action will cancel this plan forever, if you are sure plase click Confirm, if not Click Not Confirm!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm!',
+                cancelButtonText: 'Not Confirm!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = link
+                    Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                    )
+                }
+            })
+        });
     });
 </script>
 <script>
@@ -280,10 +304,10 @@
                 success: function(data) {
 
                     if (!data.error) {
-                        // console.log(window.atob(data['html']));
+                        e.target.innerHTML = thisHTML;
+                        e.target.style = "pointer-events: auto";
                         $("#modal-popup").html(window.atob(data['html']));
-                        // $("#modal-popup").modal('show');
-                        //increase modal height 0 to 100 % animated
+
                         var init_height = 0;
 
                         var interval = setInterval(() => {
@@ -299,25 +323,36 @@
                         }, 50);
 
                     } else {
-
+                        e.target.innerHTML = thisHTML;
+                        e.target.style = "pointer-events: auto";
                     }
 
 
                 },
                 error: function(xhr, status, error) {
-
+                    e.target.innerHTML = thisHTML;
+                    e.target.style = "pointer-events: auto";
 
                 }
 
             });
 
         });
-        $(document).on("click", ".load-popup", function(e) {
 
-            var param = $(this).data('param');
-            var url = $(this).data('url');
-            var size = $(this).data('size');
+        $(document).on("click", ".load-popup-back", function(e) {
+            thisHTML = e.target.innerHTML;
+            //console.log(thisHTML);
+            var spinner =
+                `<span class="spinner-border spinner-border-sm text-light" role="status" aria-hidden="true"></span> `
+            e.target.innerHTML = spinner;
+            e.target.style = "pointer-events: none";
 
+            var deliveryPlanId = $(this).data('param');
+            let url = `{{ route('companyadmin.delivery_plan.status_change', ':id') }}`;
+            url = url.replace(':id', deliveryPlanId);
+            console.log(url);
+            let param = '';
+            let size = '';
             $.ajax({
                 url: url,
                 type: "get",
@@ -333,6 +368,8 @@
                 success: function(data) {
 
                     if (!data.error) {
+                        e.target.innerHTML = thisHTML;
+                        e.target.style = "pointer-events: auto";
                         $("#modal-popup").html(data['html']);
                         // $("#modal-popup").modal('show');
                         //increase modal height 0 to 100 % animated
@@ -352,26 +389,31 @@
 
                     } else {
 
+                        toastr.error("Something went wrong, please try again")
                     }
 
 
                 },
                 error: function(xhr, status, error) {
-
-
+                    e.target.innerHTML = thisHTML;
+                    e.target.style = "pointer-events: auto";
+                    toastr.error("Something went wrong, please try again")
                 }
 
             });
-
         });
-
-
-        $(document).on("click", ".load-wizard", function(e) {
+        $(document).on("click", ".load-popup", function(e) {
+            var thisHTML = e.target.innerHTML;
+            //console.log(thisHTML);
+            var spinner =
+                `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> `
+            e.target.innerHTML = spinner;
+            e.target.style = "pointer-events: none";
 
             var param = $(this).data('param');
             var url = $(this).data('url');
             var size = $(this).data('size');
-                // console.log(url);
+
             $.ajax({
                 url: url,
                 type: "get",
@@ -385,8 +427,73 @@
                     'size': size
                 },
                 success: function(data) {
-                    // $("#modal-wizard").modal('show');
-                    // $("#modal-wizard").css('opacity', 1);
+                    //console.log(thisHTML);
+                    e.target.innerHTML = thisHTML;
+                    e.target.style = "pointer-events: auto";
+                    if (!data.error) {
+
+                        $("#modal-popup").html(data['html']);
+                        // $("#modal-popup").modal('show');
+                        //increase modal height 0 to 100 % animated
+                        var init_height = 0;
+
+                        var interval = setInterval(() => {
+                            init_height = (init_height + 0.2);
+                            $("#modal-popup").css('opacity', init_height);
+                            $("#modal-popup").modal('show');
+
+                            if (init_height >= 1) {
+                                clearInterval(interval);
+
+                            }
+
+                        }, 50);
+
+                    } else {
+                        e.target.innerHTML = thisHTML;
+                        e.target.style = "pointer-events: auto";
+                        toastr.error("Something went wrong, please try again")
+                    }
+
+
+                },
+                error: function(xhr, status, error) {
+                    e.target.innerHTML = thisHTML;
+                    e.target.style = "pointer-events: auto";
+                    toastr.error("Something went wrong, please try again")
+                }
+
+            });
+
+        });
+
+
+        $(document).on("click", ".load-wizard", function(e) {
+            var thisHTML = e.target.innerHTML;
+            //console.log(thisHTML);
+            var spinner =
+                `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> `
+            e.target.innerHTML = spinner;
+            e.target.style = "pointer-events: none";
+            var param = $(this).data('param');
+            var url = $(this).data('url');
+            var size = $(this).data('size');
+            // console.log(url);
+            $.ajax({
+                url: url,
+                type: "get",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    'param': param,
+                    'size': size
+                },
+                success: function(data) {
+                    e.target.innerHTML = thisHTML;
+                    e.target.style = "pointer-events: auto";
                     if (!data.error) {
                         $("#modal-wizard").html(data['html']);
                         // $("#modal-wizard").modal('show');
@@ -406,13 +513,17 @@
                         }, 50);
 
                     } else {
-
+                        e.target.innerHTML = thisHTML;
+                        e.target.style = "pointer-events: auto";
+                        toastr.error("Something went wrong, please try again")
                     }
 
 
                 },
                 error: function(xhr, status, error) {
-
+                    e.target.innerHTML = thisHTML;
+                    e.target.style = "pointer-events: auto";
+                    toastr.error("Something went wrong, please try again")
 
                 }
 

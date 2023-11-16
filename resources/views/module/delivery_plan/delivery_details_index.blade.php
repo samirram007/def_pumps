@@ -6,7 +6,7 @@
             <div class="container-fluid">
                 <div class="row mb-2 justify-content-between align-items-center">
                     <div class="col-sm-6">
-                    {{-- individual company admin --}}
+                        {{-- individual company admin --}}
                         <h4 class="m-0 text-dark"> {{ __('Order Processing') }} </h4>
                         <ol class="breadcrumb float-sm-left border-0 p-0 m-0">
                             <li class="breadcrumb-item "><a href="{{ route($routeRole . '.dashboard') }}"
@@ -86,33 +86,40 @@
         #tableDetails {
             width: 100% !important;
         }
-        #table_wrapper.form-inline, #tableDetails_wrapper.form-inline, #table1_wrapper.form-inline, #table2_wrapper.form-inline {
-    display: flex;
-    flex-flow: column wrap;
-    align-items: stretch;
-}
+
+        #table_wrapper.form-inline,
+        #tableDetails_wrapper.form-inline,
+        #table1_wrapper.form-inline,
+        #table2_wrapper.form-inline {
+            display: flex;
+            flex-flow: column wrap;
+            align-items: stretch;
+        }
+
         #tableDetails td:first-child {
             max-width: 30rem;
-            font-weight:bold;
+            font-weight: bold;
             font-size: 0.9rem;
             white-space: nowrap;
             text-overflow: ellipsis;
             word-break: break-all;
             overflow: hidden;
         }
+
         #tableDetails td:nth-child(2) {
             text-align: center;
         }
-        @media screen and (max-width:480px){
+
+        @media screen and (max-width:480px) {
             #tableDetails td:first-child {
-            max-width: 20rem;
-            font-size: 0.7rem;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            word-break: break-all;
-            overflow: hidden;
-            padding-block: 0.5rem;
-        }
+                max-width: 20rem;
+                font-size: 0.7rem;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                word-break: break-all;
+                overflow: hidden;
+                padding-block: 0.5rem;
+            }
         }
     </style>
     <script type="text/javascript" src="{{ asset('datetime/moment.min.js') }}"></script>
@@ -175,7 +182,7 @@
                     {
                         "data": null,
                         "render": function(data, type, full, meta) {
-                            if (data['approveStatus'] == -1) {
+                            if (data['deliveryPlanDetailsStatusId'] == 3) {
                                 return ` <div class="d-flex align-items-center justify-content-center">` +
                                     `<label style="color:red;">X</label>`;
                                 `</div>`;
@@ -191,12 +198,13 @@
                     {
                         "data": null,
                         "render": function(data, type, full, meta) {
-                            if (data['approveStatus'] == -1) {
+                            if (data['deliveryPlanDetailsStatusId'] == 3) {
                                 return ` <div class="d-flex align-items-center justify-content-center">` +
                                     `<label style="color:red;">X</label>`;
                                 `</div>`;
                             }
-                            if (data['deliveredQuantity'] == 0 || data['deliveredQuantity'] == null) {
+                            if (data['deliveredQuantity'] == 0 || data['deliveredQuantity'] ==
+                                null) {
                                 return ``;
                             }
                             return ` <div class="d-flex align-items-center justify-content-center">` +
@@ -207,7 +215,7 @@
                     {
                         "data": null,
                         "render": function(data, type, full, meta) {
-                            if (data['approveStatus'] == -1) {
+                            if (data['deliveryPlanDetailsStatusId'] == 3) {
                                 return ` <div class="d-flex align-items-center justify-content-center">` +
                                     `<label style="color:red;">X</label>`;
                                 `</div>`;
@@ -241,14 +249,14 @@
                                 `class="load-popup edit-quantity    text-info p-2 ">` +
                                 `<i class="fas fa-pencil-alt m-0 "></i></a>` +
                                 `</div>`;
-                            if (data['approveStatus'] == -1) {
+                            if (data['deliveryPlanDetailsStatusId'] == 3) {
                                 this_status =
                                     ` <div class="d-flex align-items-center justify-content-center">` +
                                     `<label style="color:red;">Rejected</label>`;
                                 `</div>`;
                             }
                             if (data['deliveryPlan']['deliveryPlanStatusId'] == 1) {
-                                if (data['approveStatus'] == -1) {
+                                if (data['deliveryPlanDetailsStatusId'] == 3) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
@@ -256,7 +264,7 @@
                                         `data-param="${this_id}" data-url="${this_approval_url}">` +
                                         `<label style="color:red;">Rejected</label>` +
                                         `</a>` + `</div>`;
-                                } else if (data['approveStatus'] == 2) {
+                                } else if (data['deliveryPlanDetailsStatusId'] == 2) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
@@ -269,7 +277,7 @@
                                         `class="load-popup edit-quantity    text-info p-2 ">` +
                                         `<i class="fas fa-pencil-alt m-0 "></i></a>` +
                                         `</div>`;
-                                } else if (data['approveStatus'] == 3) {
+                                } else if (data['deliveryPlanDetailsStatusId'] == 5) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
@@ -280,12 +288,12 @@
                                 }
                             }
                             if (data['deliveryPlan']['deliveryPlanStatusId'] == 2) {
-                                if (data['approveStatus'] == 2) {
+                                if (data['deliveryPlanDetailsStatusId'] == 2) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center text-break">` +
                                         `<lavel class="text-info font-weight-bold text-sm ">${ data['approvedQuantity'] } ${ data['productUnit']['unitShortName'] } Order Under Processing</lavel>` +
                                         `</div>`;
-                                } else if (data['approveStatus'] == 3) {
+                                } else if (data['deliveryPlanDetailsStatusId'] == 5) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
@@ -300,7 +308,7 @@
                                         `</div>`;
                                 }
                             } else if (data['deliveryPlan']['deliveryPlanStatusId'] == 3) {
-                                if (data['approveStatus'] == 2) {
+                                if (data['deliveryPlanDetailsStatusId'] == 2) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
@@ -309,11 +317,11 @@
                                         `<label >${data['approvedQuantity']} ${ data['productUnit']['unitShortName'] } Delivery on the way</label>` +
                                         `</a>` +
                                         `<a href="javascript:" data-param="${this_id}" data-url="${this_receive_url}"` +
-                                        `title="Approve Requirement"` +
+                                        `title="Approve Order"` +
                                         `class="load-popup receive-quantity   text-info p-2 ">` +
                                         `<i class="fas fa-pencil-alt m-0 "></i></a>` +
                                         `</div>`;
-                                } else if (data['approveStatus'] == 3) {
+                                } else if (data['deliveryPlanDetailsStatusId'] == 5) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
@@ -328,7 +336,7 @@
                                         `</div>`;
                                 }
                             } else if (data['deliveryPlan']['deliveryPlanStatusId'] == 4) {
-                                if (data['approveStatus'] == 2) {
+                                if (data['deliveryPlanDetailsStatusId'] == 2) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
@@ -342,7 +350,7 @@
                                         `<i class="fas fa-pencil-alt m-0 "></i></a>` +
 
                                         `</div>`;
-                                } else if (data['approveStatus'] == 3) {
+                                } else if (data['deliveryPlanDetailsStatusId'] == 5) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center text-break">` +
                                         `<label >${data['receivedQuantity']} ${ data['productUnit']['unitShortName'] } Received</label>` +

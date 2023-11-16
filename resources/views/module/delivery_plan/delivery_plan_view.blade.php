@@ -87,36 +87,44 @@
         #table th:first-child {
             text-align: center;
         }
+
         #tableDetails {
             width: 100% !important;
         }
-        #table_wrapper.form-inline, #tableDetails_wrapper.form-inline, #table1_wrapper.form-inline, #table2_wrapper.form-inline {
-    display: flex;
-    flex-flow: column wrap;
-    align-items: stretch;
-}
+
+        #table_wrapper.form-inline,
+        #tableDetails_wrapper.form-inline,
+        #table1_wrapper.form-inline,
+        #table2_wrapper.form-inline {
+            display: flex;
+            flex-flow: column wrap;
+            align-items: stretch;
+        }
+
         #tableDetails td:first-child {
             max-width: 30rem;
-            font-weight:bold;
+            font-weight: bold;
             font-size: 0.9rem;
             white-space: nowrap;
             text-overflow: ellipsis;
             word-break: break-all;
             overflow: hidden;
         }
+
         #tableDetails td:nth-child(2) {
             text-align: center;
         }
-        @media screen and (max-width:480px){
+
+        @media screen and (max-width:480px) {
             #tableDetails td:first-child {
-            max-width: 20rem;
-            font-size: 0.7rem;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            word-break: break-all;
-            overflow: hidden;
-            padding-block: 0.5rem;
-        }
+                max-width: 20rem;
+                font-size: 0.7rem;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                word-break: break-all;
+                overflow: hidden;
+                padding-block: 0.5rem;
+            }
         }
     </style>
 
@@ -140,8 +148,7 @@
                 info: false,
                 "oLanguage": langOpt,
                 data: delivery_details,
-                columns: [
-                    {
+                columns: [{
                         "data": null,
                         "render": function(data, type, full, meta) {
                             return data['deliveryPlan']['planTitle'];
@@ -179,7 +186,7 @@
                     {
                         "data": null,
                         "render": function(data, type, full, meta) {
-                            if (data['approveStatus'] == -1) {
+                            if (data['deliveryPlanDetailsStatusId'] == 3) {
                                 return ` <div class="d-flex align-items-center justify-content-center">` +
                                     `<label style="color:red;">X</label>`;
                                 `</div>`;
@@ -195,7 +202,7 @@
                     {
                         "data": null,
                         "render": function(data, type, full, meta) {
-                            if (data['approveStatus'] == -1) {
+                            if (data['deliveryPlanDetailsStatusId'] == 3) {
                                 return ` <div class="d-flex align-items-center justify-content-center">` +
                                     `<label style="color:red;">X</label>`;
                                 `</div>`;
@@ -218,33 +225,33 @@
                             let this_approval_url = approval_url.replace(':id', this_id);
                             let this_receive_url = receive_url.replace(':id', this_id);
                             var this_status =
-                            ` <div class="d-flex align-items-center justify-content-center">` +
-                                        `<a href="javascript:" ` +
-                                        `class="load-popup edit-quantity    text-secondary p-2 font-weight-bolder " ` +
-                                        `style="color:gray;" data-param="${this_id}" data-url="${this_approval_url}">` +
-                                        `<label >Waiting for approval</label>` +
-                                        `</a>` +
-                                        `<a href="javascript:" data-param="${this_id}" data-url="${this_approval_url}"` +
-                                        `title="Approve Requirement"` +
-                                        `class="load-popup edit-quantity    text-info p-2 ">` +
-                                        `<i class="fas fa-pencil-alt m-0 "></i></a>` +
-                                        `</div>`;
-                            if (data['approveStatus'] == -1) {
+                                ` <div class="d-flex align-items-center justify-content-center">` +
+                                `<a href="javascript:" ` +
+                                `class="load-popup edit-quantity    text-secondary p-2 font-weight-bolder " ` +
+                                `style="color:gray;" data-param="${this_id}" data-url="${this_approval_url}">` +
+                                `<label >Waiting for approval</label>` +
+                                `</a>` +
+                                `<a href="javascript:" data-param="${this_id}" data-url="${this_approval_url}"` +
+                                `title="Approve Requirement"` +
+                                `class="load-popup edit-quantity    text-info p-2 ">` +
+                                `<i class="fas fa-pencil-alt m-0 "></i></a>` +
+                                `</div>`;
+                            if (data['deliveryPlanDetailsStatusId'] == 3) {
                                 this_status =
                                     ` <div class="d-flex align-items-center justify-content-center">` +
                                     `<label style="color:red;">Rejected</label>`;
                                 `</div>`;
                             }
                             if (data['deliveryPlan']['deliveryPlanStatusId'] == 1) {
-                                if (data['approveStatus'] == -1) {
+                                if (data['deliveryPlanDetailsStatusId'] == 3) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
                                         `class="load-popup edit-quantity    text-success p-2 font-weight-bolder " ` +
                                         `data-param="${this_id}" data-url="${this_approval_url}">` +
                                         `<label style="color:red;">Rejected</label>` +
-                                        `</a>`+`</div>`;
-                                } else if (data['approveStatus'] == 2) {
+                                        `</a>` + `</div>`;
+                                } else if (data['deliveryPlanDetailsStatusId'] == 2) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
@@ -257,7 +264,7 @@
                                         `class="load-popup edit-quantity    text-info p-2 ">` +
                                         `<i class="fas fa-pencil-alt m-0 "></i></a>` +
                                         `</div>`;
-                                } else if (data['approveStatus'] == 3) {
+                                } else if (data['deliveryPlanDetailsStatusId'] == 5) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
@@ -268,12 +275,12 @@
                                 }
                             }
                             if (data['deliveryPlan']['deliveryPlanStatusId'] == 2) {
-                                if (data['approveStatus'] == 2) {
+                                if (data['deliveryPlanDetailsStatusId'] == 2) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center text-break text-success p-2 font-weight-bolder">` +
                                         `<lavel>${ data['approvedQuantity'] } ${ data['productUnit']['unitShortName'] } Order Under Processing</lavel>` +
                                         `</div>`;
-                                } else if (data['approveStatus'] == 3) {
+                                } else if (data['deliveryPlanDetailsStatusId'] == 5) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
@@ -288,7 +295,7 @@
                                         `</div>`;
                                 }
                             } else if (data['deliveryPlan']['deliveryPlanStatusId'] == 3) {
-                                if (data['approveStatus'] == 2) {
+                                if (data['deliveryPlanDetailsStatusId'] == 2) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
@@ -301,7 +308,7 @@
                                         `class="load-popup receive-quantity   text-info p-2 ">` +
                                         `<i class="fas fa-pencil-alt m-0 "></i></a>` +
                                         `</div>`;
-                                } else if (data['approveStatus'] == 3) {
+                                } else if (data['deliveryPlanDetailsStatusId'] == 5) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
@@ -316,7 +323,7 @@
                                         `</div>`;
                                 }
                             } else if (data['deliveryPlan']['deliveryPlanStatusId'] == 4) {
-                                if (data['approveStatus'] == 2) {
+                                if (data['deliveryPlanDetailsStatusId'] == 2) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center">` +
                                         `<a href="javascript:" ` +
@@ -330,7 +337,7 @@
                                         `<i class="fas fa-pencil-alt m-0 "></i></a>` +
 
                                         `</div>`;
-                                } else if (data['approveStatus'] == 3) {
+                                } else if (data['deliveryPlanDetailsStatusId'] == 5) {
                                     this_status =
                                         ` <div class="d-flex align-items-center justify-content-center text-break">` +
                                         `<label >${data['receivedQuantity']} ${ data['productUnit']['unitShortName'] } Received</label>` +

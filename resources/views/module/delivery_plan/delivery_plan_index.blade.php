@@ -1,5 +1,11 @@
 @extends('layouts.main')
 @section('content')
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('MAP_KEY') }}&callback=initMap" async defer></script>
+    <script>
+        async function initMap() {
+            return
+        }
+    </script>
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -37,7 +43,7 @@
 
             </div>
             <div class="reportPanel mt-3  ">
-                <table id="table" class="table   table-striped table-bordered   ">
+                <table id="table1" class="table   table-striped table-bordered   ">
                     <thead>
                         <tr>
                             <th>{{ __('Plan Name') }}</th>
@@ -56,7 +62,29 @@
 
                 </table>
                 <div class="row px-4">
-                    <div>NODP: Number of Delivery Point</div>
+                    <div class="card card-primary position-relative">
+                        <div class='icon_info'>
+                            <i class="fa fa-info-circle fa-2x text-info rounded-circle"></i>
+                        </div>
+
+                        <div class="card-body">
+
+                            <div class="row text-left">
+                                <div class="col-12 d-flex">
+
+
+                                    <div style="font-size:1.0rem" class="mt-2 pl-2 mb-4 panel panel-info    text-info  ">
+                                        <div>NODP: Number of Delivery Point</div>
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -89,13 +117,13 @@
             white-space: pre-wrap;
         }
 
-        #table td:nth-child(5),
-        #table th:nth-child(5) {
+        #table1 td:nth-child(5),
+        #table1 th:nth-child(5) {
             text-align: center;
         }
 
-        #table td:nth-child(6),
-        #table th:nth-child(6) {
+        #table1 td:nth-child(6),
+        #table1 th:nth-child(6) {
             text-align: left;
         }
 
@@ -123,8 +151,6 @@
             transition: rotate 1s ease-in-out;
         }
     </style>
-@endsection
-@push('script')
     <script>
         $(document).ready(function() {
 
@@ -134,7 +160,8 @@
                 );
             });
             let delivery_plans = @json($delivery_plans);
-            delivery_plans = delivery_plans.filter(item => item.deliveryPlanStatusId != 5);
+            delivery_plans = delivery_plans.filter(item => item.deliveryPlanStatusId != 7);
+            // console.log(delivery_plans);
             let view_url = `{{ route($routeRole . '.delivery_plan.view', ':id') }}`;
             let edit_url = `{{ route($routeRole . '.delivery_plan.edit', ':id') }}`;
             let delete_url = `{{ route($routeRole . '.delivery_plan.delete', ':id') }}`;
@@ -142,7 +169,7 @@
             let driver_url = `{{ route($routeRole . '.delivery_plan.driver', ':id') }}`;
             var start = moment().subtract(6, 'days');
             var end = moment();
-            var listTable = $('#table').DataTable({
+            var listTable = $('#table1').DataTable({
                 responsive: true,
                 select: false,
                 paging: true,
@@ -192,15 +219,15 @@
                                 'deliveryPlanId']);
                             if (data.driver == null) {
                                 return `<div class="  text-left   text-info text-weight-bold">
-                                    <a href="javascript:"  data-param="${this_id}" data-url="${this_driver_url}"  title="{{ __('Assign Driver') }}" class="load-popup status_change    text-info p-2 ">Assign Driver</a>
-                                </div>`;
+                                        <a href="javascript:"  data-param="${this_id}" data-url="${this_driver_url}"  title="{{ __('Assign Driver') }}" class="load-popup status_change    text-info p-2 ">Assign Driver</a>
+                                    </div>`;
                             } else {
                                 return `<div class="   text-left   text-info text-weight-bold">
-                                    <a href="javascript:"  data-param="${this_id}" data-url="${this_driver_url}"  title="{{ __('Chnage Driver') }}" class="load-popup status_change     text-info p-2 ">
-                                        ${data.driver.driverName}<div class="pl-2 small text-gray">${data.driver.contactNumber}</div>
-                                        </a>
+                                        <a href="javascript:"  data-param="${this_id}" data-url="${this_driver_url}"  title="{{ __('Chnage Driver') }}" class="load-popup status_change     text-info p-2 ">
+                                            ${data.driver.driverName}<div class="pl-2 small text-gray">${data.driver.contactNumber}</div>
+                                            </a>
 
-                                </div>`;
+                                    </div>`;
                             }
 
                         }
@@ -221,17 +248,17 @@
                             let this_status = data.deliveryPlanStatus.deliveryPlanStatus;
                             // console.log(typeof(this_status));
                             // console.log(trans(this_status));
-                            if (data['deliveryPlanStatusId'] == 5) {
+                            if (data['deliveryPlanStatusId'] == 7) {
                                 var this_str = `<span class="text-danger">Cancelled</span><br/>`;
                                 return this_str;
                             }
                             return `<div class="  text-info text-weight-bold text-left">
-                                <a href="javascript:" data-param="${this_id}" data-url="${this_status_change_url}"
-                                title="{{ __('Change Status') }}"
-                                class="load-popup status_change     text-info p-2 ">
-                                <i class="fas fa-pencil-alt fa-circle m-0 "></i>
-                                ${this_status}</a>
-                                </div>`;
+                                    <a href="javascript:" data-param="${this_id}" data-url="${this_status_change_url}"
+                                    title="{{ __('Change Status') }}"
+                                    class="load-popup status_change     text-info p-2 ">
+                                    <i class="fas fa-eye fa-circle fa-5x m-0 "></i>
+                                    ${this_status}</a>
+                                    </div>`;
                         }
                     },
                     {
@@ -243,17 +270,18 @@
                             let this_edit_url = edit_url.replace(':id', data['deliveryPlanId']);
                             let this_delete_url = delete_url.replace(':id', data['deliveryPlanId']);
                             let this_str = '';
-                            if (data['deliveryPlanStatusId'] != 5) {
+                            if (data['deliveryPlanStatusId'] != 7 && data['deliveryPlanStatusId'] <
+                                3) {
                                 this_str += ` <a href="${this_edit_url}"` +
                                     ` title="{{ __('Edit Plan') }}" ` +
                                     `class="   btn btn-rounded  animated-shine px-2  ">` +
                                     `<i class="fas fa-pencil-alt"></i> {{ __('Edit') }} </a>`;
                             }
 
-                            if (data['deliveryPlanStatusId'] < 4) {
+                            if (data['deliveryPlanStatusId'] < 3) {
                                 this_str += ` <a href="${this_delete_url}"` +
-                                    `title="{{ __('Delete') }}" class="delete  btn btn-rounded animated-shine-danger   ">` +
-                                    `<i class="fa fa-trash m-0 "></i> {{ __('Cancel') }} </a>`;
+                                    `title="{{ __('Remove this plan') }}" class="delete_remove  btn btn-rounded animated-shine-danger   ">` +
+                                    `<i class="fa fa-trash m-0 "></i> {{ __('Remove') }} </a>`;
 
                             }
 
@@ -262,10 +290,7 @@
                     },
 
 
-                ],
-                order: [
-                    [2, 'desc']
-                ],
+                ]
 
             });
             cb(start, end);
@@ -288,6 +313,8 @@
                 var dateArray = date.split(' - ');
                 var startDate = dateArray[0];
                 var endDate = dateArray[1];
+                var planStatusId = $('#planStatusId').val();
+                delivery_plans = delivery_plans.filter(item => item.deliveryPlanStatusId != 7);
                 $.ajax({
                     url: "{{ route($routeRole . '.delivery_plan.delivery_filter') }}",
                     type: "POST",
@@ -298,24 +325,30 @@
                         _token: "{{ csrf_token() }}"
                     },
                     success: function(response) {
-                        if (!response.starus) {
+                        if (!response.status) {
                             $('#filter').html("{{ __('Filter') }}");
 
                         }
                         //console.log(response);
-                        delivery_plans = response.data.delivery_plans.filter(item => item
-                            .deliveryPlanStatusId != 5);
-                        // delivery_plans=delivery_plans.filter(item => item.deliveryPlanStatusId !=5);
+                        if (planStatusId == '') {
+                            delivery_plans = response.data.delivery_plans.filter(item => item
+                                .deliveryPlanStatusId != 7);
+                        } else {
+                            delivery_plans = response.data.delivery_plans.filter(item => item
+                                .deliveryPlanStatusId == planStatusId);
+                        }
+
+                        // delivery_plans=delivery_plans.filter(item => item.deliveryPlanStatusId !=7);
                         listTable.clear().rows.add(delivery_plans).draw();
                         setTimeout(() => {
                             $('#filter').html("{{ __('Filter') }}");
-                        }, 500);
+                        }, 100);
 
                     }
                 });
                 setTimeout(() => {
                     $('#filter').html("{{ __('Filter') }}");
-                }, 500);
+                }, 100);
             }
             $('#reportrange').daterangepicker({
                 startDate: start,
@@ -359,4 +392,4 @@
 
         });
     </script>
-@endpush
+@endsection
