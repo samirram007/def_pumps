@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Admin\FuelRateController;
 use App\Http\Controllers\Admin\OfficeController as AdminOfficeController;
-use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MasterOfficeController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\ProductTypeController;
@@ -43,6 +42,7 @@ Route::prefix('superadmin')->group(function () {
         Route::post('/master_office/features/toggle', [MasterOfficeController::class, 'features_toggle'])->name('superadmin.master_office.feature_toggle');
         Route::post('/master_office/update/{id}', [MasterOfficeController::class, 'update'])->name('superadmin.master_office.update');
         Route::get('/master_office/delete/{id}', [MasterOfficeController::class, 'destroy'])->name('superadmin.master_office.delete');
+
         Route::get('/master_office/view/{id}', [MasterOfficeController::class, 'view'])->name('superadmin.master_office.view');
 
         Route::get('/organization/users/{id}', [UserController::class, 'organisation_users_index'])->name('superadmin.organization.users');
@@ -59,6 +59,7 @@ Route::prefix('superadmin')->group(function () {
         Route::get('/office/edit/{id}', [OfficeController::class, 'edit'])->name('superadmin.office.edit');
         Route::post('/office/update/{id}', [OfficeController::class, 'update'])->name('superadmin.office.update');
         Route::get('/office/delete/{id}', [OfficeController::class, 'destroy'])->name('superadmin.office.delete');
+        Route::post('/office/destroy', [AdminOfficeController::class, 'destroy'])->name('superadmin.office.destroy');
         Route::get('/office/view/{id}', [OfficeController::class, 'view'])->name('superadmin.office.view');
 
         Route::get('/office/latest_rate/{id}', [FuelRateController::class, 'latest_rate'])->name('superadmin.office.latest_rate');

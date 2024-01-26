@@ -659,9 +659,18 @@ ul.brand-logos li {
 }
 
 /************** Dark Theme*********************/
-.lights-off .page-body-wrapper {
+/* .lights-off .page-body-wrapper {
     background-color: rgba(0, 0, 0, 0.8);
     background-image: url(../landing/dist/images/wave.svg);
+    background-size: cover;
+    background-position: bottom;
+    background-repeat: no-repeat;
+} */
+.lights-off .main-panel {
+    background-color: rgba(0, 0, 0, 0.8);
+    background-image: url(../landing/dist/images/wave.svg);
+
+    background-size: contain;
     background-size: cover;
     background-position: bottom;
     background-repeat: no-repeat;

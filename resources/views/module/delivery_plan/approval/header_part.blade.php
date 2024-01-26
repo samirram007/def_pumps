@@ -1,4 +1,4 @@
-<div class="col-md-6 left-col">
+<div class="col-md-6 left-col d-none">
 
     <div>
         {{ __('Hub') }}: <span class="font-weight-bold">{{ $planDetails['startPoint']['hubName'] }}</span>
@@ -15,15 +15,15 @@
     </div>
 </div>
 <div class="col-md-6 right-col">
-    <div>
+    <div class="d-none">
         {{ __('Plan Date') }}: <span
             class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails['planDate'])) }}</span>
     </div>
-    <div>
+    <div class="d-none">
         {{ __('Delivery Date') }}: <span
             class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails['expectedDeliveryDate'])) }}</span>
     </div>
-    <div>
+    <div class="d-none">
         {{ __('Current Status') }}: <span class="text-info">
             {{ __($planDetails['deliveryPlanStatus']['deliveryPlanStatus']) }}</span>
     </div>
@@ -34,3 +34,4 @@
                 data-icon="mdi:content-save-all-outline" data-width="15" data-height="15"></span>
             {{ __('UPDATE') }}</button>
     </div>
+</div>

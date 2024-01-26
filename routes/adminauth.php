@@ -72,12 +72,13 @@ Route::group(['middleware' => 'CheckRole', 'prefix' => 'companyadmin'], function
     Route::post('/delivery_plan/store', [DeliveryPlanController::class, 'store'])->name('companyadmin.delivery_plan.store');
     Route::get('/delivery_plan/edit/{id}', [DeliveryPlanController::class, 'edit'])->name('companyadmin.delivery_plan.edit');
     Route::get('/delivery_plan/view/{id}', [DeliveryPlanController::class, 'show'])->name('companyadmin.delivery_plan.view');
-    Route::get('/delivery_plan/delete/{id}', [DeliveryPlanController::class, 'delete'])->name('companyadmin.delivery_plan.delete');
+    Route::post('/delivery_plan/delete', [DeliveryPlanController::class, 'delete'])->name('companyadmin.delivery_plan.delete');
     Route::get('/delivery_plan/approve/{id}', [DeliveryPlanController::class, 'approve'])->name('companyadmin.delivery_plan.approve');
     Route::get('/delivery_plan/receive/{id}', [DeliveryPlanController::class, 'receive'])->name('companyadmin.delivery_plan.receive');
     Route::get('/delivery_plan/request', [DeliveryPlanController::class, 'requestModal'])->name('companyadmin.delivery_plan.request');
     Route::post('/delivery_plan/new_request', [DeliveryPlanController::class, 'new_request'])->name('companyadmin.delivery_plan.new_request');
     Route::post('/delivery_plan/modified_request', [DeliveryPlanController::class, 'modified_request'])->name('companyadmin.delivery_plan.modified_request');
+    Route::get('/delivery_plan/status_change/{id}/{driverId}', [DeliveryPlanController::class, 'status_change'])->name('companyadmin.delivery_plan.status_change_driver');
     Route::get('/delivery_plan/status_change/{id}', [DeliveryPlanController::class, 'status_change'])->name('companyadmin.delivery_plan.status_change');
     Route::post('/delivery_plan/update_status/{id}', [DeliveryPlanController::class, 'update_status'])->name('companyadmin.delivery_plan.update_status');
     Route::get('/delivery_plan/driver/{id}', [DeliveryPlanController::class, 'driver'])->name('companyadmin.delivery_plan.driver');
@@ -92,6 +93,7 @@ Route::group(['middleware' => 'CheckRole', 'prefix' => 'companyadmin'], function
     Route::get('/delivery_plan_details/reject/{id}', [DeliveryPlanController::class, 'reject'])->name('companyadmin.delivery_plan_details.reject');
     Route::get('/delivery_plan_details/receive_delivery/{id}', [DeliveryPlanController::class, 'receive_delivery'])->name('companyadmin.delivery_plan_details.receive_delivery');
     Route::post('/delivery_plan_details/confirm_delivery/{id}', [DeliveryPlanController::class, 'confirm_delivery'])->name('companyadmin.delivery_plan_details.confirm_delivery');
+    Route::get('/delivery_plan_details/map_data/{id}', [DeliveryPlanController::class, 'map_data'])->name('companyadmin.delivery_plan.map_data');
     Route::post('/delivery_plan_details/receive_delivery_from_multi', [DeliveryPlanController::class, 'receive_delivery_from_multi'])->name('companyadmin.receive_delivery_from_multi');
 
     //============= User ===============
@@ -115,6 +117,8 @@ Route::group(['middleware' => 'CheckRole', 'prefix' => 'companyadmin'], function
 //Wizard
     Route::get('/wizard/modal/{step}/{id?}', [WizardController::class, 'modal_index'])->name('companyadmin.wizard.modal');
     Route::get('/wizard', [WizardController::class, 'index'])->name('companyadmin.wizard.index');
+    Route::post('/store_payload', [WizardController::class, 'store_payload'])->name('companyadmin.wizard.store_payload');
+    Route::get('/check_user_contactNo/{phoneNumber}', [WizardController::class, 'check_user_contactNo'])->name('companyadmin.wizard.check_user_contactNo');
 
     Route::get('/wizard/create_office', [WizardController::class, 'create_office'])->name('companyadmin.wizard.office.create');
     Route::post('/wizard/store_office', [WizardController::class, 'store_office'])->name('companyadmin.wizard.office.store');
@@ -133,7 +137,8 @@ Route::group(['middleware' => 'CheckRole', 'prefix' => 'companyadmin'], function
     Route::post('/office/edit/{id}', [AdminOfficeController::class, 'edit'])->name('companyadmin.office.edit');
     Route::get('/office/show/{id}', [AdminOfficeController::class, 'show'])->name('companyadmin.office.show');
     Route::post('/office/update/{id}', [AdminOfficeController::class, 'update'])->name('companyadmin.office.update');
-    Route::get('/office/delete/{id}', [AdminOfficeController::class, 'destroy'])->name('companyadmin.office.delete');
+    Route::get('/office/delete/{id}', [AdminOfficeController::class, 'softDelete'])->name('companyadmin.office.delete');
+    Route::post('/office/destroy', [AdminOfficeController::class, 'destroy'])->name('companyadmin.office.destroy');
     Route::get('/office/view/{id}', [AdminOfficeController::class, 'view'])->name('companyadmin.office.view');
     Route::get('/office/latest_rate/{id}', [AdminFuelRateController::class, 'latest_rate'])->name('companyadmin.office.latest_rate');
     Route::post('/office/store_latest_rate', [AdminFuelRateController::class, 'store_latest_rate'])->name('companyadmin.store_latest_rate');

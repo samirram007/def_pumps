@@ -110,6 +110,14 @@
                                                 <i class="fa fa-archive" aria-hidden="true"></i>
                                                 {{-- <i class="fa fa-cart-plus" aria-hidden="true"></i> --}}
                                             </a>
+                                            <a href="javascript:"
+                                                onclick="deleteOfficeModal(this,'{{ $subOffice['officeId'] }}')"
+                                                title="{{ __('Delete') }} {{ $subOffice['officeName'] }}"
+                                                data-title="{{ __('Deleting') }} {{ $subOffice['officeName'] }}"
+                                                class="load-popup-confirmation    text-danger mx-2 fw-bold {{ $subOffice['level'] <= 1 ? 'd-inline-flex' : 'd-none' }} m-size">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                                {{-- <i class="fa fa-cart-plus" aria-hidden="true"></i> --}}
+                                            </a>
                                         @else
                                             {{ __(' ') }}
                                         @endif
@@ -128,4 +136,22 @@
 
     </tbody>
 </table>
+@include('module.office._partial.delete_modal')
 
+<script>
+    function deleteOfficeModal(el, officeid) {
+
+
+
+
+        const title = el.getAttribute('data-title');
+        $('#modal-delete').modal('show');
+        // $('#modal-stock .desc').html(desc)
+        console.log(officeid);
+        $('#modal-delete #title').html(title)
+        $('#formofficeDelete #officeId').val(officeid)
+
+        // document.querySelector("#modal-stock #formofficeDelete").innerHTML = title
+
+    };
+</script>

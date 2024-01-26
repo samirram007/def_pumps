@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Godown;
 use App\Models\Office;
+use App\Models\OfficeWizard;
+use App\Models\Product;
+use App\Models\User;
 use App\Services\OfficeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -51,8 +54,8 @@ class WizardController extends Controller
         $data['step'] = 'modal';
         $data['title'] = 'New Pump Wizard';
         // $data['officeId']='06D5DDA0-6834-4EA1-183D-08DAF95AD4EF';
-        $data['officeId'] = '18c00830-166c-4aac-15af-08dbae72bf8b';
-
+        $data['wizardId'] = '18c00830-166c-4aac-15af-08dbae72bf8b';
+        //dd($data);
         return view('module.wizard.index', $data);
 
     }
@@ -64,40 +67,25 @@ class WizardController extends Controller
         $data['title'] = 'New Pump Wizard';
         // $data['officeId']='06D5DDA0-6834-4EA1-183D-08DAF95AD4EF';
         $data['officeId'] = '18c00830-166c-4aac-15af-08dbae72bf8b';
-        if ($step == 'create_office') {
+        if (in_array($step, ['modal', 'welcome'])) {
+            //dd($step);
+            return $this->welcome();
+        } else if (in_array($step, ['create_office', 'office'])) {
             return $this->createOffice();
-        } elseif ($step == 'show_office') {
-            if ($id == null) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'something went wrong',
-                ]);
-            }
-            return $this->showOffice($id);
-        } elseif ($step == 'godown_list') {
-            if ($id == null) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'something went wrong',
-                ]);
-            }
-            return $this->godownList($id);
-        } elseif ($step == 'create_godown') {
-            if ($id == null) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'something went wrong',
-                ]);
-            }
-            return $this->createGodown($id);
-        } elseif ($step == 'edit_godown') {
-            if ($id == null) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'something went wrong',
-                ]);
-            }
-            return $this->editGodown($id);
+        } elseif ($step == 'godown') {
+            return $this->createGodown();
+        } elseif ($step == 'product') {
+
+            return $this->product();
+        } elseif ($step == 'invoice') {
+
+            return $this->invoice();
+        } elseif ($step == 'user') {
+
+            return $this->user();
+        } elseif ($step == 'complete') {
+
+            return $this->complete();
         } elseif ($step == 'all_stock') {
             if ($id == null) {
                 return response()->json([
@@ -154,15 +142,32 @@ class WizardController extends Controller
         ]);
 
     }
+    private function welcome()
+    {
+        $data['roleName'] = $this->roleName;
+        $data['routeRole'] = $this->routeRole;
+
+        $user = $this->user;
+        $info['title'] = "Welcome";
+        $info['size'] = "modal-lg";
+        $data['step'] = 'welcome';
+        $data['title'] = 'Welcome';
+        $GetView = view('module.wizard.welcome.index', $data)->render();
+        // dd($GetView);
+        return response()->json([
+            "status" => true,
+            "html" => $GetView,
+        ]);
+    }
     private function createOffice()
     {
 
         $data['roleName'] = $this->roleName;
         $data['routeRole'] = $this->routeRole;
 
-        $user = (object) $this->user;
+        $user = $this->user;
 
-        $data['masterOfficeId'] = $user->officeId;
+        $data['masterOfficeId'] = $user['officeId'];
 
         $officeTypes = ApiController::GetOfficeTypeList();
 
@@ -171,7 +176,7 @@ class WizardController extends Controller
         });
         $data['gstTypes'] = ApiController::GetGstTypeList();
         // $data['masterOfficeList'] = Office::GetMasterOfficeList($user->officeId);
-        $data['masterOfficeList'] = [Office::GetOfficeById($user->officeId)];
+        $data['masterOfficeList'] = [Office::GetOfficeById($user['officeId'])];
         $info['title'] = "New Pump";
         $info['size'] = "modal-lg";
         $data['step'] = 'create_office';
@@ -311,11 +316,10 @@ class WizardController extends Controller
         ]);
 
     }
-    public function createGodown($id)
+    public function createGodown()
     {
         //dd($id);
 
-        $data['office'] = ApiController::GetOffice($id);
         $data['godownTypes'] = ApiController::GodownTypes();
 
         $data['menu_name'] = 'create_godown';
@@ -394,6 +398,25 @@ class WizardController extends Controller
             "html" => $htmlView,
         ]);
     }
+    public function product()
+    {
+        $user = $this->user;
+        $roleName = $this->roleName;
+
+        $data['roleName'] = $this->roleName;
+        $data['routeRole'] = $this->routeRole;
+        $officeId = '18c00830-166c-4aac-15af-08dbae72bf8b';
+        $data['products'] = Product::get_all($user['officeId']);
+        // dd($data['products']);
+        $info['title'] = "Product";
+        $info['size'] = "modal-lg";
+
+        $html = view('module.wizard.product.index', $data)->render();
+        return response()->json([
+            "status" => true,
+            "html" => $html,
+        ]);
+    }
     public function productRate($id)
     {
         $user = $this->user;
@@ -409,6 +432,28 @@ class WizardController extends Controller
         $info['size'] = "modal-lg";
 
         $html = view('module.wizard.product.latest_rate', $data)->render();
+        return response()->json([
+            "status" => true,
+            "html" => $html,
+        ]);
+    }
+    public function invoice()
+    {
+        $user = $this->user;
+        $roleName = $this->roleName;
+
+        $data['roleName'] = $this->roleName;
+        $data['routeRole'] = $this->routeRole;
+
+        $data['invoice_no'] = 0;
+
+        $data['fiscalYear'] = ApiController::GetFiscalYears();
+        //$data['fiscalYear'] = $this->fiscalYear;
+        //dd($this->fiscalYear);
+        $info['title'] = "Invoice No";
+        $info['size'] = "modal-lg";
+
+        $html = view('module.wizard.invoice_no.index', $data)->render();
         return response()->json([
             "status" => true,
             "html" => $html,
@@ -432,6 +477,51 @@ class WizardController extends Controller
         $info['size'] = "modal-lg";
 
         $html = view('module.wizard.invoice_no.create', $data)->render();
+        return response()->json([
+            "status" => true,
+            "html" => $html,
+        ]);
+    }
+    public function user()
+    {
+        $user = $this->user;
+        $data['office'] = ApiController::GetOffice($user['officeId']);
+        $data['officeList'] = [$data['office']];
+
+        //dd($data['officeList']);
+        $data['roles'] = $this->roles;
+
+        $data['roles'] = array_filter($this->roles, function ($var) use ($data) {
+            return (in_array($var, ['PumpUser', ['PumpAdmin']]));
+        });
+        //  dd($data['roles'] );
+        $info['title'] = "Create User";
+        $info['size'] = "modal-lg";
+        $data['routeRole'] = $this->routeRole;
+        $data['roleName'] = $this->roleName;
+
+        $html = view('module.wizard.user.create', $data)->render();
+        return response()->json([
+            "status" => true,
+            "html" => $html,
+        ]);
+    }
+    public function complete()
+    {
+        $user = $this->user;
+        // $data['office'] = ApiController::GetOffice($user['officeId']);
+        // $data['officeList'] = [$data['office']];
+
+        //dd($data['officeList']);
+        $data['roles'] = $this->roles;
+
+        //  dd($data['roles'] );
+        $info['title'] = "Complete";
+        $info['size'] = "modal-lg";
+        $data['routeRole'] = $this->routeRole;
+        $data['roleName'] = $this->roleName;
+
+        $html = view('module.wizard.welcome.complete', $data)->render();
         return response()->json([
             "status" => true,
             "html" => $html,
@@ -487,7 +577,11 @@ class WizardController extends Controller
             "html" => $html,
         ]);
     }
+    public function check_user_contactNo($phoneNumber)
+    {
+        return response()->json(["status" => User::ContactNoExistCheck($phoneNumber)]);
 
+    }
     private function loadUsers($officeId)
     {
 
@@ -497,6 +591,29 @@ class WizardController extends Controller
             'officeId' => $officeId,
         ];
         $this->users = ApiController::UserListByEmployeeId($param_data);
+
+    }
+    public function store_payload(Request $request)
+    {
+
+        $user = $this->user;
+        //dd($user['id']);
+        $data = [
+            'payload' => $request->input('payload'),
+            'step' => $request->input('step'),
+            'userId' => $user['id'],
+
+        ];
+        // dump(json_encode($data));
+
+        $response = OfficeWizard::set_payload($data);
+        //dump($response['step']);
+        return response()->json([
+            "status" => true,
+            "message" => "payload saved",
+            "payload" => $response['payload'],
+            "step" => $response['step'],
+        ]);
 
     }
 }

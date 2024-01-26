@@ -3,12 +3,13 @@
         <div>
             {{ __('Pump') }}: <span class="font-weight-bold">{{ $planDetails['officeName'] }}</span>
         </div>
-        <div>
+        <div class="d-none">
 
             {{ __('Hub') }}: <span class="font-weight-bold">{{ $planDetails['startPoint']['hubName'] }}</span>
         </div>
-        <div>
-            {{ __('Product') }}: <span class="font-weight-bold">{{ $planDetails['product']['productTypeName'] }}</span>
+        <div class="d-none">
+            {{ __('Product') }}: <span class="font-weight-bold">
+                {{ $planDetails['product']['productTypeName'] }}</span>
         </div>
         <div>
             @if ($planDetails['deliveryPlanDetailsStatusId'] == 5)
@@ -43,22 +44,22 @@
         </div>
     </div>
     <div class="col-md-6 right-col pr-0">
-        <div>
-            {{ __('Plan Date') }}: <span
-                class="font-weight-bold">{{ date('d-M-Y', strtotime($planDetails['deliveryPlan']['planDate'])) }}</span>
+        <div class="d-none">
+            {{ __('Plan Date') }}: <span class="font-weight-bold">
+                {{ date('d-M-Y', strtotime($planDetails['deliveryPlan']['planDate'])) }}</span>
         </div>
 
 
-        <div>
+        <div class="d-none">
             @if ($planDetails['deliveredQuantity'] > 0)
-                {{ __('Delivery Date') }}: <span
-                    class="font-weight-bold">{{ date('d-M-Y H:i:s', strtotime($planDetails['deliveredAt'])) }}</span>
+                {{ __('Delivery Date') }}: <span class="font-weight-bold">
+                    {{ date('d-M-Y H:i:s', strtotime($planDetails['deliveredAt'])) }}</span>
             @else
                 {{ __('Delivery Date') }}: <span
                     class="font-weight-bold">{{ date('d-M-Y H:i:s', strtotime($planDetails['expectedDeliveryTime'])) }}</span>
             @endif
         </div>
-        <div>
+        <div class="d-none">
             @php
                 $status = '<span class="font-weight-bold text-gray plan_status">Receive Confirmation Pending</span>';
                 if ($planDetails['deliveryPlanDetailsStatusId'] == 3) {

@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <button type="button" class="back load-popup-back  " data-param="{{ $deliveryPlanId }}" aria-label="Close">
+    <button type="button" class="back load-popup-back d-none  " data-param="{{ $deliveryPlanId }}" aria-label="Close">
         <i class="fas fa-arrow-circle-left" aria-hidden="true" style="font-size:24px; color:#fff"></i>
     </button>
 

@@ -103,7 +103,7 @@ a:hover {
     border: 2px solid #ffffff;
     border-radius: 38px;
     text-shadow: 1px 0 1px #343a40;
-    padding: 6px 25px !important;
+    padding: 0 20px !important;
     display: inline;
     justify-content: center;
     align-items: center;
@@ -245,10 +245,13 @@ h4.modal-title {
     rotate: -15deg;
 }
 .plan_status {
-    animation: fadeIn 1.2s infinite linear;
+    animation: fadeIn 0.5s infinite linear;
     animation-direction: alternate;
 }
-
+.anim-fade-in {
+    animation: onlyFadeIn 7s 1 linear;
+    animation-direction: normal;
+}
 @keyframes fadeIn {
     0% {
         opacity: 0;
@@ -259,6 +262,24 @@ h4.modal-title {
         opacity: 1;
         font-weight: bolder;
     }
+}
+@keyframes onlyFadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+.p-c {
+    cursor: pointer;
+}
+.pe-none {
+    pointer-events: none;
+}
+.pe-auto {
+    pointer-events: auto;
 }
 @media (min-width: 992px) {
     .modal-xl {
@@ -444,7 +465,7 @@ ol.breadcrumb {
     font-size: 16px;
     border: 2px solid #ffffff;
     text-shadow: 1px 0 1px #343a40;
-    padding: 6px 20px !important;
+    padding: 4px 20px !important;
 }
 
 .animated-shine {
@@ -463,7 +484,7 @@ ol.breadcrumb {
     font-size: 16px;
     border: 2px solid #ffffff;
     /* text-shadow: 1px 0 1px #343a40; */
-    padding: 6px 20px !important;
+    padding: 4px 20px !important;
 }
 
 .animated-shine::after {

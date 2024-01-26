@@ -281,7 +281,12 @@
         });
         //jQuery.support.cors = true;
         $(document).on("click", ".load-popup-post", function(e) {
-
+            var thisHTML = e.target.innerHTML;
+            //console.log(thisHTML);
+            var spinner =
+                `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>${thisHTML} `
+            e.target.innerHTML = spinner;
+            e.target.style = "pointer-events: none";
             var param = $(this).data('param');
             var url = $(this).data('url');
             var size = $(this).data('size');

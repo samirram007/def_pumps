@@ -90,7 +90,9 @@ class OfficeController extends Controller
         $info['title']="Create Office";
         $info['size']="modal-lg";
 
-        $data['masterOfficeList']=Office::GetMasterOfficeList('D5355D33-02CF-40B0-5246-08DA286D7F4A');
+        $data['masterOfficeList']=Office::GetMasterOfficeList($id);
+        // $data['masterOfficeList']=Office::GetMasterOfficeList('D5355D33-02CF-40B0-5246-08DA286D7F4A');
+        // $data['masterOfficeList']=Office::GetMasterOfficeList('FE7074B5-F428-4051-09FA-08DC1E3B394D');
         // $data['masterOfficeList']=ApiController::GetMasterOfficeList();
 
 

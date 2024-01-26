@@ -6,6 +6,7 @@
             return
         }
     </script>
+    @include('module.delivery_plan._partial.delete_modal')
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -165,8 +166,11 @@
             let view_url = `{{ route($routeRole . '.delivery_plan.view', ':id') }}`;
             let edit_url = `{{ route($routeRole . '.delivery_plan.edit', ':id') }}`;
             let delete_url = `{{ route($routeRole . '.delivery_plan.delete', ':id') }}`;
-            let status_change_url = `{{ route($routeRole . '.delivery_plan.status_change', ':id') }}`;
-            let driver_url = `{{ route($routeRole . '.delivery_plan.driver', ':id') }}`;
+            let status_change_url =
+                `{{ route($routeRole . '.delivery_plan.status_change', ':id') }}`;
+            // let driver_url = `{{ route($routeRole . '.delivery_plan.driver', ':id') }}`;
+            let driver_url =
+                `{{ route($routeRole . '.delivery_plan.status_change_driver', [':id', 'driver']) }}`;
             var start = moment().subtract(6, 'days');
             var end = moment();
             var listTable = $('#table1').DataTable({
@@ -175,18 +179,21 @@
                 paging: true,
                 zeroRecords: true,
                 "oLanguage": langOpt,
+
                 data: delivery_plans,
                 columns: [{
                         "data": null,
                         "render": function(data, type, full, meta) {
-                            return data.planTitle.split("_").slice(-2).join('_')
+
+                            return `${ data.planTitle.split("_").slice(-2).join('_')}`
+
                         }
                     },
                     {
                         "data": null,
                         "render": function(data, type, full, meta) {
                             const d = new Date(data['planDate']);
-                            return `<span class="sr-only">${ d}</span>` +
+                            return `<span class="sr-only">${ moment(d).format('YYYYMMDD')}</span>` +
                                 `${ moment(d).format('DD-MM-YYYY')}`;
                         }
                     },
@@ -219,15 +226,17 @@
                                 'deliveryPlanId']);
                             if (data.driver == null) {
                                 return `<div class="  text-left   text-info text-weight-bold">
-                                        <a href="javascript:"  data-param="${this_id}" data-url="${this_driver_url}"  title="{{ __('Assign Driver') }}" class="load-popup status_change    text-info p-2 ">Assign Driver</a>
+                                        <a href="javascript:"  data-param="${this_id}" data-url="${this_driver_url}"  title="{{ __('Assign Driver') }}" class="  load-popup status_change   text-info p-2 ">Assign Driver</a>
                                     </div>`;
                             } else {
                                 return `<div class="   text-left   text-info text-weight-bold">
-                                        <a href="javascript:"  data-param="${this_id}" data-url="${this_driver_url}"  title="{{ __('Chnage Driver') }}" class="load-popup status_change     text-info p-2 ">
+                                        <a href="javascript:"  data-param="${this_id}" data-url="${this_driver_url}"  title="{{ __('Driver') }}" class="load-popup status_change     text-info p-2 ">
                                             ${data.driver.driverName}<div class="pl-2 small text-gray">${data.driver.contactNumber}</div>
-                                            </a>
-
-                                    </div>`;
+                                            </a></div>`;
+                                // return `<div class="   text-left   text-info text-weight-bold">
+                            //         <a href="javascript:"  data-param="${this_id}" data-url="${this_driver_url}"  title="{{ __('Chnage Driver') }}" class="load-popup status_change     text-info p-2 ">
+                            //             ${data.driver.driverName}<div class="pl-2 small text-gray">${data.driver.contactNumber}</div>
+                            //             </a></div>`;
                             }
 
                         }
@@ -279,9 +288,14 @@
                             }
 
                             if (data['deliveryPlanStatusId'] < 3) {
-                                this_str += ` <a href="${this_delete_url}"` +
-                                    `title="{{ __('Remove this plan') }}" class="delete_remove  btn btn-rounded animated-shine-danger   ">` +
-                                    `<i class="fa fa-trash m-0 "></i> {{ __('Remove') }} </a>`;
+                                // this_str += ` <a href="${this_delete_url}"` +
+                                //     `title="{{ __('Remove this plan') }}" class="delete_remove  btn btn-rounded animated-shine-danger   ">` +
+                                //     `<i class="fa fa-trash m-0 "></i> {{ __('Remove') }} </a>`;
+                                this_str += ` <a href="javascript:"
+                                data-url="${ this_delete_url }"
+                                onclick="deleteModal(this,${this_id})"
+                                title="{{ __('Remove this plan') }}" class="  btn btn-rounded animated-shine-danger   ">
+                                <i class="fa fa-trash m-0 "></i> {{ __('Remove') }} </a>`;
 
                             }
 
@@ -290,7 +304,8 @@
                     },
 
 
-                ]
+                ],
+                "order": [1, 'desc']
 
             });
             cb(start, end);

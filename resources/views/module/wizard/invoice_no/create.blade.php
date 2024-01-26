@@ -13,7 +13,7 @@
 
                     </div>
                     <div class="rounded card p-3 bg-white shadow min-h-100 mt-4">
-
+                        @include('module.wizard.office.info')
                         <div class="col-md-12">
 
                             <div class="row">
@@ -42,8 +42,9 @@
                                 <div class="col-12 col-md-3 mx-auto d-flex align-items-center">
                                     <input type="hidden" name="officeId" id="officeId"
                                         value="{{ $office[0]['officeId'] }}">
-                                    <button type="submit" class="submit w-100 btn btn-rounded animated-shine  px-4"><span
-                                            class="iconify" data-icon="mdi:content-save-all-outline" data-width="15"
+                                    <button type="submit"
+                                        class="submit w-100 btn btn-rounded animated-shine  px-4"><span class="iconify"
+                                            data-icon="mdi:content-save-all-outline" data-width="15"
                                             data-height="15"></span>
                                         {{ __('Set') }}</button>
 
@@ -52,7 +53,7 @@
                             </div>
                             <div class="row text-center  border-top  pt-2 gap-4 ">
 
-                                <div class="col-12  d-flex justify-content-end">
+                                <div class="col-12  d-flex justify-content-end ">
                                     <button type="button" onclick="showOffice(wizardOfficeId)"
                                         class="  btn btn-rounded animated-shine px-4">
                                         {{ __('Office Info') }}</button>

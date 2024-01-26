@@ -1,9 +1,9 @@
 <div id="progressbar" class="progressbar">
-    <div class="progress-step progress-step-active" data-title="Pump Info"></div>
-    <div class="progress-step" data-title="Godown"></div>
-    <div class="progress-step" data-title="Rate"></div>
-    <div class="progress-step" data-title="Invoice No"></div>
-    <div class="progress-step" data-title="User"></div>
+    <div class="progress-step progress-step-active" id="step-office" data-title="{{ __('Pump Info') }}"></div>
+    <div class="progress-step " id="step-godown" data-title="{{ __('Godown') }}"></div>
+    <div class="progress-step" id="step-product" data-title="{{ __('Product') }}"></div>
+    <div class="progress-step" id="step-invoice" data-title="{{ __('Invoice No') }}"></div>
+    <div class="progress-step" id="step-user" data-title="{{ __('User') }}"></div>
 
 </div>
 <script>
@@ -49,7 +49,7 @@
         transform: translateY(-50%);
         height: 4px;
         width: 100%;
-        background-color: #829bee86;
+        background-color: #45ad6886;
         z-index: 1;
 
     }
@@ -67,7 +67,7 @@
     }
 
     .progress-step:hover {
-        box-shadow: 0 0 5px 2px #3993dd99;
+        box-shadow: 0 0 5px 2px #39dd7d99;
         border: 2px solid #ccc;
         cursor: pointer;
         transition: 0.2s;
@@ -77,7 +77,7 @@
         counter-increment: step;
         content: counter(step);
         z-index: 3;
-        color: #284cc0;
+        color: #28c06c;
         font-size: 0.8rem;
     }
 
@@ -93,7 +93,7 @@
     }
 
     .progress-step-active {
-        background-color: #284cc0;
+        background-color: #1d9787;
         color: #ccc;
     }
 
@@ -102,11 +102,24 @@
     }
 
     .progress-step-active:after {
-        color: #284cc0;
+        color: #0f9731;
+    }
+
+    .current-step:after {
+        color: #0f9731;
+        font-weight: bold;
     }
 
     .progress-step:hover {
         font-weight: bold;
         transition: 0.2s;
+    }
+
+    .current-step {
+        box-shadow: 0 0 5px 2px #1e8b8699;
+        border: 2px solid #ccc;
+        cursor: pointer;
+        transition: 0.2s;
+
     }
 </style>

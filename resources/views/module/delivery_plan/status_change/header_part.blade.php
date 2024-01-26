@@ -10,9 +10,7 @@
         {{ __('No Of Delivery Point') }}: <span
             class="font-weight-bold">{{ count($planDetails['deliveryPlanDetailsList']) }}</span>
     </div>
-    <div>
 
-    </div>
 </div>
 <div class="col-md-6 right-col">
     <div>
@@ -29,6 +27,7 @@
     </div>
 
     <div>
+
         @if ($isTopAdmin)
             @if ($planDetails['deliveryPlanStatusId'] < 3)
                 @foreach ($deliveryPlanStatus as $key => $item)
@@ -40,17 +39,31 @@
                 @endif
             @endforeach
         @endif
-        @if ($planDetails['deliveryPlanStatusId'] == 3)
-            <a href="javascript:" data-param="{{ $planDetails['deliveryPlanId'] }}"
-                data-url="{{ route($routeRole . '.delivery_plan.driver', $planDetails['deliveryPlanId']) }}"
-                title="{{ __('Assign Driver') }}"
-                class="load-popup   btn btn-sm animated-shine btn-rounded   ">{{ __('Assign Driver') }}</a>
+
+        @if (in_array($planDetails['deliveryPlanStatusId'], [3, 4, 5, 6]))
+
+            @if ($planDetails['driver'] == null)
+                <a href="javascript:" data-param="{{ $planDetails['deliveryPlanId'] }}"
+                    data-url="{{ route($routeRole . '.delivery_plan.driver', $planDetails['deliveryPlanId']) }}"
+                    title="{{ __('Assign Driver') }}"
+                    class="load-popup  d-none btn btn-sm animated-shine btn-rounded   ">{{ __('Assign Driver') }}</a>
+            @else
+                <a href="javascript:" data-param="{{ $planDetails['deliveryPlanId'] }}"
+                    data-url="{{ route($routeRole . '.delivery_plan.driver', $planDetails['deliveryPlanId']) }}"
+                    title="{{ __('Assigned Driver') }}"
+                    class="load-popup  d-none btn btn-sm animated-shine btn-rounded   "><i
+                        class="fas fa-truck"></i></a>
+            @endif
         @endif
     @endif
-    <button class="btn btn-sm animated-shine  text-light" onclick="getData(this)" title="{{ __('reload') }}">
+
+    <button class="btn btn-sm animated-shine d-none  text-light" onclick="getData(this)"
+        title="{{ __('reload') }}">
         <i class="fa fa-refresh" aria-hidden="true"></i>
     </button>
-    <button class="btn btn-sm animated-shine  text-light  " onclick="getMap(this)" title="{{ __('map view') }}">
+    <button class="btn btn-sm animated-shine d-none  text-light  " onclick="getMap(this)"
+        title="{{ __('map view') }}">
         <i class="fas fa-map " aria-hidden="true"></i>
     </button>
+</div>
 </div>

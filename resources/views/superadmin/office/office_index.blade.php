@@ -82,7 +82,8 @@
                                             {{-- <td>{{ $key + 1 }} </td> --}}
                                             <td>{{ $data->officeName }}</td>
                                             <td>{{ $data->officeTypeName }}</td>
-                                            <td class="{{ strlen($data->officeAddress) > 20 ? 'pre-wrap' : '' }}">{{ $data->officeAddress }}</td>
+                                            <td class="{{ strlen($data->officeAddress) > 20 ? 'pre-wrap' : '' }}">
+                                                {{ $data->officeAddress }}</td>
                                             <td>{{ $data->officeContactNo }}</td>
                                             <td class="text-wrap text-truncate">{{ $data->officeEmail }}</td>
                                             <td class="text-wrap text-truncate text-center">
@@ -105,20 +106,30 @@
                                                     class="btn btn-outline-info"><span class="iconify"
                                                         data-icon="mdi:circle-edit-outline" data-width="15"
                                                         data-height="15"></span> {{ __('Edit') }}</a> --}}
-
-                                                <a href="javascript:" data-param=""
-                                                    data-url="{{ route('superadmin.office.edit', $data->officeId) }}"
-                                                    title="{{ __('Edit') }}"
-                                                    class="load-popup   btn btn-rounded animated-shine px-4 "> <i
-                                                        class="fa fa-edit"></i> </a>
                                                 @if ($data->officeTypeId != 1)
                                                     <a href="javascript:" data-param=""
                                                         data-url="{{ route('superadmin.office.latest_rate', $data->officeId) }}"
                                                         title="{{ __('Latest Rate') }}"
                                                         class="load-popup btn btn-rounded animated-shine mx-2 ">
                                                         {{ __('@') }}
+                                                    </a>
                                                 @endif
+
+                                                <a href="javascript:" data-param=""
+                                                    data-url="{{ route('superadmin.office.edit', $data->officeId) }}"
+                                                    title="{{ __('Edit') }}"
+                                                    class="load-popup   btn btn-rounded animated-shine px-4 "> <i
+                                                        class="fa fa-edit"></i> </a>
+
+                                                <a href="javascript:"
+                                                    onclick="deleteOfficeModal(this,'{{ $data->officeId }}')"
+                                                    title="{{ __('Delete') }} {{ $data->officeName }}"
+                                                    data-title="{{ __('Deleting') }} {{ $data->officeName }}"
+                                                    class="load-popup-confirmation    btn btn-rounded animated-shine mx-2 ">
+                                                    <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </a>
+
+
 
                                                 {{-- <a href="{{ route('superadmin.office.delete', $data->id) }}"
                                                     class="btn btn-outline-info delete"><span class="iconify" data-icon="mdi:delete-sweep-outline" data-width="15" data-height="15"></span> Delete</a> --}}
@@ -134,7 +145,25 @@
                 </div>
             </div>
         </section>
+        @include('superadmin.office._partial.delete_modal')
     </div>
+    <script>
+        function deleteOfficeModal(el, officeid) {
+
+
+            // alert(officeid)
+
+            const title = el.getAttribute('data-title');
+            $('#modal-delete').modal('show');
+            // $('#modal-stock .desc').html(desc)
+            console.log(officeid);
+            $('#modal-delete #title').html(title)
+            $('#formofficeDelete #officeId').val(officeid)
+
+            // document.querySelector("#modal-stock #formofficeDelete").innerHTML = title
+
+        };
+    </script>
     <script>
         $(document).ready(function() {
 

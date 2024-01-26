@@ -27,16 +27,18 @@ class Helper
     }
     public static function jsonDE($object)
     {
-        return json_decode(json_encode($object),true);
+        return json_decode(json_encode($object), true);
     }
-    public static function GetResource($url){
+    public static function GetResource($url)
+    {
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*"];
         $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . $url)->json();
         return $res;
     }
-    public static function PostResource($url,$data){
+    public static function PostResource($url, $data)
+    {
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*"];
-        $res = Http::withHeaders($headers)->post(env('API_RESOURCE_URL') . $url,$data);
+        $res = Http::withHeaders($headers)->post(env('API_RESOURCE_URL') . $url, $data);
         return $res;
     }
 }

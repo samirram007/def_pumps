@@ -41,8 +41,9 @@
 
             @include('layouts.sidebar')
             <!-- partial -->
-            <div class="main-panel" data-aos="fade-right" data-aos-delay="500" data-aos-offset="300"
-                data-aos-easing="ease-in-sine">
+            {{-- <div class="main-panel" data-aos="fade-right" data-aos-delay="500" data-aos-offset="300"
+                data-aos-easing="ease-in-sine"> --}}
+            <div class="main-panel">
                 {{-- @include('flash-message') --}}
                 {{-- <div class="bg-primary position-absolute w-100" style="height: 15rem;">
           </div> --}}
@@ -66,12 +67,13 @@
             </div>
 
             <!-- main-panel ends -->
+
         </div>
 
         <!-- page-body-wrapper ends -->
     </div>
-
     @include('layouts.footer')
+
     @include('layouts.css_js_2')
 
     <!-- This is yield script begin -->

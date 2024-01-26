@@ -20,7 +20,7 @@ class DeliveryPlan extends Model
     public static function get_all()
     {
         //dd($data);
-        return Helper::GetResource('DeliveryPlan');
+        return Helper::GetResource('DeliveryPlan/GetAll');
         // $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "*"];
         // $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'DeliveryPlan')->json();
         // return $res;
@@ -173,6 +173,22 @@ class DeliveryPlan extends Model
         //dd(json_encode($data));
         $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];
         $res = Http::withHeaders($headers)->get(env('API_RESOURCE_URL') . 'DeliveryPlan/DeliveryPlanDetailsByDeliveryPlanId/' . $id)->json();
+        // dd($res);
+        return $res;
+    }
+    public static function GetAvailableDriver($id)
+    {
+        //dd(json_encode($data));
+        $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];
+        $res = Http::withHeaders($headers)->get(env('API_ROUTE_URL') . 'v1/driver_available/' . $id)->json();
+        // dd($res);
+        return $res;
+    }
+    public static function GetDeliveryPlanMapData($id)
+    {
+        //dd(json_encode($data));
+        $headers = ["Authorization" => "Bearer " . Session::get('_token'), "Accept" => "application/json"];
+        $res = Http::withHeaders($headers)->get(env('API_ROUTE_URL') . 'v1/driver_route/' . $id)->json();
         // dd($res);
         return $res;
     }

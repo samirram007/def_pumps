@@ -7,6 +7,7 @@
     });
     var deliveryPlan = @json($deliveryPlan);
     var drivers = @json($drivers);
+    var deliveryPlanId = deliveryPlan.deliveryPlanId
 
     function dataTableInit() {
 
@@ -49,13 +50,10 @@
                 {
                     "data": null,
                     "render": function(data, type, full, meta) {
-                        if ([4, 5].includes(deliveryPlan.deliveryPlanStatusId)) {
 
-                            if (deliveryPlan.driver.driverId == data.driverId) {
-                                return 'On Trip'
-                            }
-                        }
-                        return 'No Trip'
+                        return `<a href = "javascript:"
+                            onclick = "driverStat('${ data.driverId}')"
+                            class = "    btn btn-rounded  animated-shine     " > <i class="fa fa-bar-chart"></i> </a>`
 
                     }
                 },
@@ -65,15 +63,16 @@
                     "render": function(data, type, full, meta) {
 
                         var this_str = ``;
-                        if (data.assigned) {
+                        if (data.assigned && data.deliveryPlanId == deliveryPlanId) {
                             this_str += `<a href = "javascript:"
                                 class = " d-block   btn btn-info-outline text-info    px-2 pe-none "  > Assigned </a>`
                         } else if ([3].includes(deliveryPlan.deliveryPlanStatusId)) {
                             this_str += `<a href = "javascript:"
                             onclick = "AddDriver(this,'${ data.driverId}')"
-                            class = " d-block   btn btn-rounded  animated-shine px-2  " > Assign </a>`
+                            class = "   btn btn-rounded  animated-shine    " > Assign </a>`
 
-
+                        } else {
+                            this_str += `...`
                         }
                         return `<div>${this_str}</div>`;
                     }
@@ -147,6 +146,39 @@
 
 
         });
+
+    }
+
+    function getMap(e) {
+
+        // initMap();
+        if ($('#mapWrapperPanel').hasClass('d-none')) {
+            $('#mapWrapperPanel').removeClass('d-none');
+            $('#mapWrapperPanel').addClass('d-flex');
+            if (newList.length == 0) {
+                getMapData();
+            } else {
+                initMap();
+            }
+
+
+        } else if ($('#mapWrapperPanel').hasClass('d-flex')) {
+
+            $('#mapWrapperPanel').addClass('d-none');
+            $('#mapWrapperPanel').removeClass('d-flex');
+            // initMap();
+
+        }
+    }
+
+    function getMapForPanel(e) {
+
+
+        if (newList.length == 0) {
+            getMapData();
+        } else {
+            initMap();
+        }
 
     }
 </script>

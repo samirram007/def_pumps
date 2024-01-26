@@ -1,144 +1,85 @@
 <div class="alert alert-danger sr-only"></div>
-<form id="formSavePlan">
-    <div class="row justify-content-center align-items-center mb-4">
+<div class="row">
+    <div class="col-md-6">
+        <form id="formSavePlan">
+            <div class="row justify-content-start align-items-center mb-4">
 
-        @csrf
-        <div class="col-12 col-md-2 text-md-right">{{ __('Plan Name') }} : </div>
-        <div class="col-12 col-md-6 ">
-            <input id="planTitle" name="planTitle" class=" w-100 border-bottom border-primary p-2 rounded-pill "
-                class="form-control" value="{{ $planTitle }}" />
+                @csrf
+                <div class="col-12 text-left">{{ __('Plan Name') }} : </div>
+                <div class="col-12 col-md-8 ">
+                    <input id="planTitle" name="planTitle" class=" w-100 border-bottom border-primary p-2 rounded-pill "
+                        class="form-control" value="{{ $planTitle }}" />
 
-        </div>
-
-
-        @if (isset($requestData))
-            <input type="text" id="deliveryPlanId" name="deliveryPlanId" class="sr-only"
-                value="{{ $requestData['DeliveryPlanId'] }}">
-            <input type="text" name="productId" class="sr-only" value="{{ $requestData['ProductTypeId'] }}">
-            <input type="text" name="productTypeId" class="sr-only" value="{{ $requestData['ProductTypeId'] }}">
-            <input type="text" name="StartingPointId" class="sr-only" value="{{ $requestData['StartingPointId'] }}">
-            <input type="text" name="manufactureingHub" class="sr-only"
-                value="{{ $requestData['StartingPointId'] }}">
-            <input type="text" name="MinimumMultiple" class="sr-only" value="{{ $requestData['MinimumMultiple'] }}">
-            <input type="text" name="TankCapacity" class="sr-only" value="{{ $requestData['TankCapacity'] }}">
-
-            <input type="datetime-local" name="planDate" class="sr-only" value="{{ $requestData['planDate'] }}">
-            <input type="datetime-local" name="expectedDeliveryDate" class="sr-only"
-                value="{{ $requestData['expectedDeliveryDate'] }}">
-            <input type="datetime-local" id="ExpectedReturnTime" name="ExpectedReturnTime" class="sr-only"
-                value="">
-        @endif
-
-        <div class="col-12 col-md-4 d-flex flex-row align-items-center justify-content-center  ">
-
-            @if (isset($requestData) && $requestData['DeliveryPlanId'] > 0)
-                <button id="save_plan" type="submit"
-                    class="save_plan btn btn-rounded animated-shine px-2 mx-4 ">{{ __('Update Plan') }}</button>
-            @else
-                <button id="save_plan" type="submit"
-                    class="save_plan btn btn-rounded animated-shine px-2 mx-4 ">{{ __('Save Plan') }}</button>
-            @endif
+                </div>
 
 
+                @if (isset($requestData))
+                    <input type="text" id="deliveryPlanId" name="deliveryPlanId" class="sr-only"
+                        value="{{ $requestData['DeliveryPlanId'] }}">
+                    <input type="text" name="productId" class="sr-only" value="{{ $requestData['ProductTypeId'] }}">
+                    <input type="text" name="productTypeId" class="sr-only"
+                        value="{{ $requestData['ProductTypeId'] }}">
+                    <input type="text" name="StartingPointId" class="sr-only"
+                        value="{{ $requestData['StartingPointId'] }}">
+                    <input type="text" name="manufactureingHub" class="sr-only"
+                        value="{{ $requestData['StartingPointId'] }}">
+                    <input type="text" name="MinimumMultiple" class="sr-only"
+                        value="{{ $requestData['MinimumMultiple'] }}">
+                    <input type="text" name="TankCapacity" class="sr-only"
+                        value="{{ $requestData['TankCapacity'] }}">
 
-        </div>
-        <style>
-            .btn-box {
-                display: inline-block;
-                white-space: nowrap;
-                position: relative;
-                padding: 1rem.75rem;
-                font-size: 16px;
-                line-height: 1.5;
-                color: #fff;
-                background-color: var(--info);
-                border-radius: .3rem;
-                cursor: pointer;
-                transition: all ease-in-out.3s;
-                width: 100%;
-                min-width: fit-content;
+                    <input type="datetime-local" name="planDate" class="sr-only" value="{{ $requestData['planDate'] }}">
+                    <input type="datetime-local" name="expectedDeliveryDate" class="sr-only"
+                        value="{{ $requestData['expectedDeliveryDate'] }}">
+                    <input type="datetime-local" id="ExpectedReturnTime" name="ExpectedReturnTime" class="sr-only"
+                        value="">
+                @endif
 
-            }
+                <div class="col-12 col-md-4 d-none flex-row align-items-center justify-content-center  ">
 
-            .gap-10 {
-                gap: 10px;
-            }
+                    @if (isset($requestData) && $requestData['DeliveryPlanId'] > 0)
+                        <button id="save_plan" type="submit"
+                            class="save_plan btn btn-rounded animated-shine px-2 mx-4 ">{{ __('Update Plan') }}</button>
+                    @else
+                        <button id="save_plan" type="submit"
+                            class="save_plan btn btn-rounded animated-shine px-2 mx-4 ">{{ __('Save Plan') }}</button>
+                    @endif
 
-            .fa-circle {
-                border-radius: 50%;
-                background-color: #9ca3a270;
-                color: #0a705a;
-                font-size: 100%;
-            }
 
-            .fa-circle:active {
-                background-color: #464949d0;
-                color: #d0ebe5;
-                rotate: 45deg;
-            }
 
-            .fa-circle:hover {
-                background-color: #3b6e6e91;
-                color: #13332c;
-                rotate: -135deg;
-                transition: rotate 1s ease-in-out;
-            }
+                </div>
 
-            .btn-box>div {}
+                <div
+                    class="col-12  gap-5  d-flex flex-row align-items-center justify-content-end mt-2 overflow-hidden ">
+                    <div class="btn-box animated-shine d-none " onclick="toggleRequestPanel(this);"
+                        title="{{ __('Modify Request') }}">
 
-            .animated-shine {
-                animation: shine 8s infinite linear alternate forwards running;
-                transform-origin: center bottom !important;
+                        <i class="fa fa-paper-plane"></i>
+                        <div>{{ __('Request') }}</div>
+                    </div>
 
-            }
 
-            .value_fit {
-                max-width: 130px;
-            }
 
-            .sl_fit {
-                max-width: 30px;
-            }
 
-            .desc_fit {
-                max-width: 250px;
-            }
 
-            /* Animation */
-            /* @keyframes shine {
-                        0%   {transform: rotate(0deg);}
-                        100% {transform: rotate(-360deg);}
-                        } */
-        </style>
-        <div class="col-12  gap-5  d-flex flex-row align-items-center justify-content-end mt-2 overflow-hidden ">
-            <div class="btn-box animated-shine d-none " onclick="toggleRequestPanel(this);"
-                title="{{ __('Modify Request') }}">
+                </div>
 
-                <i class="fa fa-paper-plane"></i>
-                <div>{{ __('Request') }}</div>
-            </div>
-
-            <div class="btn-box btn-block animated-shine update-route  " onclick="updateRoute(this);"
-                title="{{ __('Set Optimize route') }}">
-
-                <i class="fa fa-bullseye"></i>
-                <div>{{ __('Set Optimize Route') }}</div>
-            </div>
-            <div class="btn-box animated-shine " onclick="toggleMapPanel(this);" title="{{ __('Map View') }}">
-
-                <i class="fas fa-map"></i>
-                <div>{{ __('Map View') }}</div>
 
 
             </div>
-
-
-        </div>
-
-
-
+        </form>
     </div>
-</form>
+    <div class="col-md-6 h6 m-0">
+        @if (isset($response))
+            <div class="dragHeader" id="SummaryOne"> {{ $response['Routes']['Algorithm_1']['Description'] }}</div>
+        @else
+            <div class="dragHeader" id="SummaryOne"> {{ __(' Routing based on Nearest Branch ') }}</div>
+        @endif
+    </div>
+</div>
+
+
+
 <form id="formRequestModifiedPlan">
     @csrf
     @if (isset($requestData))
@@ -158,16 +99,79 @@
         <button id="modify_plan" type="submit" class="modify_plan  sr-only">{{ __('Update Plan') }}</button>
     @endif
 </form>
+<style>
+    .btn-box {
+        display: inline-block;
+        white-space: nowrap;
+        position: relative;
+        padding: 1rem.75rem;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #fff;
+        background-color: var(--info);
+        border-radius: .3rem;
+        cursor: pointer;
+        transition: all ease-in-out.3s;
+        width: 100%;
+        min-width: fit-content;
+
+    }
+
+    .gap-10 {
+        gap: 10px;
+    }
+
+    .fa-circle {
+        border-radius: 50%;
+        background-color: #9ca3a270;
+        color: #0a705a;
+        font-size: 100%;
+    }
+
+    .fa-circle:active {
+        background-color: #464949d0;
+        color: #d0ebe5;
+        rotate: 45deg;
+    }
+
+    .fa-circle:hover {
+        background-color: #3b6e6e91;
+        color: #13332c;
+        rotate: -135deg;
+        transition: rotate 1s ease-in-out;
+    }
+
+    .btn-box>div {}
+
+    .animated-shine {
+        animation: shine 8s infinite linear alternate forwards running;
+        transform-origin: center bottom !important;
+
+    }
+
+    .value_fit {
+        max-width: 130px;
+    }
+
+    .sl_fit {
+        max-width: 30px;
+    }
+
+    .desc_fit {
+        max-width: 250px;
+    }
+
+    /* Animation */
+    /* @keyframes shine {
+                0%   {transform: rotate(0deg);}
+                100% {transform: rotate(-360deg);}
+                } */
+</style>
 <div id="listWrapperPanel" class="d-flex flex-column">
 
 
     <div class="  card border border-primary">
-        @if (isset($response))
-            <div class="dragHeader" id="SummaryOne"> {{ $response['Routes']['Algorithm_1']['Description'] }}</div>
-        @else
-            <div class="dragHeader" id="SummaryOne"> {{ __(' Routing based on Nearest Branch ') }}</div>
-        @endif
-        {{-- @dd(json_encode($response)) --}}
+
         <div class="table-responsive">
             <table id="table1" class="table   table-striped table-bordered  display" cellspacing="0"
                 style="width:100%">
@@ -175,6 +179,8 @@
                     <tr>
                         <td class="sl_fit">{{ __('Sl') }}</td>
                         <td class="desc_fit">{{ __('Pumps') }}</td>
+                        <td class="value_fit">{{ __('Delivery At') }}</td>
+                        <td class="value_fit">{{ __('Distance(km)') }} </td>
                         <td class="value_fit">{{ __('Current') }}({{ __('in ltr') }})</td>
                         <td class="value_fit">{{ __('Availability') }}({{ __('in ltr') }})</td>
                         <td class="editable-column value_fit">{{ __('Suggested') }}({{ __('in ltr') }})</td>
@@ -201,17 +207,6 @@
         </div>
 
 
-        {{-- <div id="tableFooterOne" class="dragBlockFooter ">
-        <div class="dragItem">{{ __('Total Pumps( as ready ) : ') }}{{ $sl_no }}</div>
-
-        <div class="dragItem text-white">{{ $totalCurrentStock }}</div>
-        <div class="dragItem text-white">{{ $totalAvailability }}</div>
-
-
-        <div class="dragItem pl-4">{{ $totalRequirement }}</div>
-
-        <div>- </div>
-    </div> --}}
 
 
 
@@ -360,10 +355,42 @@
 
     .rowHeader {
         display: flex;
-        margin-inline-start: 20px;
-        padding-inline-start: 10px;
+        margin-inline-end: 20px;
+        /*  padding-inline-start: 10px; */
         gap: 5px;
         flex-direction: column;
+        justify-content: center;
+    }
+
+    .rowHeader>div:first-child {
+        color: #0fa887;
+    }
+
+    .rowHeader>div>div {
+        border: 2px solid #091a1709;
+        border-radius: 5px;
+        gap: 5px;
+    }
+
+    .rowHeader>div>div>div {
+        padding: 3px !important;
+
+
+
+    }
+
+    .rowHeader>div>div>div:first-child {
+        border-bottom: 2px solid #091a1721;
+        white-space: nowrap;
+        font-weight: :normal;
+        font-size: 14px;
+
+    }
+
+    .rowHeader>div>div>div:last-child {
+        white-space: nowrap;
+        font-weight: bold;
+
     }
 
     .rowHeader::before {
@@ -493,7 +520,7 @@
 
             event.preventDefault();
             if (!isOptimize) {
-                toastr.error("Route Optimization Required")
+                toastr.error(`Please "<i class="fa fa-bullseye"></i> Set Optimize Route"`)
                 return
 
 
@@ -532,6 +559,12 @@
             // console.log(formData);
 
             let data = newList.slice(1, -1);
+            if (data.length === 0) {
+                toastr.warning('No Data Found');
+                $('#save_plan').attr('disabled', false);
+                $('#save_plan').html(btnText);
+                return
+            }
             formData.append('data', JSON.stringify(data));
             formData.append('extraList', JSON.stringify(extraList));
 
@@ -591,11 +624,12 @@
         });
 
         //const jsonData = JSON.stringify(data, replacer)
+
         $("#formRequestModifiedPlan").on("submit", function(event) {
 
             event.preventDefault();
 
-
+            btnRouteOptimize.style = "pointer-events:none"
             var addOne = newList.reduce(function(previousValue, currentValue) {
                 return {
                     officeId: previousValue.officeId + currentValue.officeId,
@@ -643,9 +677,9 @@
                 processData: false, // don't process the data
                 contentType: false, // set content type to false as jQuery will tell the server its a query string request
             }).done(function(data) {
-                console.log(data);
-                if (!data.status) {
 
+                if (!data.status) {
+                    btnRouteOptimize.style = "pointer-events:auto"
                     if (data.errors != 'undefined') {
                         $.each(data.errors, function(key, value) {
                             $('#' + key).addClass('is-invalid');
@@ -661,32 +695,39 @@
                     setTimeout(() => {
                         //$('.search').click();
                         // $('.close').click();
+
+                        //console.log(data);
                         newList = data.data.Routes.Algorithm_1.Route;
                         Total_distance = data.data.Routes.Algorithm_1.Total_distance;
-                        XXExpectedReturnTime = newList[newList.length - 1]
+                        XExpectedReturnTime = newList[newList.length - 1]
                             .estimatedDeliveryTime;
                         JourneyStartTime = datetimeLocal(newList[0].estimatedDeliveryTime);
                         ExpectedReturnTime = datetimeLocal(XExpectedReturnTime);
 
                         TotalJourneyTime = st(JourneyStartTime, ExpectedReturnTime);
-                        //console.log(TotalJourneyTime);
+
                         $('#ExpectedReturnTime').val(ExpectedReturnTime);
                         $('#ModifiedExpectedReturnTime').val(ExpectedReturnTime);
 
                         dt_table1.clear().rows.add(newList.slice(1, -1)).draw();
                         extraList = data.data.Not_selected;
                         dt_table2.clear().rows.add(extraList).draw();
-                        toastr.success("Route optimize");
+                        //toastr.success("Route optimize");
+                        calculateSummary()
+
+                        toastr.info("Route optimize successfully")
+                        btnRouteOptimize.style = "pointer-events:auto"
+                        isOptimize = true
                         if ($('#mapWrapperPanel').hasClass('d-flex')) {
 
                             initMap();
 
                         }
-                    }, 1000);
+                    }, 100);
                 }
             }).fail(function(data) {
 
-
+                btnRouteOptimize.style = "pointer-events:auto"
                 toastr.error(data.message);
 
                 // console.log(data);
@@ -705,16 +746,17 @@
         //console.log(response.hasOwnProperty('DeliveryPlan_statusId'));
         var DeliveryPlanStatusId = response.hasOwnProperty('DeliveryPlan_statusId') ? response.DeliveryPlan_statusId : 0;
         //console.log("Plan Status: "+DeliveryPlanStatusId);
-        newList = routeList;
+        var newList = routeList;
         // console.log(Date.Parse(newList[newList.length - 1].estimatedDeliveryTime));
         var XExpectedReturnTime = newList[newList.length - 1].estimatedDeliveryTime;
         var JourneyStartTime = datetimeLocal(newList[0].estimatedDeliveryTime);
         var ExpectedReturnTime = datetimeLocal(XExpectedReturnTime);
 
         var TotalJourneyTime = st(JourneyStartTime, ExpectedReturnTime);
-        //console.log(TotalJourneyTime);
+
         $('#ExpectedReturnTime').val(ExpectedReturnTime);
         $('#ModifiedExpectedReturnTime').val(ExpectedReturnTime);
+
         var extra_list = response.Not_selected;
 
         var extraList = extra_list;
@@ -964,14 +1006,36 @@
                 limitWarning = `Exceed the Tank Capacity Limit : ${TankCapacity} ltr`;
                 toastr.error(limitWarning);
             }
+            // XExpectedReturnTime = newList[newList.length - 1].estimatedDeliveryTime;
+            // JourneyStartTime = datetimeLocal(newList[0].estimatedDeliveryTime);
+            // ExpectedReturnTime = datetimeLocal(XExpectedReturnTime);
 
-            var strOne = `<ul class="rowHeader">
-                <li title="${limitWarning}">Total requirements for  suggested ${(newList.length - 2)} pump(s) is
-                    :<span class="${styleCheck}"> ${ parseFloat(addOne.atDeliveryRequirement).toFixed(0)} ltr</span></li>
-                    <li>Suggested Distance : <span>${Total_distance.toFixed(0)} km</span></li>
-                    <li> Suggested Travel Time : ${TotalJourneyTime}</li>
+            // TotalJourneyTime = st(JourneyStartTime, ExpectedReturnTime);
+            // $('#ExpectedReturnTime').val(ExpectedReturnTime);
+            // $('#ModifiedExpectedReturnTime').val(ExpectedReturnTime);
 
-                    </ul>`;
+            var strOne = `<div class="rowHeader ">
+                <div class="title">Summary of suggested plan</div>
+                <div title="${limitWarning}" class="row">
+                    <div class="col-6">
+                        <div>Total requirements</div>
+                        <div><span class="${styleCheck}"> ${ parseFloat(addOne.atDeliveryRequirement).toFixed(0)} ltr</span></div>
+                    </div>
+
+                    <div class="col-6">
+                        <div>No of pump(s)</div>
+                        <div>  <span>${(newList.length - 2)}</span> </div>
+                    </div>
+                    <div class="col-6">
+                        <div>Distance(Cord.) </div>
+                        <div> <span>${Total_distance.toFixed(0)} km</span></div>
+                    </div>
+                    <div class="col-6">
+                        <div>Travel time</div>
+                        <div>  ${TotalJourneyTime}</div>
+                    </div>
+               </div>
+            </div>`;
             $('#SummaryOne').html(strOne);
 
             var addTwo = extraList.reduce(function(previousValue, currentValue) {
@@ -1033,6 +1097,13 @@
         var idx = 1;
         var modifiedOffice = []
         var TotalDistance = 0;
+        var options = {
+            year: "2-digit",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        };
         var dt_table1 = $('#table1').DataTable({
             responsive: true,
             select: false,
@@ -1085,29 +1156,49 @@
                             `);">` +
                             `    <i class="fas    fa-minus-circle"></i>` +
                             `</div>`;
-                        var options = {
-                            year: "2-digit",
-                            month: "2-digit",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                        };
+
                         var SubProp = ``;
                         if (data.hasOwnProperty('estimatedDeliveryTime')) {
                             TotalDistance += data.distance;
                             // console.log(TotalDistance, data.distance);
-                            SubProp = `      <div class="pl-2 text-primary"><small>Delivery at: <abbr title="attribute">${new Intl.DateTimeFormat('en-GB',options).format(Date.parse(data.estimatedDeliveryTime))}</abbr></small></div>
-                                    <div class="pl-2 text-primary"><small>Distance(km) : <abbr title="attribute">${TotalDistance.toFixed(0)}(${data.distance.toFixed(0)}) </abbr></small></div>
+                            SubProp = `      <div class="pl-2 text-info font-weight-bold">
+                                        <div class="py-2  ">Delivery at: <abbr title="attribute">${new Intl.DateTimeFormat('en-GB',options).format(Date.parse(data.estimatedDeliveryTime))}</abbr></div>
+                                        </div>
+                                    <div class="pl-2 text-info font-weight-bold display-6">
+                                        <div class="py-2" >Distance(km) : <abbr title="attribute">${TotalDistance.toFixed(0)}(${data.distance.toFixed(0)}) </abbr></div>
+                                    </div>
                               `;
                         }
 
                         return `<div class="d-flex justify-content-between align-items-center title="${data.officeName}" ">
                                 <div class="overflow-hidden">
                                     <strong><em>${trimToMaxLength(data.officeName,20)}</em></strong>
-                                    ${SubProp}
+
                                 </div>
                             <div class="dragItem bg-transparent p-2 rounded" >${btn}</div>
                             </div>`;
+                    }
+                },
+                {
+                    data: null,
+                    "render": function(data, type, full, meta) {
+                        if (data.hasOwnProperty('estimatedDeliveryTime')) {
+
+                            return `<div class="td_box d-flex justify-content-between align-items-center ">${new Intl.DateTimeFormat('en-GB',options).format(Date.parse(data.estimatedDeliveryTime))}</div>`;
+
+                        }
+                        return ''
+                    }
+                },
+                {
+                    data: null,
+                    "render": function(data, type, full, meta) {
+                        if (data.hasOwnProperty('estimatedDeliveryTime')) {
+                            TotalDistance += data.distance;
+                            return `<div class="td_box d-flex justify-content-between align-items-center ">${TotalDistance.toFixed(0)}(${data.distance.toFixed(0)})</div>`;
+
+                        }
+                        return ''
                     }
                 },
                 {
@@ -1421,13 +1512,7 @@
             // console.log('start drag ')
         }
 
-        // $('.draggable').on('dragend',(e)=>{
-        //     e.preventDefault()
-        //      e.target.classList.remove('dragging');
-        //     // deleteNow($(e.target).attr('data-index'));
-        //    // $(e.target).removeClass('dragging');
-        //     //console.log($(e.target).attr('data-index'));
-        // })
+
         $('#table2').on('dragover', (e) => {
             e.preventDefault()
 

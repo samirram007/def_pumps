@@ -113,48 +113,7 @@
                     <form id="formApprove" enctype="multipart/form-data">
                         @csrf
                     </form>
-                    <div class="rounded card p-3 bg-white shadow min-h-100">
 
-                        <div class="card card-primary">
-
-
-                            <div class="card-body">
-                                {{-- <div class="row text-center">
-                                    <div class="col-12">
-                                        <div style="font-size:1.25rem"
-                                            class="mt-2 mb-4 panel panel-info w-100 bg-light rounded text-center text-info  ">
-                                            Leave "{{ __('Receive Quantity') }}" empty to confirm
-                                            "Delivered Quantity"</div>
-                                    </div>
-                                    <div class="col-12 mx-auto sr-only">
-                                        <button type="submit" class="submit btn btn-rounded animated-shine px-4"><span
-                                                class="iconify" data-icon="mdi:content-save-all-outline" data-width="15"
-                                                data-height="15"></span>
-                                            {{ __('UPDATE APPROVE STATUS') }}</button>
-
-                                    </div>
-
-                                </div> --}}
-
-                                <div class="row text-left">
-                                    <div class="col-12 d-flex">
-                                        <div>
-                                            <i class="fa fa-info-circle fa-3x text-info"></i>
-                                        </div>
-
-                                        <div style="font-size:1.0rem"
-                                            class="mt-2 pl-2 mb-4 panel panel-info    text-info  ">
-                                            <div>Leave "{{ __('Receive Quantity') }}" empty to confirm
-                                                "Delivered Quantity"</div>
-                                        </div>
-
-
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </section>
             </div>
         </div>
@@ -162,7 +121,32 @@
 
         {{-- @dd($planDetails) --}}
     </div>
+    <div class="rounded card p-3 bg-white min-h-100 fixed-bottom">
 
+        <div class="card card-primary">
+
+
+            <div class="card-body">
+
+
+                <div class="row text-left">
+                    <div class="col-12 d-flex">
+                        <div>
+                            <i class="fa fa-info-circle fa-3x text-info"></i>
+                        </div>
+
+                        <div style="font-size:1.0rem" class="mt-2 pl-2 mb-4 panel panel-info    text-info  ">
+                            <div>Leave "{{ __('Receive Quantity') }}" empty to confirm
+                                "Delivered Quantity"</div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
     @include('module.delivery_plan.receiving.css')
     @include('module.delivery_plan.receiving.js')
 </div>

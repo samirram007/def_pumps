@@ -55,6 +55,7 @@ class DeliveryPlanController extends Controller
             $data['MasterOffice'] = session()->has('officeData') ? session()->get('officeData') : ApiController::GetOffice($user['officeId']);
 
             $delivery_plans = DeliveryPlan::get_all();
+            // dd($delivery_plans);
             usort($delivery_plans, function ($a, $b) {
                 return strtotime($b['planDate']) - strtotime($a['planDate']);
             });
@@ -429,24 +430,22 @@ class DeliveryPlanController extends Controller
             "message" => $response['message'],
         ]);
     }
-    public function delete($id)
+    public function delete(Request $request)
     {
         $user = $this->user;
         $data['roleName'] = $this->roleName;
         $data['routeRole'] = $this->routeRole;
         $submit_data = [
-            "deliveryPlanId" => $id,
+            "deliveryPlanId" => $request->deliveryPlanId,
             "deliveryPlanStatusId" => 7,
             "userId" => $user['id'],
         ];
         $response = DeliveryPlan::UpdateDeliveryPlanStatus($submit_data);
-
-        //$GetView = view('module.delivery_plan.receive_delivery', $data)->render();
-        return redirect()->back();
-        // return response()->json([
-        //     "status" => true,
-        //     "message" => "Cancelled successfully",
-        // ]);
+        // dd($response->json());
+        return response()->json([
+            "status" => $response->json()['status'],
+            "message" => $response->json()['message'],
+        ]);
     }
     public function approve_requirement($id)
     {
@@ -702,7 +701,7 @@ class DeliveryPlanController extends Controller
             "html" => $GetView,
         ]);
     }
-    public function status_change($id)
+    public function status_change($id, $driver = '')
     {
         $user = $this->user;
         $data['officeId'] = $user['officeId'];
@@ -711,7 +710,7 @@ class DeliveryPlanController extends Controller
         $data['routeRole'] = $this->routeRole;
         $data['title'] = 'Plan: ';
         $data['userId'] = $user['id'];
-
+        $data['page'] = $driver;
         $data['isTopAdmin'] = !$user['masterOfficeId'] ? true : false;
         //dd($data['isTopAdmin']);
         $data['deliveryPlanId'] = $id; //DeliveryPlan::GetDeliveryPlan($id);
@@ -897,7 +896,7 @@ class DeliveryPlanController extends Controller
             "message" => "Rejection done successfully",
         ]);
     }
-    public function driver($id)
+    public function driver_backup($id)
     {
         $user = $this->user;
         $data['officeId'] = $user['officeId'];
@@ -927,6 +926,53 @@ class DeliveryPlanController extends Controller
             'html' => view('module.delivery_plan.driver_assigning.index', $data)->render(),
         ]);
     }
+    public function driver($id)
+    {
+        $user = $this->user;
+        $data['officeId'] = $user['officeId'];
+        $data['adminId'] = $user['id'];
+        $data['isTopAdmin'] = !$user['masterOfficeId'] ? true : false;
+        $data['roleName'] = $this->roleName;
+        $data['routeRole'] = $this->routeRole;
+        $data['title'] = 'Driver Assigning: ';
+        $data['deliveryPlanId'] = $id;
+        // $data['drivers'] = Driver::GetDrivers();
+
+        $data['deliveryPlan'] = DeliveryPlan::GetDeliveryPlan($id);
+        $driverAvailable = DeliveryPlan::GetAvailableDriver($id);
+        $data['drivers'] = $driverAvailable['driverAvailable'];
+
+        $data['planDetails'] = $data['deliveryPlan'];
+        //dd($data['drivers']);
+        return response()->json([
+            'status' => true,
+            'data' => $data,
+            'html' => view('module.delivery_plan.driver_assigning.index', $data)->render(),
+        ]);
+    }
+
+    public function map_data($id)
+    {
+        $user = $this->user;
+        $data['officeId'] = $user['officeId'];
+        $data['adminId'] = $user['id'];
+        $data['isTopAdmin'] = !$user['masterOfficeId'] ? true : false;
+        $data['roleName'] = $this->roleName;
+        $data['routeRole'] = $this->routeRole;
+        $data['title'] = 'Driver Assigning: ';
+        $data['deliveryPlanId'] = $id;
+        // $data['drivers'] = Driver::GetDrivers();
+
+        $mapData = DeliveryPlan::GetDeliveryPlanMapData($id);
+        // dd($mapData);
+        $data['driverRoute'] = $mapData['driverRoute'];
+        $data['plannedRoute'] = $mapData['plannedRoute'];
+        //dd($data['drivers']);
+        return response()->json([
+            'status' => true,
+            'data' => $data,
+        ]);
+    }
     public function assign_driver(Request $request, $id)
     {
         $user = $this->user;
@@ -936,6 +982,7 @@ class DeliveryPlanController extends Controller
         $data['roleName'] = $this->roleName;
         $data['routeRole'] = $this->routeRole;
         $data['title'] = 'Driver Assigning: ';
+        $data['deliveryPlanId'] = $id;
         $submitData = [
             "driverId" => $request->driverId,
             "deliveryPlanId" => $id,
@@ -948,17 +995,10 @@ class DeliveryPlanController extends Controller
                 "errors" => [$response['message']],
             ]);
         }
-        $data['drivers'] = Driver::GetDrivers();
+
         $data['deliveryPlan'] = DeliveryPlan::GetDeliveryPlan($id);
-        if ($data['deliveryPlan']['driver'] !== null) {
-            $data['driverId'] = $data['deliveryPlan']['driver']['driverId'];
-            foreach ($data['drivers'] as $key => $value) {
-                if ($value['driverId'] == $data['driverId']) {
-                    $data['drivers'][$key]['assigned'] = true;
-                    break;
-                }
-            }
-        }
+        $driverAvailable = DeliveryPlan::GetAvailableDriver($id);
+        $data['drivers'] = $driverAvailable['driverAvailable'];
         $data['planDetails'] = $data['deliveryPlan'];
         return response()->json([
             'status' => true,

@@ -1,4 +1,4 @@
-<div class="modal-dialog modal-xl  modal-dialog-top mt-4 ">
+<div class=" mt-4 ">
     <div class="modal-content bg-info">
         @include('module.delivery_plan.receiving.delivery.top_header')
 
@@ -204,7 +204,7 @@
 
                     </section>
                     <section id="step2" class="content sr-only">
-                        <div class=" p-3 bg-white shadow min-h-100">
+                        <div class=" p-3 bg-white min-h-100">
                             <div class="card">
                                 <div id="godownList" class=" godownList">
 
@@ -231,7 +231,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="rounded card p-3 bg-white shadow min-h-100">
+
+                        <div class="rounded card p-3 bg-white shadow min-h-100 fixed-bottom">
 
                             <div class="card card-primary">
 
@@ -257,7 +258,6 @@
                                 </div>
                             </div>
                         </div>
-
 
                     </section>
                     <style scoped>
@@ -357,6 +357,7 @@
         </form>
         {{-- @dd($planDetails) --}}
     </div>
+
     <script>
         var godownsArray = [];
         var godowns = @JSON($godowns[0]['godownProduct']);
@@ -813,4 +814,5 @@
             });
         });
     </script>
+
 </div>

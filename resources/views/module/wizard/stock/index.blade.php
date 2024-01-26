@@ -12,7 +12,9 @@
             </div>
             <div class="offset-md-2 col-md-8  ">
                 <div class="wizard-box scroll-box card card-primary ">
+
                     <div class="rounded card p-3 bg-white shadow min-h-100">
+                        @include('module.wizard.office.info')
                         <div class="rounded card p-3 bg-white shadow min-h-100">
                             @include('module.wizard.godown.partials.header', ['active' => 'stock'])
                         </div>

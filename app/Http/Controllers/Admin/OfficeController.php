@@ -93,7 +93,7 @@ class OfficeController extends Controller
 
     private function getChildren($parent, $offices, &$hierarchy)
     {
-        // dd($parent);
+
         $children = array_filter($offices, function ($office) use ($parent) {
             return $office['masterOfficeId'] === $parent['officeId'];
         });
@@ -101,7 +101,7 @@ class OfficeController extends Controller
         foreach ($children as $key => $child) {
             // $hierarchy[] = $child;
             $children[$key]['children'] = $this->getChildren($child, $offices, $hierarchy);
-//unset($children[$key]);
+
         }
         return $children;
     }
@@ -142,6 +142,7 @@ class OfficeController extends Controller
         $user = (object) $this->user;
 
         $data['masterOfficeId'] = $user->officeId;
+        $data['step'] = 1;
         //dd($data['masterOfficeId']);
         $data['officeTypes'] = ApiController::GetOfficeTypeList();
         $data['gstTypes'] = ApiController::GetGstTypeList();
@@ -150,6 +151,7 @@ class OfficeController extends Controller
         //dd($data['masterOfficeList']);
         $info['title'] = "Create Office";
         $info['size'] = "modal-lg";
+
         $GetView = view('companyadmin.office.office_new_wizard', $data)->render();
         return response()->json([
             "status" => true,
@@ -273,7 +275,7 @@ class OfficeController extends Controller
         $info['size'] = "modal-lg";
         $user = (object) $this->user;
         $data['masterOfficeList'] = Office::GetMasterOfficeList($user->officeId);
-        //dd($data);
+
         $GetView = view('companyadmin.office.office_edit', $data)->render();
 
         return response()->json([
@@ -360,9 +362,22 @@ class OfficeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        //dd($request->all());
+        $payload = [
+            "officeId" => $request->officeId,
+        ];
+        $response = Office::DeleteOffice($payload);
+        //dd($response->json()['result']['isSuccess'], $response->json()['result']['message']);
+        return response()->json([
+            "status" => $response->json()['result']['isSuccess'],
+            "message" => $response->json()['result']['message'],
+        ]);
+    }
+    public function softDelete($id)
+    {
+
     }
 
     public function invoice_no($officeId)

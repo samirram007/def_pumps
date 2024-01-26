@@ -1,5 +1,22 @@
-<div>Total Distance : <span id="TotalDistance">0</span></div>
-<div>Travel Time : <span id="TotalTime">0</span></div>
+<div class="row dragHeader m-0 d-none {{ env('APP_DEBUG') ? '' : 'd-none' }}">
+
+    <div class="offset-md-6 col-md-6 rowHeader my-0 ">
+        <div class="row"></div>
+        <div class="row">
+            <div class="col-6">
+                <div>{{ __('Distance(map)') }}</div>
+                <div> <span id="TotalDistance">0</span></div>
+            </div>
+            <div class="col-6">
+                <div>{{ __('Travel Time') }}</div>
+                <div> <span id="TotalTime">0</span></div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
 <div id="map" style="background: #083f5570 "></div>
 
 
@@ -112,7 +129,8 @@
                             `</div> ` +
                             `</div> ` +
                             `<p class="mt-4 text-danger"><b>NextStop : </b><b><u>` + json["Route"][i +
-                                1]['officeName'] + `</u></b>(Distance: ` + my_route.legs[i].distance
+                                1
+                            ]['officeName'] + `</u></b>(Distance: ` + my_route.legs[i].distance
                             .text + `, Travel Time : ` + my_route.legs[i].duration.text + `)</p>` +
                             `<button class="sr-only" onclick="alert();">Change</button>` +
                             `</div>`
@@ -153,22 +171,19 @@
         // const minutes = totalMinutes % 60;
 
         // return hours + '<b>h</b> ' + minutes + '<b>m</b> ' + seconds + '<b>s</b>';
-        var duration=totalSeconds*1000;
+        var duration = totalSeconds * 1000;
         var days = Math.floor(duration / (1000 * 60 * 60 * 24));
-            var hours = Math.floor((duration % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((duration % (1000 * 60)) / 1000);
-            // Output the result in an element with id="demo"
-            return days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+        var hours = Math.floor((duration % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((duration % (1000 * 60)) / 1000);
+        // Output the result in an element with id="demo"
+        return days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
     }
 </script>
 
 @push('script')
-<!-- <script src="mapsJavaScriptAPI.js" async defer></script> -->
-<script>
-
-     console.clear();
-</script>
-
+    <!-- <script src="mapsJavaScriptAPI.js" async defer></script> -->
+    <script>
+        console.clear();
+    </script>
 @endpush
-

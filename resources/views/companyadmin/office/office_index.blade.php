@@ -21,7 +21,7 @@
 
                         <div class=" d-flex  justify-content-end" style="right:0;top:0;">
                             <a href="{{ route('companyadmin.wizard.index') }}" title="{{ __('New Pump') }}"
-                                class="{{ env('APP_ENV') == 'local' ? 'load-wizard  btn btn-rounded animated-shine px-2 mb-2 ' : 'sr-only' }} ">
+                                class="load-wizard  btn btn-rounded animated-shine px-2 mb-2">
                                 {{ __('New Pump') }}</a>
                             {{-- <a href="javascript:" data-param="" data-size=""
                                 data-url="{{ route('companyadmin.wizard.modal', 'modal') }}" title="{{ __('New Pump') }}"

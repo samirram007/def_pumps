@@ -1,11 +1,20 @@
-<div class="modal-header">
-    <div class="modal-title text-light">
-        <div class="pl-2 pt-2">Total Distance : <span id="TotalDistance">0</span></div>
-        <div class="pl-2 pb-2">Travel Time : <span id="TotalTime">0</span></div>
+<div class="row dragHeader m-0 {{ env('APP_DEBUG') ? '' : 'd-none' }}">
+
+    <div class="offset-md-6 col-md-6 rowHeader my-0 ">
+        <div class="row"></div>
+        <div class="row">
+            <div class="col-6">
+                <div>{{ __('Distance(map)') }}</div>
+                <div> <span id="TotalDistance">0</span></div>
+            </div>
+            <div class="col-6">
+                <div>{{ __('Travel Time') }}</div>
+                <div> <span id="TotalTime">0</span></div>
+            </div>
+        </div>
     </div>
-    <button type="button" onclick="getMap()" class="close">
-        <i class="fa fa-times-circle" style="font-size:24px; color:#fff"></i>
-    </button>
+
+
 </div>
 
 <div id="map" style="background: #083f5570 "></div>
@@ -171,3 +180,10 @@
         return days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
     }
 </script>
+
+@push('script')
+    <!-- <script src="mapsJavaScriptAPI.js" async defer></script> -->
+    <script>
+        console.clear();
+    </script>
+@endpush
